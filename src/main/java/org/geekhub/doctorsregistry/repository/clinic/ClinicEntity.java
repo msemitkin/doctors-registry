@@ -18,7 +18,7 @@ public class ClinicEntity {
     private String address;
 
     public static ClinicEntity of(ClinicDTO clinicDTO) {
-        return new ClinicEntity(clinicDTO.id(), clinicDTO.name(), clinicDTO.address());
+        return new ClinicEntity(clinicDTO.getId(), clinicDTO.getName(), clinicDTO.getAddress());
     }
 
     protected ClinicEntity() {

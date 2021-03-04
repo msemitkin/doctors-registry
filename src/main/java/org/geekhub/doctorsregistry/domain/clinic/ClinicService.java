@@ -1,5 +1,6 @@
-package org.geekhub.doctorsregistry.domain;
+package org.geekhub.doctorsregistry.domain.clinic;
 
+import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.springframework.stereotype.Service;

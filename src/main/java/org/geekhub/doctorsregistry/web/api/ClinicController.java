@@ -1,6 +1,6 @@
 package org.geekhub.doctorsregistry.web.api;
 
-import org.geekhub.doctorsregistry.domain.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
 import org.springframework.http.HttpStatus;
@@ -24,8 +24,9 @@ public class ClinicController {
     }
 
     @PostMapping("/api/clinics")
-    public ClinicDTO saveClinic(ClinicDTO clinicDTO) {
-        ClinicEntity saved = clinicService.save(ClinicEntity.of(clinicDTO));
+    public ClinicDTO saveClinic(String name, String address) {
+        ClinicEntity clinicEntity = new ClinicEntity(null, name, address);
+        ClinicEntity saved = clinicService.save(clinicEntity);
         return ClinicDTO.of(saved);
     }
 
