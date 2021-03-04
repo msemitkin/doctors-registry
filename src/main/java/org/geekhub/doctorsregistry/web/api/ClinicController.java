@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.api;
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
+import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +48,12 @@ public class ClinicController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteClinicById(@PathVariable("id") Integer id) {
         clinicService.deleteById(id);
+    }
+
+    @GetMapping("/api/clinics/{id}/doctors")
+    public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") Integer id) {
+        return clinicService.getDoctors(id).stream()
+            .map(DoctorDTO::of)
+            .collect(Collectors.toList());
     }
 }

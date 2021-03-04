@@ -32,12 +32,20 @@ public class DoctorService {
             .orElseThrow(EntityNotFoundException::new);
     }
 
+    public List<DoctorEntity> findDoctorsByClinic(Integer clinicId) {
+        return doctorRepository.findDoctorEntitiesByClinicId(clinicId);
+    }
+
     public void deleteById(int id) {
         if (doctorRepository.existsById(id)) {
             doctorRepository.deleteById(id);
         } else {
             throw new EntityNotFoundException(id);
         }
+    }
+
+    public void deleteDoctorsByClinicId(Integer clinicId) {
+        doctorRepository.deleteDoctorEntitiesByClinicId(clinicId);
     }
 
 }
