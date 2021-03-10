@@ -11,7 +11,12 @@ public class AppointmentDTO {
     private DoctorDTO doctorDTO;
     private LocalDateTime dateTime;
 
-    public AppointmentDTO(Integer id, PatientDTO patientDTO, DoctorDTO doctorDTO, LocalDateTime dateTime) {
+    public AppointmentDTO(
+        Integer id,
+        PatientDTO patientDTO,
+        DoctorDTO doctorDTO,
+        LocalDateTime dateTime
+    ) {
         this.id = id;
         this.patientDTO = patientDTO;
         this.doctorDTO = doctorDTO;

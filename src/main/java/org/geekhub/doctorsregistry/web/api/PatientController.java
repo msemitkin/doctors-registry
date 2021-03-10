@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.api;
 
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
+import org.geekhub.doctorsregistry.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.patient.PatientDTO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,20 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class PatientController {
 
     private final PatientService patientService;
+    private final PatientMapper patientMapper;
 
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, PatientMapper patientMapper) {
         this.patientService = patientService;
+        this.patientMapper = patientMapper;
     }
 
     @GetMapping("/api/patients/{id}")
     public PatientDTO getPatientById(@PathVariable("id") Integer id) {
         PatientEntity found = patientService.findById(id);
-        return PatientDTO.of(found);
+        return patientMapper.toDTO(found);
     }
 
     @PostMapping("/api/patients/")
     public PatientDTO newPatient(String firstName, String lastName) {
         PatientEntity patientEntity = new PatientEntity(null, firstName, lastName);
-        return PatientDTO.of(patientService.save(patientEntity));
+        return patientMapper.toDTO(patientService.save(patientEntity));
     }
 }

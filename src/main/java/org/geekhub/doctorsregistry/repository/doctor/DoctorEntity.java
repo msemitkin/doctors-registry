@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.repository.doctor;
 
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
-import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,17 +25,6 @@ public class DoctorEntity {
     private SpecializationEntity specialization;
     private Integer clinicId;
     private Integer price;
-
-    public static DoctorEntity of(DoctorDTO doctorDTO) {
-        return new DoctorEntity(
-            doctorDTO.id(),
-            doctorDTO.getFirstName(),
-            doctorDTO.getLastName(),
-            SpecializationEntity.of(doctorDTO.specialization()),
-            doctorDTO.clinicId(),
-            doctorDTO.price()
-        );
-    }
 
     protected DoctorEntity() {
     }

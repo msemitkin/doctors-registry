@@ -1,7 +1,5 @@
 package org.geekhub.doctorsregistry.repository.specialization;
 
-import org.geekhub.doctorsregistry.web.specialization.SpecializationDTO;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,10 +15,6 @@ public class SpecializationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-
-    public static SpecializationEntity of(SpecializationDTO specializationDTO) {
-        return new SpecializationEntity(specializationDTO.getId(), specializationDTO.getName());
-    }
 
     protected SpecializationEntity() {
     }

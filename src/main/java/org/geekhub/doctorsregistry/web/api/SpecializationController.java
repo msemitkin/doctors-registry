@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.api;
 
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
+import org.geekhub.doctorsregistry.mapper.SpecializationMapper;
 import org.geekhub.doctorsregistry.web.specialization.SpecializationDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,15 +13,20 @@ import java.util.stream.Collectors;
 public class SpecializationController {
 
     private final SpecializationService specializationService;
+    private final SpecializationMapper specializationMapper;
 
-    public SpecializationController(SpecializationService specializationService) {
+    public SpecializationController(
+        SpecializationService specializationService,
+        SpecializationMapper specializationMapper
+    ) {
         this.specializationService = specializationService;
+        this.specializationMapper = specializationMapper;
     }
 
     @GetMapping("/api/specializations")
     public List<SpecializationDTO> getSpecializations() {
         return specializationService.findAll().stream()
-            .map(SpecializationDTO::of)
+            .map(specializationMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

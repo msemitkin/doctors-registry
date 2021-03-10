@@ -24,20 +24,20 @@ public class AppointmentController {
     @GetMapping("/appointments/{appointment-id}")
     public AppointmentDTO getAppointmentById(@PathVariable("appointment-id") Integer appointmentId) {
         AppointmentEntity entity = appointmentService.findById(appointmentId);
-        return appointmentMapper.toDto(entity);
+        return appointmentMapper.toDTO(entity);
     }
 
     @GetMapping("/api/patients/{patient-id}/appointments")
     public List<AppointmentDTO> getPatientAppointments(@PathVariable("patient-id") Integer patientId) {
         return appointmentService.findByPatientId(patientId).stream()
-            .map(appointmentMapper::toDto)
+            .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("/api/doctors/{doctor-id}/appointments")
     public List<AppointmentDTO> getDoctorAppointments(@PathVariable("doctor-id") Integer doctorId) {
         return appointmentService.findByDoctorId(doctorId).stream()
-            .map(appointmentMapper::toDto)
+            .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 

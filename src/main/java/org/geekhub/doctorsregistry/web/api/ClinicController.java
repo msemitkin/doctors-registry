@@ -1,6 +1,8 @@
 package org.geekhub.doctorsregistry.web.api;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.mapper.ClinicMapper;
+import org.geekhub.doctorsregistry.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
@@ -19,29 +21,37 @@ import java.util.stream.Collectors;
 public class ClinicController {
 
     private final ClinicService clinicService;
+    private final ClinicMapper clinicMapper;
+    private final DoctorMapper doctorMapper;
 
-    public ClinicController(ClinicService clinicService) {
+    public ClinicController(
+        ClinicService clinicService,
+        ClinicMapper clinicMapper,
+        DoctorMapper doctorMapper
+    ) {
         this.clinicService = clinicService;
+        this.clinicMapper = clinicMapper;
+        this.doctorMapper = doctorMapper;
     }
 
     @PostMapping("/api/clinics")
     public ClinicDTO saveClinic(String name, String address) {
         ClinicEntity clinicEntity = new ClinicEntity(null, name, address);
         ClinicEntity saved = clinicService.save(clinicEntity);
-        return ClinicDTO.of(saved);
+        return clinicMapper.toDTO(saved);
     }
 
     @GetMapping("/api/clinics")
     public List<ClinicDTO> findAllClinics() {
         return clinicService.findAll().stream()
-            .map(ClinicDTO::of)
+            .map(clinicMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("/api/clinics/{id}")
     public ClinicDTO findClinicById(@PathVariable("id") Integer id) {
         ClinicEntity found = clinicService.findById(id);
-        return ClinicDTO.of(found);
+        return clinicMapper.toDTO(found);
     }
 
     @DeleteMapping("/api/clinics/{id}")
@@ -53,7 +63,8 @@ public class ClinicController {
     @GetMapping("/api/clinics/{id}/doctors")
     public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") Integer id) {
         return clinicService.getDoctors(id).stream()
-            .map(DoctorDTO::of)
+            .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
     }
+
 }

@@ -1,7 +1,5 @@
 package org.geekhub.doctorsregistry.repository.clinic;
 
-import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,10 +14,6 @@ public class ClinicEntity {
     private Integer id;
     private String name;
     private String address;
-
-    public static ClinicEntity of(ClinicDTO clinicDTO) {
-        return new ClinicEntity(clinicDTO.getId(), clinicDTO.getName(), clinicDTO.getAddress());
-    }
 
     protected ClinicEntity() {
     }

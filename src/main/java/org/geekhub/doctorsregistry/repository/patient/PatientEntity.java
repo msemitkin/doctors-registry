@@ -1,7 +1,5 @@
 package org.geekhub.doctorsregistry.repository.patient;
 
-import org.geekhub.doctorsregistry.web.patient.PatientDTO;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,10 +18,6 @@ public class PatientEntity {
     private String lastName;
 
     protected PatientEntity() {
-    }
-
-    public static PatientEntity of(PatientDTO dto) {
-        return new PatientEntity(dto.getId(), dto.getFirstName(), dto.getLastName());
     }
 
     public PatientEntity(Integer id, String firstName, String lastName) {

@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.api;
 
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DoctorMapper doctorMapper;
 
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, DoctorMapper doctorMapper) {
         this.doctorService = doctorService;
+        this.doctorMapper = doctorMapper;
     }
 
     @PostMapping("api/doctors")
@@ -35,20 +38,20 @@ public class DoctorController {
         DoctorEntity doctor
             = new DoctorEntity(null, firstName, lastName, specialization, clinicId, price);
         DoctorEntity saved = doctorService.save(doctor);
-        return DoctorDTO.of(saved);
+        return doctorMapper.toDTO(saved);
     }
 
     @GetMapping("api/doctors")
     public List<DoctorDTO> getAllDoctors() {
         return doctorService.findAll().stream()
-            .map(DoctorDTO::of)
+            .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("api/doctors/{id}")
     public DoctorDTO getDoctorById(@PathVariable("id") Integer id) {
         DoctorEntity found = doctorService.findById(id);
-        return DoctorDTO.of(found);
+        return doctorMapper.toDTO(found);
     }
 
     @DeleteMapping("api/doctors/{id}")
