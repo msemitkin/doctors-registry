@@ -1,6 +1,6 @@
-package org.geekhub.doctorsregistry.web.doctor;
+package org.geekhub.doctorsregistry.web.api.doctor;
 
-import org.geekhub.doctorsregistry.web.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.api.specialization.SpecializationDTO;
 
 public record DoctorDTO(
     Integer id,

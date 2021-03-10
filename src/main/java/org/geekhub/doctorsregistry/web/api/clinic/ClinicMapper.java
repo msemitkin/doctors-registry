@@ -1,7 +1,6 @@
-package org.geekhub.doctorsregistry.mapper;
+package org.geekhub.doctorsregistry.web.api.clinic;
 
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
-import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
 import org.springframework.stereotype.Component;
 
 @Component

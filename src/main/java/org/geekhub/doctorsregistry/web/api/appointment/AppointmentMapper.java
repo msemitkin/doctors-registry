@@ -1,9 +1,10 @@
-package org.geekhub.doctorsregistry.mapper;
+package org.geekhub.doctorsregistry.web.api.appointment;
 
+import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
+import org.geekhub.doctorsregistry.web.api.patient.PatientMapper;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
-import org.geekhub.doctorsregistry.web.appointment.AppointmentDTO;
 import org.springframework.stereotype.Component;
 
 @Component

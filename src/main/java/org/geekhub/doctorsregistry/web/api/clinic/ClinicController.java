@@ -1,11 +1,9 @@
-package org.geekhub.doctorsregistry.web.api;
+package org.geekhub.doctorsregistry.web.api.clinic;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
-import org.geekhub.doctorsregistry.mapper.ClinicMapper;
-import org.geekhub.doctorsregistry.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
-import org.geekhub.doctorsregistry.web.clinic.ClinicDTO;
-import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

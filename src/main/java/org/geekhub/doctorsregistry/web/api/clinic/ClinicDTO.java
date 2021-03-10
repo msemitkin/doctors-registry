@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.web.clinic;
+package org.geekhub.doctorsregistry.web.api.clinic;
 
 public record ClinicDTO(
     Integer id,

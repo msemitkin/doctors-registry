@@ -1,10 +1,8 @@
-package org.geekhub.doctorsregistry.web.api;
+package org.geekhub.doctorsregistry.web.api.doctor;
 
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
-import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,7 +1,7 @@
-package org.geekhub.doctorsregistry.web.appointment;
+package org.geekhub.doctorsregistry.web.api.appointment;
 
-import org.geekhub.doctorsregistry.web.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.patient.PatientDTO;
+import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.web.api.patient.PatientDTO;
 
 import java.time.LocalDateTime;
 

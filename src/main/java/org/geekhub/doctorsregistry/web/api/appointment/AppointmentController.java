@@ -1,9 +1,7 @@
-package org.geekhub.doctorsregistry.web.api;
+package org.geekhub.doctorsregistry.web.api.appointment;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
-import org.geekhub.doctorsregistry.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
-import org.geekhub.doctorsregistry.web.appointment.AppointmentDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
