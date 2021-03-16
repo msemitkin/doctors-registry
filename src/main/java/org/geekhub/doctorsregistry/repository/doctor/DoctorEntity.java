@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.repository.doctor;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +21,7 @@ public class DoctorEntity {
     private Integer id;
     private String firstName;
     private String lastName;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialization_id")
     private SpecializationEntity specialization;
     private Integer clinicId;
