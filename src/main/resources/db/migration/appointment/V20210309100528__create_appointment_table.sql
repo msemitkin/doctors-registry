@@ -5,5 +5,5 @@ create table appointment
     doctor_working_hour_id integer,
     datetime               timestamp not null,
     constraint patient_id_fkey foreign key (patient_id) references patient (id) ON DELETE CASCADE,
-    constraint doctor_working_hour_id_fkey foreign key (doctor_working_hour_id) references doctor_working_hour (id)
+    constraint doctor_working_hour_id_fkey foreign key (doctor_working_hour_id) references doctor_working_hour (id) ON DELETE CASCADE
 );

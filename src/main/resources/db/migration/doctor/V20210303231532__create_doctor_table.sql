@@ -7,5 +7,5 @@ create table doctor
     clinic_id         integer,
     price             integer     not null,
     constraint specialization_id_fkey foreign key (specialization_id) references specialization (id),
-    constraint clinic_id_fkey foreign key (clinic_id) references clinic (id)
+    constraint clinic_id_fkey foreign key (clinic_id) references clinic (id) ON DELETE CASCADE
 );
