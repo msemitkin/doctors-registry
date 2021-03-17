@@ -6,9 +6,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -18,7 +21,8 @@ public class AppointmentRepository {
         "select appointment.id as id, " +
         "appointment.patient_id as patient_id, " +
         "doctor_working_hour.doctor_id as doctor_id, " +
-        "appointment.datetime as datetime " +
+        "appointment.date as date " +
+        "doctor_working_hour.time as time " +
         "from appointment " +
         "join doctor_working_hour " +
         "on appointment.doctor_working_hour_id = doctor_working_hour.id " +
@@ -26,15 +30,14 @@ public class AppointmentRepository {
 
     private static final String GET_DOCTOR_WORKING_HOUR_ID_BY_DOCTOR_ID_AND_DAY_OF_THE_WEEK_AND_TIME =
         "select doctor_working_hour.id as id " +
-        "from doctor_working_hour join working_hour " +
-        "on doctor_working_hour.working_hour_id = working_hour.id " +
+        "from doctor_working_hour " +
         "where doctor_working_hour.doctor_id = :doctor_id " +
-        "and working_hour.time = :time " +
-        "and UPPER(working_hour.day_of_the_week) = :day_of_the_week ";
+        "and doctor_working_hour.time = :time " +
+        "and doctor_working_hour.day_of_the_week = :day_of_the_week ";
 
     private static final String CREATE_APPOINTMENT =
-        "insert into appointment (patient_id, doctor_working_hour_id, datetime) " +
-        "values (:patient_id, :doctor_working_hour_id, :datetime)";
+        "insert into appointment (patient_id, doctor_working_hour_id, date) " +
+        "values (:patient_id, :doctor_working_hour_id, :date)";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -42,12 +45,16 @@ public class AppointmentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) -> new AppointmentEntity(
-        rs.getInt("id"),
-        rs.getInt("patient_id"),
-        rs.getInt("doctor_id"),
-        rs.getTimestamp("datetime").toLocalDateTime()
-    );
+    private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) ->
+        new AppointmentEntity(
+            rs.getInt("id"),
+            rs.getInt("patient_id"),
+            rs.getInt("doctor_id"),
+            LocalDateTime.of(
+                rs.getDate("date").toLocalDate(),
+                rs.getTime("date").toLocalTime()
+            )
+        );
 
     public Optional<AppointmentEntity> findById(Integer id) {
         try {
@@ -59,26 +66,42 @@ public class AppointmentRepository {
         }
     }
 
+    private Optional<Integer> getWorkingHourId(
+        Integer doctorId,
+        LocalTime time,
+        DayOfWeek dayOfWeek
+    ) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(
+                GET_DOCTOR_WORKING_HOUR_ID_BY_DOCTOR_ID_AND_DAY_OF_THE_WEEK_AND_TIME,
+                Map.of(
+                    "doctor_id", doctorId,
+                    "time", Time.valueOf(time),
+                    "day_of_the_week", dayOfWeek.getValue()
+                ),
+                Integer.class
+                )
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
     @Transactional
     public void create(AppointmentEntity appointmentEntity) {
-        Integer workingHourId = jdbcTemplate.queryForObject(
-            GET_DOCTOR_WORKING_HOUR_ID_BY_DOCTOR_ID_AND_DAY_OF_THE_WEEK_AND_TIME,
-            Map.of(
-                "doctor_id", appointmentEntity.getDoctorId(),
-                "time", appointmentEntity.getDateTime().toLocalTime(),
-                "day_of_the_week", appointmentEntity.getDateTime().getDayOfWeek().name()
-            ),
-            Integer.class
-        );
 
-        if (Objects.isNull(workingHourId)) {
-            throw new IllegalArgumentException("Requested entity does not exist");
-        }
+        Integer workingHourId = getWorkingHourId(
+            appointmentEntity.getDoctorId(),
+            appointmentEntity.getDateTime().toLocalTime(),
+            appointmentEntity.getDateTime().getDayOfWeek()
+        ).orElseThrow(
+            () -> new IllegalArgumentException("Doctor working hour was not found with parameters")
+        );
 
         jdbcTemplate.update(CREATE_APPOINTMENT, Map.of(
             "patient_id", appointmentEntity.getPatientId(),
             "doctor_working_hour_id", workingHourId,
-            "datetime", Timestamp.valueOf(appointmentEntity.getDateTime())
+            "date", Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
             )
         );
 
