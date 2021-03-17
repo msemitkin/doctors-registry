@@ -26,6 +26,10 @@ public class PatientEntity {
         this.lastName = lastName;
     }
 
+    public static PatientEntity withId(int id) {
+        return new PatientEntity(id, null, null);
+    }
+
     public Integer getId() {
         return id;
     }

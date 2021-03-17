@@ -46,6 +46,10 @@ public class DoctorEntity {
         this.price = price;
     }
 
+    public static DoctorEntity withId(int id) {
+        return new DoctorEntity(id, null, null, null, null, null);
+    }
+
     public Integer getId() {
         return id;
     }

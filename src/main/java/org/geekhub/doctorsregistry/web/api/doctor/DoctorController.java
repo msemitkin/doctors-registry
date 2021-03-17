@@ -52,6 +52,13 @@ public class DoctorController {
         return doctorMapper.toDTO(found);
     }
 
+    @GetMapping("/api/clinics/{id}/doctors")
+    public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") Integer id) {
+        return doctorService.findDoctorsByClinic(id).stream()
+            .map(doctorMapper::toDTO)
+            .collect(Collectors.toList());
+    }
+
     @DeleteMapping("api/doctors/{id}")
     public void deleteDoctorById(@PathVariable("id") Integer id) {
         doctorService.deleteById(id);
