@@ -1,25 +1,22 @@
 package org.geekhub.doctorsregistry.web.api.appointment;
 
-import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.api.patient.PatientDTO;
-
 import java.time.LocalDateTime;
 
 public class AppointmentDTO {
     private Integer id;
-    private PatientDTO patientDTO;
-    private DoctorDTO doctorDTO;
+    private Integer pateintId;
+    private Integer doctorId;
     private LocalDateTime dateTime;
 
     public AppointmentDTO(
         Integer id,
-        PatientDTO patientDTO,
-        DoctorDTO doctorDTO,
+        Integer pateintId,
+        Integer doctorId,
         LocalDateTime dateTime
     ) {
         this.id = id;
-        this.patientDTO = patientDTO;
-        this.doctorDTO = doctorDTO;
+        this.pateintId = pateintId;
+        this.doctorId = doctorId;
         this.dateTime = dateTime;
     }
 
@@ -31,20 +28,20 @@ public class AppointmentDTO {
         this.id = id;
     }
 
-    public PatientDTO getPatientDTO() {
-        return patientDTO;
+    public Integer getPateintId() {
+        return pateintId;
     }
 
-    public void setPatientDTO(PatientDTO patientDTO) {
-        this.patientDTO = patientDTO;
+    public void setPateintId(Integer pateintId) {
+        this.pateintId = pateintId;
     }
 
-    public DoctorDTO getDoctorDTO() {
-        return doctorDTO;
+    public Integer getDoctorId() {
+        return doctorId;
     }
 
-    public void setDoctorDTO(DoctorDTO doctorDTO) {
-        this.doctorDTO = doctorDTO;
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
     public LocalDateTime getDateTime() {

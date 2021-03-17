@@ -4,15 +4,15 @@ import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import org.springframework.util.Assert;
 
 @Service
 public class AppointmentService {
 
-    private static final Integer APPOINTMENT_DURATION = 20;
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
 
     private final ZonedTime zonedTime;
     private final AppointmentRepository appointmentRepository;
@@ -25,40 +25,23 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
+    public void create(AppointmentEntity appointmentEntity) {
+
+        Assert.notNull(appointmentEntity, "Appointment entity is null");
+        Assert.notNull(appointmentEntity.getDoctorId(), "Doctor id is null");
+        Assert.notNull(appointmentEntity.getPatientId(), "Patient id is null");
+        Assert.notNull(appointmentEntity.getDateTime(), "Datetime is null");
+
+
+        if (!appointmentEntity.getDateTime().isAfter(zonedTime.now())) {
+            logger.warn("Cannot create appointment for past time");
+            throw new IllegalArgumentException("Cannot create appointment for past time");
+        }
+        appointmentRepository.create(appointmentEntity);
+    }
+
     public AppointmentEntity findById(Integer id) {
         return appointmentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
-    public AppointmentEntity save(AppointmentEntity appointmentEntity) {
-        return appointmentRepository.save(appointmentEntity);
-    }
-
-    public List<AppointmentEntity> findArchivedAppointmentsByDoctorId(Integer doctorId) {
-        LocalDateTime searchUntilTime = zonedTime.now().minusMinutes(APPOINTMENT_DURATION);
-        return appointmentRepository.findAppointmentEntitiesByDoctorIdAndDateTimeBefore(
-            doctorId, searchUntilTime
-        );
-    }
-
-    public List<AppointmentEntity> findPendingAppointmentsByDoctorId(Integer doctorId) {
-        LocalDateTime searchUntilTime = zonedTime.now().minusMinutes(APPOINTMENT_DURATION);
-        return appointmentRepository.findAppointmentEntitiesByDoctorIdAndDateTimeAfter(
-            doctorId, searchUntilTime
-        );
-    }
-
-    public List<AppointmentEntity> findArchivedAppointmentsByPatientId(Integer patientId) {
-        LocalDateTime searchUntilTime = zonedTime.now().minusMinutes(APPOINTMENT_DURATION);
-        return appointmentRepository.findAppointmentEntitiesByPatientIdAndDateTimeBefore(
-            patientId, searchUntilTime
-        );
-    }
-
-    public List<AppointmentEntity> findPendingAppointmentsByPatientId(Integer patientId) {
-        LocalDateTime searchUntilTime = zonedTime.now().minusMinutes(APPOINTMENT_DURATION);
-        return appointmentRepository.findAppointmentEntitiesByPatientIdAndDateTimeAfter(
-            patientId, searchUntilTime
-        );
     }
 
 }

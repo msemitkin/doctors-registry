@@ -1,40 +1,27 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
-import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHour;
-import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Entity
-@Table(name = "appointment")
 public class AppointmentEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "patient_id")
-    private PatientEntity patient;
-    @ManyToOne
-    @JoinColumn(name = "doctor_working_hour_id")
-    private DoctorWorkingHour doctorWorkingHour;
-    @Column(name = "datetime")
+    private Integer patientId;
+    private Integer doctorId;
     private LocalDateTime dateTime;
 
     protected AppointmentEntity() {
     }
 
-    public AppointmentEntity(Integer id, PatientEntity patient, DoctorWorkingHour doctorWorkingHour, LocalDateTime dateTime) {
+    public AppointmentEntity(
+        Integer id,
+        Integer patientId,
+        Integer doctorId,
+        LocalDateTime dateTime
+    ) {
         this.id = id;
-        this.patient = patient;
-        this.doctorWorkingHour = doctorWorkingHour;
+        this.patientId = patientId;
+        this.doctorId = doctorId;
         this.dateTime = dateTime;
     }
 
@@ -46,20 +33,20 @@ public class AppointmentEntity {
         this.id = id;
     }
 
-    public PatientEntity getPatient() {
-        return patient;
+    public Integer getPatientId() {
+        return patientId;
     }
 
-    public void setPatient(PatientEntity patient) {
-        this.patient = patient;
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
-    public DoctorWorkingHour getDoctorWorkingHour() {
-        return doctorWorkingHour;
+    public Integer getDoctorId() {
+        return doctorId;
     }
 
-    public void setDoctorWorkingHour(DoctorWorkingHour doctorWorkingHour) {
-        this.doctorWorkingHour = doctorWorkingHour;
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
     public LocalDateTime getDateTime() {
@@ -68,5 +55,28 @@ public class AppointmentEntity {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AppointmentEntity that = (AppointmentEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(patientId, that.patientId) && Objects.equals(doctorId, that.doctorId) && Objects.equals(dateTime, that.dateTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, patientId, doctorId, dateTime);
+    }
+
+    @Override
+    public String toString() {
+        return "AppointmentEntity{" +
+               "id=" + id +
+               ", patientId=" + patientId +
+               ", doctorId=" + doctorId +
+               ", dateTime=" + dateTime +
+               '}';
     }
 }
