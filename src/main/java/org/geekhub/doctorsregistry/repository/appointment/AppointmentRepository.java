@@ -21,7 +21,7 @@ public class AppointmentRepository {
         "select appointment.id as id, " +
         "appointment.patient_id as patient_id, " +
         "doctor_working_hour.doctor_id as doctor_id, " +
-        "appointment.date as date " +
+        "appointment.date as date, " +
         "doctor_working_hour.time as time " +
         "from appointment " +
         "join doctor_working_hour " +
@@ -38,6 +38,29 @@ public class AppointmentRepository {
     private static final String CREATE_APPOINTMENT =
         "insert into appointment (patient_id, doctor_working_hour_id, date) " +
         "values (:patient_id, :doctor_working_hour_id, :date)";
+
+    private static final String DOCTOR_WORKS_AT = """
+        select exists( 
+               select id 
+               from doctor_working_hour 
+               where doctor_id = :doctor_id 
+                 and day_of_the_week = :day_of_the_week 
+                 and time = :time            
+        )
+        """;
+
+
+    private static final String DOCTOR_DO_NOT_HAVE_APPOINTMENTS = """
+        select not exists(
+            select *
+            from appointment
+                     join doctor_working_hour dwh on appointment.doctor_working_hour_id = dwh.id
+            where doctor_id = :doctor_id
+              and day_of_the_week = :day_of_the_week
+              and time = :time
+              and date = :date
+        )""";
+
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -105,6 +128,34 @@ public class AppointmentRepository {
             )
         );
 
+    }
+
+    private boolean doctorWorksAt(Integer doctorId, DayOfWeek dayOfWeek, LocalTime localTime) {
+        Map<String, ?> parameters = Map.of(
+            "doctor_id", doctorId,
+            "day_of_the_week", dayOfWeek.getValue(),
+            "time", Time.valueOf(localTime)
+        );
+        return Optional.ofNullable(
+            jdbcTemplate.queryForObject(DOCTOR_WORKS_AT, parameters, Boolean.class)
+        ).orElse(false);
+    }
+
+    private boolean doNotHaveAppointments(Integer doctorId, LocalDateTime dateTime) {
+        Map<String, ?> parameters = Map.of(
+            "doctor_id", doctorId,
+            "day_of_the_week", dateTime.getDayOfWeek().getValue(),
+            "time", Time.valueOf(dateTime.toLocalTime()),
+            "date", Date.valueOf(dateTime.toLocalDate())
+        );
+        return Optional.ofNullable(
+            jdbcTemplate.queryForObject(DOCTOR_DO_NOT_HAVE_APPOINTMENTS, parameters, Boolean.class)
+        ).orElse(false);
+    }
+
+    public boolean doctorAvailable(Integer doctorId, LocalDateTime dateTime) {
+        return doctorWorksAt(doctorId, dateTime.getDayOfWeek(), dateTime.toLocalTime()) &&
+               doNotHaveAppointments(doctorId, dateTime);
     }
 
 }

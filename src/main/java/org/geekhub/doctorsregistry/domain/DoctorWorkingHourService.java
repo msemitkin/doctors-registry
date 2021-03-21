@@ -29,7 +29,7 @@ public class DoctorWorkingHourService {
         );
         Assert.isTrue(
             doctorRepository.existsById(doctorWorkingHour.getDoctorId()),
-            "Doctor with given id does not exist"
+            () -> "Doctor with given id does not exist: " + doctorWorkingHour.getDoctorId()
         );
 
         doctorWorkingHourRepository.add(doctorWorkingHour);
