@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.api.errorhandling;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableException;
+import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,15 @@ public class DefaultExceptionHandler {
         logger.info("Doctor is not available at this time", e);
         return new ResponseEntity<>(
             ErrorDTO.withMessage("Doctor is not available at this time"),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(PatientBusyException.class)
+    public ResponseEntity<ErrorDTO> patientBusy(PatientBusyException e) {
+        logger.info("Patient busy", e);
+        return new ResponseEntity<>(
+            ErrorDTO.withMessage("Cannot create appointment. Patient has another one at this time"),
             HttpStatus.BAD_REQUEST
         );
     }

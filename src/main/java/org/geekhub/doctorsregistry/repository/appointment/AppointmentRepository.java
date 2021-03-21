@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
+import org.geekhub.doctorsregistry.repository.DatabaseException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -61,6 +62,14 @@ public class AppointmentRepository {
               and date = :date
         )""";
 
+    private static final String PATIENT_HAS_APPOINTMENT_AT = """
+        select exists(
+                    select * from appointment join doctor_working_hour on appointment.doctor_working_hour_id = doctor_working_hour.id  
+                    where patient_id = :patient_id
+                    and appointment.date = :date
+                    and doctor_working_hour.time = :time
+               )
+        """;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -158,4 +167,18 @@ public class AppointmentRepository {
                doNotHaveAppointments(doctorId, dateTime);
     }
 
+    public boolean patientDoNotHaveAppointment(Integer patientId, LocalDateTime dateTime) {
+        Map<String, ?> parameters = Map.of(
+            "patient_id", patientId,
+            "date", Date.valueOf(dateTime.toLocalDate()),
+            "time", Time.valueOf(dateTime.toLocalTime())
+        );
+        boolean patientHasAppointment = Optional.ofNullable(
+            jdbcTemplate.queryForObject(PATIENT_HAS_APPOINTMENT_AT, parameters, Boolean.class))
+            .orElseThrow(() -> new DatabaseException(
+                    "Expected boolean value while fetching data from db, but null received"
+                )
+            );
+        return !patientHasAppointment;
+    }
 }

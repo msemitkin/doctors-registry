@@ -38,6 +38,10 @@ public class AppointmentService {
             logger.warn("Cannot create appointment for past time");
             throw new IllegalArgumentException("Cannot create appointment for past time");
         }
+        if (!patientDoNotHaveAppointment(appointmentEntity)) {
+            logger.warn("Patient already has an appointment at specified time");
+            throw new PatientBusyException("Patient already has an appointment at specified time");
+        }
         if (!doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())) {
             logger.info("Attempted to make an appointment with a doctor at already booked time");
             throw new DoctorNotAvailableException("Doctor is not available at this time");
@@ -51,6 +55,12 @@ public class AppointmentService {
 
     private boolean doctorAvailable(Integer doctorId, LocalDateTime localDateTime) {
         return appointmentRepository.doctorAvailable(doctorId, localDateTime);
+    }
+
+    private boolean patientDoNotHaveAppointment(AppointmentEntity appointmentEntity) {
+        return appointmentRepository.patientDoNotHaveAppointment(
+            appointmentEntity.getPatientId(), appointmentEntity.getDateTime()
+        );
     }
 
 }
