@@ -42,6 +42,9 @@ public class AppointmentService {
             logger.warn("Patient already has an appointment at specified time");
             throw new PatientBusyException("Patient already has an appointment at specified time");
         }
+        if (patientHasAppointmentWithDoctorThatDay(appointmentEntity)) {
+            throw new RepeatedDayAppointment();
+        }
         if (!doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())) {
             logger.info("Attempted to make an appointment with a doctor at already booked time");
             throw new DoctorNotAvailableException("Doctor is not available at this time");
@@ -60,6 +63,14 @@ public class AppointmentService {
     private boolean patientDoNotHaveAppointment(AppointmentEntity appointmentEntity) {
         return appointmentRepository.patientDoNotHaveAppointment(
             appointmentEntity.getPatientId(), appointmentEntity.getDateTime()
+        );
+    }
+
+    private boolean patientHasAppointmentWithDoctorThatDay(AppointmentEntity appointmentEntity) {
+        return appointmentRepository.patientHasAppointmentWithThatDoctorThatDay(
+            appointmentEntity.getPatientId(),
+            appointmentEntity.getDoctorId(),
+            appointmentEntity.getDateTime()
         );
     }
 

@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.api.errorhandling;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableException;
 import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
+import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,20 @@ public class DefaultExceptionHandler {
     public ResponseEntity<ErrorDTO> patientBusy(PatientBusyException e) {
         logger.info("Patient busy", e);
         return new ResponseEntity<>(
-            ErrorDTO.withMessage("Cannot create appointment. Patient has another one at this time"),
+            ErrorDTO.withMessage(
+                "Cannot create appointment. Patient has another one at this time"
+            ),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(RepeatedDayAppointment.class)
+    public ResponseEntity<ErrorDTO> repeatedDayAppointment(RepeatedDayAppointment e) {
+        logger.warn("Attempt to make multiple appointments with a doctor on a single day");
+        return new ResponseEntity<>(
+            ErrorDTO.withMessage(
+                "Cannot create multiple appointments with a doctor on a single day"
+            ),
             HttpStatus.BAD_REQUEST
         );
     }

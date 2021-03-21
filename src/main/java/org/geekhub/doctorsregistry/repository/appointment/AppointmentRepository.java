@@ -71,6 +71,17 @@ public class AppointmentRepository {
                )
         """;
 
+    private static final String PATIENT_HAS_APPOINTMENT_WITH_DOCTOR_ON_DAY =
+        """
+                select exists(
+                    select * 
+                    from appointment join doctor_working_hour on appointment.doctor_working_hour_id = doctor_working_hour.id
+                    where appointment.patient_id = :patient_id
+                    and doctor_working_hour.doctor_id = :doctor_id
+                    and appointment.date = :date
+                )
+            """;
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public AppointmentRepository(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -180,5 +191,20 @@ public class AppointmentRepository {
                 )
             );
         return !patientHasAppointment;
+    }
+
+    public boolean patientHasAppointmentWithThatDoctorThatDay(
+        Integer patientId, Integer doctorId, LocalDateTime dateTime
+    ) {
+        Map<String, Object> parameters = Map.of(
+            "patient_id", patientId,
+            "doctor_id", doctorId,
+            "date", Date.valueOf(dateTime.toLocalDate()),
+            "time", Time.valueOf(dateTime.toLocalTime())
+        );
+        Boolean result = jdbcTemplate.queryForObject(
+            PATIENT_HAS_APPOINTMENT_WITH_DOCTOR_ON_DAY, parameters, Boolean.class
+        );
+        return Optional.ofNullable(result).orElseThrow(DatabaseException::new);
     }
 }
