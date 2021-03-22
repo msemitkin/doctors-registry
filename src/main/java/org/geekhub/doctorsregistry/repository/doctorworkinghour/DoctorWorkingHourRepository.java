@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.repository.doctorworkinghour;
 
 import org.geekhub.doctorsregistry.repository.DatabaseException;
-import org.geekhub.doctorsregistry.repository.SQLManager;
+import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 

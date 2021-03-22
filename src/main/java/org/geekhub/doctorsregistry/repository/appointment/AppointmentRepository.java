@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
 import org.geekhub.doctorsregistry.repository.DatabaseException;
-import org.geekhub.doctorsregistry.repository.SQLManager;
+import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,14 +19,22 @@ import java.util.Optional;
 @Repository
 public class AppointmentRepository {
 
+    private static final String ID = "id";
+    private static final String PATIENT_ID = "patient_id";
+    private static final String DOCTOR_ID = "doctor_id";
+    private static final String DATE = "date";
+    private static final String TIME = "time";
+    private static final String DAY_OF_THE_WEEK = "day_of_the_week";
+    private static final String DOCTOR_WORKING_HOUR_ID = "doctor_working_hour_id";
+
     private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) ->
         new AppointmentEntity(
-            rs.getInt("id"),
-            rs.getInt("patient_id"),
-            rs.getInt("doctor_id"),
+            rs.getInt(ID),
+            rs.getInt(PATIENT_ID),
+            rs.getInt(DOCTOR_ID),
             LocalDateTime.of(
-                rs.getDate("date").toLocalDate(),
-                rs.getTime("date").toLocalTime()
+                rs.getDate(DATE).toLocalDate(),
+                rs.getTime(TIME).toLocalTime()
             )
         );
 
@@ -45,7 +53,7 @@ public class AppointmentRepository {
         try {
             String query = sqlManager.getQuery("find-appointment-by-id");
             return Optional.ofNullable(
-                jdbcTemplate.queryForObject(query, Map.of("id", id), rowMapper)
+                jdbcTemplate.queryForObject(query, Map.of(ID, id), rowMapper)
             );
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -64,9 +72,9 @@ public class AppointmentRepository {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
                 query,
                 Map.of(
-                    "doctor_id", doctorId,
-                    "time", Time.valueOf(time),
-                    "day_of_the_week", dayOfWeek.getValue()
+                    DOCTOR_ID, doctorId,
+                    TIME, Time.valueOf(time),
+                    DAY_OF_THE_WEEK, dayOfWeek.getValue()
                 ),
                 Integer.class
                 )
@@ -88,9 +96,9 @@ public class AppointmentRepository {
         );
 
         jdbcTemplate.update(sqlManager.getQuery("save-appointment"), Map.of(
-            "patient_id", appointmentEntity.getPatientId(),
-            "doctor_working_hour_id", workingHourId,
-            "date", Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
+            PATIENT_ID, appointmentEntity.getPatientId(),
+            DOCTOR_WORKING_HOUR_ID, workingHourId,
+            DATE, Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
             )
         );
 
@@ -98,9 +106,9 @@ public class AppointmentRepository {
 
     private boolean doctorWorksAt(Integer doctorId, DayOfWeek dayOfWeek, LocalTime localTime) {
         Map<String, ?> parameters = Map.of(
-            "doctor_id", doctorId,
-            "day_of_the_week", dayOfWeek.getValue(),
-            "time", Time.valueOf(localTime)
+            DOCTOR_ID, doctorId,
+            DAY_OF_THE_WEEK, dayOfWeek.getValue(),
+            TIME, Time.valueOf(localTime)
         );
         return Optional.ofNullable(
             jdbcTemplate.queryForObject(
@@ -114,10 +122,10 @@ public class AppointmentRepository {
     private boolean doNotHaveAppointments(Integer doctorId, LocalDateTime dateTime) {
         String query = sqlManager.getQuery("if-doctor-do-not-have-appointment-at");
         Map<String, ?> parameters = Map.of(
-            "doctor_id", doctorId,
-            "day_of_the_week", dateTime.getDayOfWeek().getValue(),
-            "time", Time.valueOf(dateTime.toLocalTime()),
-            "date", Date.valueOf(dateTime.toLocalDate())
+            DOCTOR_ID, doctorId,
+            DAY_OF_THE_WEEK, dateTime.getDayOfWeek().getValue(),
+            TIME, Time.valueOf(dateTime.toLocalTime()),
+            DATE, Date.valueOf(dateTime.toLocalDate())
         );
         return Optional.ofNullable(
             jdbcTemplate.queryForObject(query, parameters, Boolean.class)
@@ -132,9 +140,9 @@ public class AppointmentRepository {
     public boolean patientDoNotHaveAppointment(Integer patientId, LocalDateTime dateTime) {
         String query = sqlManager.getQuery("if-patient-has-appointment-at");
         Map<String, ?> parameters = Map.of(
-            "patient_id", patientId,
-            "date", Date.valueOf(dateTime.toLocalDate()),
-            "time", Time.valueOf(dateTime.toLocalTime())
+            PATIENT_ID, patientId,
+            DATE, Date.valueOf(dateTime.toLocalDate()),
+            TIME, Time.valueOf(dateTime.toLocalTime())
         );
         boolean patientHasAppointment = Optional.ofNullable(
             jdbcTemplate.queryForObject(query, parameters, Boolean.class))
@@ -152,10 +160,10 @@ public class AppointmentRepository {
             "if-patient-has-appointment-with-doctor-on-day"
         );
         Map<String, Object> parameters = Map.of(
-            "patient_id", patientId,
-            "doctor_id", doctorId,
-            "date", Date.valueOf(dateTime.toLocalDate()),
-            "time", Time.valueOf(dateTime.toLocalTime())
+            PATIENT_ID, patientId,
+            DOCTOR_ID, doctorId,
+            DATE, Date.valueOf(dateTime.toLocalDate()),
+            TIME, Time.valueOf(dateTime.toLocalTime())
         );
         Boolean result = jdbcTemplate.queryForObject(query, parameters, Boolean.class);
         return Optional.ofNullable(result).orElseThrow(DatabaseException::new);

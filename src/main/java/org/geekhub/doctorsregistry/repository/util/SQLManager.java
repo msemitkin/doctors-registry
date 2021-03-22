@@ -1,5 +1,6 @@
-package org.geekhub.doctorsregistry.repository;
+package org.geekhub.doctorsregistry.repository.util;
 
+import org.geekhub.doctorsregistry.repository.InitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class SQLManager {
+
     private static final Logger logger = LoggerFactory.getLogger(SQLManager.class);
     private static final String FILE_EXTENSION = ".sql";
     private static final String RESOURCE_PATH_PATTERN = "classpath*:sql/**/*.sql";

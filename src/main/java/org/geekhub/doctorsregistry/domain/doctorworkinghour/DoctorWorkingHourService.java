@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.domain;
+package org.geekhub.doctorsregistry.domain.doctorworkinghour;
 
 import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.AppointmentTime;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;

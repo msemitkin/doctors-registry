@@ -1,6 +1,6 @@
 package org.geekhub.doctorsregistry.web.api.doctorworkinghour;
 
-import org.geekhub.doctorsregistry.domain.DoctorWorkingHourService;
+import org.geekhub.doctorsregistry.domain.doctorworkinghour.DoctorWorkingHourService;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

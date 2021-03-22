@@ -1,6 +1,5 @@
 package org.geekhub.doctorsregistry.domain.doctorworkinghour;
 
-import org.geekhub.doctorsregistry.domain.DoctorWorkingHourService;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
