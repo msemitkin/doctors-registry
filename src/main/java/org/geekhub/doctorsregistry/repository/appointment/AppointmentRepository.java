@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
 import org.geekhub.doctorsregistry.repository.DatabaseException;
+import org.geekhub.doctorsregistry.repository.SQLManager;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,76 +19,6 @@ import java.util.Optional;
 @Repository
 public class AppointmentRepository {
 
-    private static final String FIND_BY_ID =
-        "select appointment.id as id, " +
-        "appointment.patient_id as patient_id, " +
-        "doctor_working_hour.doctor_id as doctor_id, " +
-        "appointment.date as date, " +
-        "doctor_working_hour.time as time " +
-        "from appointment " +
-        "join doctor_working_hour " +
-        "on appointment.doctor_working_hour_id = doctor_working_hour.id " +
-        "where appointment.id = :id";
-
-    private static final String GET_DOCTOR_WORKING_HOUR_ID_BY_DOCTOR_ID_AND_DAY_OF_THE_WEEK_AND_TIME =
-        "select doctor_working_hour.id as id " +
-        "from doctor_working_hour " +
-        "where doctor_working_hour.doctor_id = :doctor_id " +
-        "and doctor_working_hour.time = :time " +
-        "and doctor_working_hour.day_of_the_week = :day_of_the_week ";
-
-    private static final String CREATE_APPOINTMENT =
-        "insert into appointment (patient_id, doctor_working_hour_id, date) " +
-        "values (:patient_id, :doctor_working_hour_id, :date)";
-
-    private static final String DOCTOR_WORKS_AT = """
-        select exists( 
-               select id 
-               from doctor_working_hour 
-               where doctor_id = :doctor_id 
-                 and day_of_the_week = :day_of_the_week 
-                 and time = :time            
-        )
-        """;
-
-
-    private static final String DOCTOR_DO_NOT_HAVE_APPOINTMENTS = """
-        select not exists(
-            select *
-            from appointment
-                     join doctor_working_hour dwh on appointment.doctor_working_hour_id = dwh.id
-            where doctor_id = :doctor_id
-              and day_of_the_week = :day_of_the_week
-              and time = :time
-              and date = :date
-        )""";
-
-    private static final String PATIENT_HAS_APPOINTMENT_AT = """
-        select exists(
-                    select * from appointment join doctor_working_hour on appointment.doctor_working_hour_id = doctor_working_hour.id  
-                    where patient_id = :patient_id
-                    and appointment.date = :date
-                    and doctor_working_hour.time = :time
-               )
-        """;
-
-    private static final String PATIENT_HAS_APPOINTMENT_WITH_DOCTOR_ON_DAY =
-        """
-                select exists(
-                    select * 
-                    from appointment join doctor_working_hour on appointment.doctor_working_hour_id = doctor_working_hour.id
-                    where appointment.patient_id = :patient_id
-                    and doctor_working_hour.doctor_id = :doctor_id
-                    and appointment.date = :date
-                )
-            """;
-
-    private final NamedParameterJdbcTemplate jdbcTemplate;
-
-    public AppointmentRepository(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) ->
         new AppointmentEntity(
             rs.getInt("id"),
@@ -99,10 +30,22 @@ public class AppointmentRepository {
             )
         );
 
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final SQLManager sqlManager;
+
+    public AppointmentRepository(
+        NamedParameterJdbcTemplate jdbcTemplate,
+        SQLManager sqlManager
+    ) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.sqlManager = sqlManager;
+    }
+
     public Optional<AppointmentEntity> findById(Integer id) {
         try {
+            String query = sqlManager.getQuery("find-appointment-by-id");
             return Optional.ofNullable(
-                jdbcTemplate.queryForObject(FIND_BY_ID, Map.of("id", id), rowMapper)
+                jdbcTemplate.queryForObject(query, Map.of("id", id), rowMapper)
             );
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -114,9 +57,12 @@ public class AppointmentRepository {
         LocalTime time,
         DayOfWeek dayOfWeek
     ) {
+        String query = sqlManager.getQuery(
+            "find-doctor-working-hour-id-by-doctor-id-and-day-of-the-week-and-time"
+        );
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
-                GET_DOCTOR_WORKING_HOUR_ID_BY_DOCTOR_ID_AND_DAY_OF_THE_WEEK_AND_TIME,
+                query,
                 Map.of(
                     "doctor_id", doctorId,
                     "time", Time.valueOf(time),
@@ -141,7 +87,7 @@ public class AppointmentRepository {
             () -> new IllegalArgumentException("Doctor working hour was not found with parameters")
         );
 
-        jdbcTemplate.update(CREATE_APPOINTMENT, Map.of(
+        jdbcTemplate.update(sqlManager.getQuery("save-appointment"), Map.of(
             "patient_id", appointmentEntity.getPatientId(),
             "doctor_working_hour_id", workingHourId,
             "date", Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
@@ -157,11 +103,16 @@ public class AppointmentRepository {
             "time", Time.valueOf(localTime)
         );
         return Optional.ofNullable(
-            jdbcTemplate.queryForObject(DOCTOR_WORKS_AT, parameters, Boolean.class)
+            jdbcTemplate.queryForObject(
+                sqlManager.getQuery("if-doctor-works-at-day-and-time"),
+                parameters,
+                Boolean.class
+            )
         ).orElse(false);
     }
 
     private boolean doNotHaveAppointments(Integer doctorId, LocalDateTime dateTime) {
+        String query = sqlManager.getQuery("if-doctor-do-not-have-appointment-at");
         Map<String, ?> parameters = Map.of(
             "doctor_id", doctorId,
             "day_of_the_week", dateTime.getDayOfWeek().getValue(),
@@ -169,7 +120,7 @@ public class AppointmentRepository {
             "date", Date.valueOf(dateTime.toLocalDate())
         );
         return Optional.ofNullable(
-            jdbcTemplate.queryForObject(DOCTOR_DO_NOT_HAVE_APPOINTMENTS, parameters, Boolean.class)
+            jdbcTemplate.queryForObject(query, parameters, Boolean.class)
         ).orElse(false);
     }
 
@@ -179,13 +130,14 @@ public class AppointmentRepository {
     }
 
     public boolean patientDoNotHaveAppointment(Integer patientId, LocalDateTime dateTime) {
+        String query = sqlManager.getQuery("if-patient-has-appointment-at");
         Map<String, ?> parameters = Map.of(
             "patient_id", patientId,
             "date", Date.valueOf(dateTime.toLocalDate()),
             "time", Time.valueOf(dateTime.toLocalTime())
         );
         boolean patientHasAppointment = Optional.ofNullable(
-            jdbcTemplate.queryForObject(PATIENT_HAS_APPOINTMENT_AT, parameters, Boolean.class))
+            jdbcTemplate.queryForObject(query, parameters, Boolean.class))
             .orElseThrow(() -> new DatabaseException(
                     "Expected boolean value while fetching data from db, but null received"
                 )
@@ -196,15 +148,16 @@ public class AppointmentRepository {
     public boolean patientHasAppointmentWithThatDoctorThatDay(
         Integer patientId, Integer doctorId, LocalDateTime dateTime
     ) {
+        String query = sqlManager.getQuery(
+            "if-patient-has-appointment-with-doctor-on-day"
+        );
         Map<String, Object> parameters = Map.of(
             "patient_id", patientId,
             "doctor_id", doctorId,
             "date", Date.valueOf(dateTime.toLocalDate()),
             "time", Time.valueOf(dateTime.toLocalTime())
         );
-        Boolean result = jdbcTemplate.queryForObject(
-            PATIENT_HAS_APPOINTMENT_WITH_DOCTOR_ON_DAY, parameters, Boolean.class
-        );
+        Boolean result = jdbcTemplate.queryForObject(query, parameters, Boolean.class);
         return Optional.ofNullable(result).orElseThrow(DatabaseException::new);
     }
 }

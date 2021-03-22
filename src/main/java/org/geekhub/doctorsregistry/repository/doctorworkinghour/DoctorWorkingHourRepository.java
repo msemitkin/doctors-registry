@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.repository.doctorworkinghour;
 
 import org.geekhub.doctorsregistry.repository.DatabaseException;
+import org.geekhub.doctorsregistry.repository.SQLManager;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,37 +11,33 @@ import java.util.Optional;
 @Repository
 public class DoctorWorkingHourRepository {
 
-    private static final String ADD_WORKING_HOUR =
-        "insert into doctor_working_hour (doctor_id, time, day_of_the_week) " +
-        "values (:doctor_id, :time, :day_of_the_week)";
-
-    private static final String IF_RECORD_EXISTS =
-        "select count(1) " +
-        "from doctor_working_hour " +
-        "where doctor_id = :doctor_id " +
-        "and time = :time " +
-        "and day_of_the_week = :day_of_the_week";
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final SQLManager sqlManager;
 
-    public DoctorWorkingHourRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+    public DoctorWorkingHourRepository(
+        NamedParameterJdbcTemplate jdbcTemplate,
+        SQLManager sqlManager
+    ) {
         this.jdbcTemplate = jdbcTemplate;
+        this.sqlManager = sqlManager;
     }
 
     public void add(DoctorWorkingHourEntity doctorWorkingHourEntity) {
+        String query = sqlManager.getQuery("add-working-hour.sql");
         Map<String, ?> parameters = Map.of(
             "doctor_id", doctorWorkingHourEntity.doctorId,
             "time", doctorWorkingHourEntity.time,
             "day_of_the_week", doctorWorkingHourEntity.dayOfTheWeek
         );
         if (!recordExists(parameters)) {
-            jdbcTemplate.update(ADD_WORKING_HOUR, parameters);
+            jdbcTemplate.update(query, parameters);
         }
     }
 
     private boolean recordExists(Map<String, ?> parameters) {
+        String query = sqlManager.getQuery("if-doctor-working-hour-exists");
         Optional<Integer> result = Optional.ofNullable(
-            jdbcTemplate.queryForObject(IF_RECORD_EXISTS, parameters, Integer.class)
+            jdbcTemplate.queryForObject(query, parameters, Integer.class)
         );
         return 1 == result.orElseThrow(() -> new DatabaseException("Got a null value"));
     }
