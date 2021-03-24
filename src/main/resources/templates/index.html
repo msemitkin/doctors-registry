@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Doctors</title>
+    <title>Behelsi</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -17,42 +17,14 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
-    <style>
-        .doctor {
-            padding-left: 10px;
-            list-style: none;
-            background: #F2F9F4;
-            width: 600px
-        }
-
-        .doctor:hover {
-            box-shadow: 0 0 5px 2px lightgray;
-        }
-        #content {
-            margin-top: 40px;
-        }
-    </style>
-    <script type="text/javascript">
-        function doctor(id) {
-            window.location.href = "/doctor?id=" + id;
-        }
-    </script>
 </head>
 <body>
-<header id="navigation">
-</header>
+<header id="navigation"></header>
 <div id="content">
-    <ul>
-        <li class="doctor" th:each="doctor : ${doctors}" th:onclick="'doctor(' + ${doctor.getId()} + ')'">
-            <h5>
-                <span th:text="${doctor.getFirstName()}">first-name</span>
-                <span th:text="${doctor.getLastName()}">last-name</span>
-            </h5>
-            <p>Specialization: <span th:text="${doctor.getSpecialization().getName()}">specialization</span>
-            </p>
-            <p><a th:href="'/clinic?id=' + ${doctor.getClinicId()}">Clinic</a></p>
-        </li>
-    </ul>
+    <div class="media" style="text-align: center; margin: auto; display: block">
+        <h3>Behelsi</h3><br>
+        <img th:src=" @{/media/logo.png}" alt="logo" width="575px" height="500px">
+    </div>
 </div>
 </body>
 </html>
