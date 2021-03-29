@@ -44,7 +44,10 @@ public class AppointmentServiceTest {
         AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 1, TEST_DATE_TIME);
 
         Mockito.doNothing().when(appointmentRepository).create(Mockito.any(AppointmentEntity.class));
-        Mockito.when(zonedTime.now()).thenReturn(TEST_DATE_TIME.minusHours(1));
+        Mockito.when(appointmentRepository.doctorAvailable(Mockito.any(), Mockito.any())).thenReturn(true);
+        Mockito.when(appointmentRepository.patientDoNotHaveAppointment(Mockito.any(), Mockito.any())).thenReturn(true);
+        Mockito.when(appointmentRepository.patientDoNotHaveAppointment(Mockito.anyInt(), Mockito.any())).thenReturn(true);
+        Mockito.when(zonedTime.now()).thenReturn(TEST_DATE_TIME.minusDays(1));
 
         appointmentService.create(appointmentEntity);
     }
@@ -92,7 +95,10 @@ public class AppointmentServiceTest {
             {"2021-03-17T10:00:00", "2021-03-17T10:00:00"},
             {"2021-03-17T10:00:00", "2020-03-17T12:00:00"},
             {"2021-03-17T10:00:00", "2021-02-17T12:00:00"},
-            {"2021-03-17T10:00:00", "2021-02-16T12:00:00"}
+            {"2021-03-17T10:00:00", "2021-02-16T12:00:00"},
+            {"2021-03-29T06:00:00", "2021-03-29T14:00:00"},
+            {"2021-03-29T10:00:00", "2021-03-29T14:00:00"},
+            {"2021-03-29T00:00:00", "2021-03-29T14:00:00"}
         };
     }
 
@@ -100,13 +106,14 @@ public class AppointmentServiceTest {
         expectedExceptions = IllegalArgumentException.class,
         dataProvider = "throws_exception_when_create_appointment_for_past_time_parameters"
     )
-    public void throws_exception_when_create_appointment_for_past_time(String timeNow, String appointmentTime) {
+    public void throws_exception_when_create_appointment_for_not_allowed_time(String timeNow, String appointmentTime) {
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse(timeNow));
         Mockito.doNothing().when(appointmentRepository).create(Mockito.any(AppointmentEntity.class));
 
         LocalDateTime givenDateTime = LocalDateTime.parse(appointmentTime);
         AppointmentEntity testAppointment = new AppointmentEntity(1, 2, 3, givenDateTime);
-
+        System.out.println("App: " + testAppointment.getDateTime().toLocalDate());
+        System.out.println("Now: " + LocalDateTime.parse(timeNow).toLocalDate());
         appointmentService.create(testAppointment);
     }
 

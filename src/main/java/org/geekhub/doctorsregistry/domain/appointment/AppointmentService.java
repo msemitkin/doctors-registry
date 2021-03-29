@@ -34,9 +34,9 @@ public class AppointmentService {
         Assert.notNull(appointmentEntity.getPatientId(), "Patient id is null");
         Assert.notNull(appointmentEntity.getDateTime(), "Datetime is null");
 
-        if (!appointmentEntity.getDateTime().isAfter(zonedTime.now())) {
+        if (!zonedTime.now().toLocalDate().isBefore(appointmentEntity.getDateTime().toLocalDate())) {
             logger.warn("Cannot create appointment for past time");
-            throw new IllegalArgumentException("Cannot create appointment for past time");
+            throw new IllegalArgumentException("Received appointment with now allowed time");
         }
         if (!patientDoNotHaveAppointment(appointmentEntity)) {
             logger.warn("Patient already has an appointment at specified time");
