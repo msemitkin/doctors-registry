@@ -23,7 +23,7 @@ public class DoctorWorkingHourRepository {
     }
 
     public void add(DoctorWorkingHourEntity doctorWorkingHourEntity) {
-        String query = sqlManager.getQuery("add-working-hour.sql");
+        String query = sqlManager.getQuery("add-working-hour");
         Map<String, ?> parameters = Map.of(
             "doctor_id", doctorWorkingHourEntity.doctorId,
             "time", doctorWorkingHourEntity.time,
@@ -36,9 +36,9 @@ public class DoctorWorkingHourRepository {
 
     private boolean recordExists(Map<String, ?> parameters) {
         String query = sqlManager.getQuery("if-doctor-working-hour-exists");
-        Optional<Integer> result = Optional.ofNullable(
-            jdbcTemplate.queryForObject(query, parameters, Integer.class)
+        Optional<Boolean> result = Optional.ofNullable(
+            jdbcTemplate.queryForObject(query, parameters, Boolean.class)
         );
-        return 1 == result.orElseThrow(() -> new DatabaseException("Got a null value"));
+        return result.orElseThrow(() -> new DatabaseException("Got a null value"));
     }
 }
