@@ -53,15 +53,14 @@ public class SQLManager {
             logger.error("Failed to load queries from resources", e);
             throw new InitializationException();
         }
-
     }
 
     public String getQuery(String fileName) {
         String fileNameWithExtension = fileName + FILE_EXTENSION;
         if (queries.containsKey(fileNameWithExtension)) {
-            return queries.get(fileName);
+            return queries.get(fileNameWithExtension);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Could not find requested query");
         }
     }
 
