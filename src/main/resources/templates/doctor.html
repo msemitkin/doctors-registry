@@ -33,6 +33,28 @@
         .doctor:hover {
             box-shadow: 0 0 5px 2px lightgray;
         }
+
+        .schedule table {
+            width: 750px;
+            margin: auto;
+            margin-top: 40px;
+        }
+
+        .cell {
+            margin: 5px;
+            background: #F2F9F4;
+        }
+
+        .schedule td, .schedule th {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .schedule ul {
+            padding-left: 0;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +71,28 @@
             <li>Price starts at: <span th:text="${doctor.getPrice()}"></span></li>
         </ul>
         <p><a th:href="'/clinic?id=' + ${doctor.getClinicId()}">Clinic</a></p>
+    </div>
+    <div class="schedule">
+        <table>
+            <thead>
+            <tr>
+                <th th:each="date : ${schedule.keySet()}">
+                    <div th:text="${date.dayOfWeek.name()}">date</div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:each="entry : ${schedule.entrySet()}">
+                    <ul style="list-style: none">
+                        <li th:each="time: ${entry.getValue()}">
+                            <div th:text="${time}" class="cell">time</div>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

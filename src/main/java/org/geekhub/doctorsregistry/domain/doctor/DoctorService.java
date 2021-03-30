@@ -43,9 +43,4 @@ public class DoctorService {
             throw new EntityNotFoundException(id);
         }
     }
-
-    public void deleteDoctorsByClinicId(Integer clinicId) {
-        doctorRepository.deleteDoctorEntitiesByClinicId(clinicId);
-    }
-
 }

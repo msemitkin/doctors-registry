@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AppointmentTime {
 
@@ -23,7 +24,9 @@ public class AppointmentTime {
     }
 
     public static List<LocalTime> getSupportedTimes() {
-        return new ArrayList<>(availableTime);
+        return new ArrayList<>(availableTime).stream()
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     private AppointmentTime() {
