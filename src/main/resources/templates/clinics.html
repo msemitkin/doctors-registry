@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Clinics</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
+    <link rel="stylesheet" th:href="@{/style/clinics-style.css}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
@@ -17,20 +18,6 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
-    <style>
-        #content {
-            margin-top: 40px;
-        }
-        .clinic {
-            list-style: none;
-            background: #F2F9F4;
-            width: 600px
-        }
-
-        .clinic:hover {
-            box-shadow: 0 0 5px 2px lightgray;
-        }
-    </style>
     <script type="text/javascript">
         function clinic(id) {
             window.location.href = "/clinic?id=" + id;

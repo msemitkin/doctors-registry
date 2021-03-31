@@ -1,0 +1,14 @@
+.doctor {
+    padding-left: 10px;
+    list-style: none;
+    background: #F2F9F4;
+    width: 600px
+}
+
+.doctor:hover {
+    box-shadow: 0 0 5px 2px lightgray;
+}
+
+#content {
+    margin-top: 40px;
+}

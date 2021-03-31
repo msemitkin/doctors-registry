@@ -17,88 +17,7 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
-    <style>
-        #content {
-            margin-top: 40px;
-        }
-
-        .doctor {
-            margin: auto;
-            background: #F2F9F4;
-            width: 900px;
-            height: 200px;
-            padding: 10px;
-        }
-
-        .doctor:hover {
-            box-shadow: 0 0 5px 2px lightgray;
-        }
-
-        .schedule {
-            width: 900px;
-            margin: auto;
-            margin-top: 40px;
-        }
-
-        .schedule table {
-            margin: auto;
-        }
-
-        .schedule td, .schedule th {
-            border: 1px solid black;
-            border-collapse: collapse;
-            text-align: center;
-            vertical-align: top;
-        }
-
-        .schedule ul {
-            padding-left: 0;
-        }
-
-
-        .radio-toolbar {
-            list-style: none;
-            padding-left: 0;
-            width: 120px;
-        }
-
-        .radio-toolbar input[type="radio"] {
-            opacity: 0;
-            position: fixed;
-            width: 0;
-        }
-
-        .radio-toolbar label, #submit {
-            display: inline-block;
-            background-color: #ddd;
-            padding: 2px 5px;
-            margin-top: 5px;
-            font-family: sans-serif, Arial;
-            font-size: 16px;
-            border: 2px solid #444;
-            border-radius: 4px;
-        }
-
-        .radio-toolbar label:hover {
-            background-color: #dfd;
-        }
-
-        .radio-toolbar input[type="radio"]:focus + label {
-            border: 2px dashed #444;
-        }
-
-        .radio-toolbar input[type="radio"]:checked + label {
-            background-color: #bfb;
-            border-color: #4c4;
-        }
-
-        #submit {
-            margin-left: auto;
-            margin-right: 0;
-            width: 50px;
-            display: block
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/style/doctor-style.css}">
 </head>
 <body>
 <header id="navigation">
@@ -109,7 +28,7 @@
             <span th:text="${doctor.getFirstName()}">first-name</span>
             <span th:text="${doctor.getLastName()}">last-name</span>
         </h2>
-        <ul style="list-style: none">
+        <ul>
             <li>Specialization: <span th:text="${doctor.getSpecialization().getName()}">specialization</span></li>
             <li>Price starts at: <span th:text="${doctor.getPrice()}"></span></li>
         </ul>

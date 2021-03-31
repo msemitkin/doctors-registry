@@ -1,0 +1,13 @@
+#content {
+    margin-top: 40px;
+}
+
+.clinic {
+    list-style: none;
+    background: #F2F9F4;
+    width: 600px
+}
+
+.clinic:hover {
+    box-shadow: 0 0 5px 2px lightgray;
+}

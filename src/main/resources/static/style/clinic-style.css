@@ -1,0 +1,32 @@
+.clinic {
+    margin: auto;
+    background: #F2F9F4;
+    width: 900px;
+    height: 100px;
+    padding-left: 5px;
+}
+
+.clinic:hover {
+    box-shadow: 0 0 5px 2px lightgray;
+}
+
+.doctors {
+    margin-top: 60px;
+}
+
+.doctor {
+    margin: auto;
+    list-style: none;
+    background: #F2F9F4;
+    width: 600px;
+    padding-left: 5px;
+}
+
+.doctor:hover {
+    box-shadow: 0 0 5px 2px lightgray;
+}
+
+#content {
+    position: static;
+    margin-top: 40px;
+}
