@@ -5,8 +5,11 @@ import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.Appointmen
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
+import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
+import org.geekhub.doctorsregistry.repository.patient.PatientServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -25,13 +28,22 @@ public class AppointmentService {
 
     private final ZonedTime zonedTime;
     private final AppointmentRepository appointmentRepository;
+    private final PatientServiceRepository patientRepository;
 
     public AppointmentService(
         ZonedTime zonedTime,
-        AppointmentRepository appointmentRepository
-    ) {
+        AppointmentRepository appointmentRepository,
+        PatientServiceRepository patientRepository) {
         this.zonedTime = zonedTime;
         this.appointmentRepository = appointmentRepository;
+        this.patientRepository = patientRepository;
+    }
+
+    public void create(User user, Integer doctorId, LocalDateTime dateTime) {
+        Integer patientId = patientRepository.getPatientId(user.getUsername());
+        AppointmentEntity appointment = new AppointmentEntity(null, patientId, doctorId, dateTime);
+        create(appointment);
+
     }
 
     public void create(AppointmentEntity appointmentEntity) {

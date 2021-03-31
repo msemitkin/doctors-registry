@@ -4,6 +4,7 @@ import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
+import org.geekhub.doctorsregistry.repository.patient.PatientServiceRepository;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -24,13 +25,15 @@ public class AppointmentServiceTest {
     private AppointmentRepository appointmentRepository;
     @Mock
     private ZonedTime zonedTime;
+    @Mock
+    private PatientServiceRepository patientRepository;
 
     private AppointmentService appointmentService;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        appointmentService = new AppointmentService(zonedTime, appointmentRepository);
+        appointmentService = new AppointmentService(zonedTime, appointmentRepository, patientRepository);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
