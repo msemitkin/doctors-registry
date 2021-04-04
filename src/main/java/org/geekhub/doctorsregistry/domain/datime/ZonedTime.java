@@ -1,18 +1,14 @@
 package org.geekhub.doctorsregistry.domain.datime;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-@Component
 public class ZonedTime {
 
     private final String timeZone;
 
-    public ZonedTime(@Value("${timezone}") String timeZone) {
+    public ZonedTime(String timeZone) {
         this.timeZone = timeZone;
     }
 

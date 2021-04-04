@@ -18,17 +18,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
 public class SQLManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SQLManager.class);
     private static final String FILE_EXTENSION = ".sql";
-    private static final String RESOURCE_PATH_PATTERN = "classpath*:sql/**/*.sql";
 
     private final Map<String, String> queries;
     private final String pattern;
 
-    public SQLManager(@Value(RESOURCE_PATH_PATTERN) String pattern) {
+    public SQLManager(String pattern) {
         this.queries = new HashMap<>();
         this.pattern = pattern;
     }
