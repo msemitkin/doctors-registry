@@ -8,14 +8,14 @@ CREATE TABLE user_credentials
 ALTER TABLE clinic
     ADD COLUMN email varchar;
 ALTER TABLE clinic
-    ADD constraint email_fkey foreign key (email) references user_credentials (email);
+    ADD constraint clinic_email_fkey foreign key (email) references user_credentials (email);
 
 ALTER TABLE doctor
     ADD COLUMN email varchar;
 ALTER TABLE doctor
-    ADD constraint email_fkey foreign key (email) references user_credentials (email);
+    ADD constraint doctor_email_fkey foreign key (email) references user_credentials (email);
 
 ALTER TABLE patient
     ADD COLUMN email varchar;
 ALTER TABLE patient
-    ADD constraint email_fkey foreign key (email) references user_credentials (email);
+    ADD constraint patient_email_fkey foreign key (email) references user_credentials (email);
