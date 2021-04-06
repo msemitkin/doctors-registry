@@ -60,7 +60,7 @@ public class DefaultExceptionHandler {
     public ResponseEntity<ErrorDTO> timeNotAllowed(TimeNotAllowed e) {
         logger.warn("Received appointment with not allowed time", e);
         return new ResponseEntity<>(ErrorDTO.withMessage(
-            "Sorry, you cannot create appointment earlier that for the next day"),
+            "Sorry, you can only create appointments for the next seven days"),
             HttpStatus.BAD_REQUEST
         );
     }
