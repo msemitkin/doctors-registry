@@ -106,7 +106,7 @@ public class AppointmentServiceTest {
     }
 
     @Test(
-        expectedExceptions = IllegalArgumentException.class,
+        expectedExceptions = TimeNotAllowed.class,
         dataProvider = "throws_exception_when_create_appointment_for_past_time_parameters"
     )
     public void throws_exception_when_create_appointment_for_not_allowed_time(String timeNow, String appointmentTime) {
@@ -115,8 +115,6 @@ public class AppointmentServiceTest {
 
         LocalDateTime givenDateTime = LocalDateTime.parse(appointmentTime);
         AppointmentEntity testAppointment = new AppointmentEntity(1, 2, 3, givenDateTime);
-        System.out.println("App: " + testAppointment.getDateTime().toLocalDate());
-        System.out.println("Now: " + LocalDateTime.parse(timeNow).toLocalDate());
         appointmentService.create(testAppointment);
     }
 

@@ -4,6 +4,7 @@ import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableException;
 import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointment;
+import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class DefaultExceptionHandler {
         logger.info("Patient busy", e);
         return new ResponseEntity<>(
             ErrorDTO.withMessage(
-                "Cannot create appointment. Patient has another one at this time"
+                "Sorry, you already have an appointment at selected time"
             ),
             HttpStatus.BAD_REQUEST
         );
@@ -49,10 +50,18 @@ public class DefaultExceptionHandler {
         logger.warn("Attempt to make multiple appointments with a doctor on a single day");
         return new ResponseEntity<>(
             ErrorDTO.withMessage(
-                "Cannot create multiple appointments with a doctor on a single day"
+                "Sorry, you already have an appointment with this doctor on selected day"
             ),
             HttpStatus.BAD_REQUEST
         );
     }
 
+    @ExceptionHandler(TimeNotAllowed.class)
+    public ResponseEntity<ErrorDTO> timeNotAllowed(TimeNotAllowed e) {
+        logger.warn("Received appointment with not allowed time", e);
+        return new ResponseEntity<>(ErrorDTO.withMessage(
+            "Sorry, you cannot create appointment earlier that for the next day"),
+            HttpStatus.BAD_REQUEST
+        );
+    }
 }
