@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.*;
+
 @Repository
 public class DoctorWorkingHourRepository {
 
@@ -25,9 +27,9 @@ public class DoctorWorkingHourRepository {
     public void add(DoctorWorkingHourEntity doctorWorkingHourEntity) {
         String query = sqlManager.getQuery("add-working-hour");
         Map<String, ?> parameters = Map.of(
-            "doctor_id", doctorWorkingHourEntity.doctorId,
-            "time", doctorWorkingHourEntity.time,
-            "day_of_the_week", doctorWorkingHourEntity.dayOfTheWeek
+            DOCTOR_ID, doctorWorkingHourEntity.doctorId,
+            TIME, doctorWorkingHourEntity.time,
+            DAY_OF_THE_WEEK, doctorWorkingHourEntity.dayOfTheWeek
         );
         if (!recordExists(parameters)) {
             jdbcTemplate.update(query, parameters);

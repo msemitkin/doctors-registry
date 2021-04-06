@@ -11,13 +11,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.*;
+
 @Repository
 public class PatientJdbcTemplateRepository {
-
-    private static final String PATIENT_ID = "patient_id";
-    private static final String DOCTOR_ID = "doctor_id";
-    private static final String DATE = "date";
-    private static final String TIME = "time";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SQLManager sqlManager;

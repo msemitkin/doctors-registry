@@ -14,16 +14,10 @@ import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.*;
+
 @Repository
 public class AppointmentRepository {
-
-    private static final String ID = "id";
-    private static final String PATIENT_ID = "patient_id";
-    private static final String DOCTOR_ID = "doctor_id";
-    private static final String DATE = "date";
-    private static final String TIME = "time";
-    private static final String DAY_OF_THE_WEEK = "day_of_the_week";
-    private static final String DOCTOR_WORKING_HOUR_ID = "doctor_working_hour_id";
 
     private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) ->
         new AppointmentEntity(
