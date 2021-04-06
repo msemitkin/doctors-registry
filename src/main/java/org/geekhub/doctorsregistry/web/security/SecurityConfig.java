@@ -8,6 +8,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] SWAGGER_WHITELIST = {
+        "/api/**",
+        "/configuration/ui",
+        "/swagger-resources/**",
+        "/configuration/**",
+        "/swagger-ui.html",
+        "/webjars/**",
+        "/swagger-ui/**",
+        "/v3/api-docs"
+    };
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -18,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .formLogin()
             .and()
-            .logout();
+            .logout()
+            .and()
+            .csrf().ignoringAntMatchers(SWAGGER_WHITELIST);
     }
 }
