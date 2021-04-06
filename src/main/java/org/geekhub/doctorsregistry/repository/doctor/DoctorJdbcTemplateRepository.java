@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.repository.doctor;
 
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.repository.DatabaseException;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.jdbc.core.RowMapper;
@@ -78,6 +79,12 @@ public class DoctorJdbcTemplateRepository {
     public List<AppointmentEntity> getAppointments(Integer doctorId) {
         String query = sqlManager.getQuery("get-doctor-appointments");
         return jdbcTemplate.query(query, Map.of(DOCTOR_ID, doctorId), rowMapper);
+    }
+
+    public int getIdByEmail(String email) {
+        String query = sqlManager.getQuery("get-doctor-id-by-email");
+        Integer id = jdbcTemplate.queryForObject(query, Map.of("email", email), Integer.class);
+        return Optional.ofNullable(id).orElseThrow(DatabaseException::new);
     }
 
 }

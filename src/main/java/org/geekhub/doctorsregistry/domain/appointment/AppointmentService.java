@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.domain.appointment;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
@@ -13,21 +14,21 @@ import java.time.LocalDateTime;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final PatientJdbcTemplateRepository patientRepository;
+    private final PatientService patientService;
     private final AppointmentValidator appointmentValidator;
 
     public AppointmentService(
         AppointmentRepository appointmentRepository,
-        PatientJdbcTemplateRepository patientRepository,
+        PatientService patientService,
         AppointmentValidator appointmentValidator
     ) {
         this.appointmentRepository = appointmentRepository;
-        this.patientRepository = patientRepository;
+        this.patientService = patientService;
         this.appointmentValidator = appointmentValidator;
     }
 
     public void create(User user, Integer doctorId, LocalDateTime dateTime) {
-        Integer patientId = patientRepository.getPatientId(user.getUsername());
+        Integer patientId = patientService.getIdByEmail(user.getUsername());
         AppointmentEntity appointment = new AppointmentEntity(null, patientId, doctorId, dateTime);
         create(appointment);
     }

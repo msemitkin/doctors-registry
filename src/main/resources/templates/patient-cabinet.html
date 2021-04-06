@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cabinet</title>
+    <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script th:src="@{/js/load-nav.js}"></script>
+</head>
+<body>
+<header id="navigation">
+</header>
+<div class="row">
+    <div class="col-4">
+        <div class="list-group" id="list-tab" role="tablist">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
+               href="#list-home" role="tab" aria-controls="home">Pending</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+               href="#list-profile" role="tab" aria-controls="profile">Archive</a>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                <ul class="list-group list-group-horizontal" th:each="appointment : ${pending}">
+                    <li class="list-group-item" th:text="${appointment.getDoctorId()}">Patient id</li>
+                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                <ul class="list-group list-group-horizontal" th:each="appointment : ${archive}">
+                    <li class="list-group-item" th:text="${appointment.getDoctorId()}">Patient id</li>
+                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

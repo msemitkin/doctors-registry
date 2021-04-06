@@ -6,7 +6,6 @@ import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
-import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +34,10 @@ public class PatientService {
 
     public PatientEntity findById(Integer id) {
         return patientRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public int getIdByEmail(String email) {
+        return patientJdbcTemplateRepository.getPatientId(email);
     }
 
     public boolean patientHasAppointmentOnSelectedTime(AppointmentEntity appointmentEntity) {

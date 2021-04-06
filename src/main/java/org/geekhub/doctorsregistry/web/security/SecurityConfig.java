@@ -23,6 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole("PATIENT")
+            .mvcMatchers("/doctors/me/cabinet").hasRole("DOCTOR")
+            .mvcMatchers("/patients/me/cabinet").hasRole("PATIENT")
             .mvcMatchers("/login", "/logout").permitAll()
             .anyRequest()
             .authenticated()

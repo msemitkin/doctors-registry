@@ -41,6 +41,10 @@ public class DoctorService {
             .collect(Collectors.toList());
     }
 
+    public int getIdByEmail(String email) {
+        return doctorJdbcTemplateRepository.getIdByEmail(email);
+    }
+
     public DoctorEntity findById(int id) {
         return doctorRepository.findById(id)
             .orElseThrow(EntityNotFoundException::new);
