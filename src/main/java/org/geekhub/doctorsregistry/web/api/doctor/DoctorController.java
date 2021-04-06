@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,6 +60,13 @@ public class DoctorController {
         return doctorService.findDoctorsByClinic(id).stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/doctors/{id}/schedule")
+    public Map<LocalDate, List<LocalTime>> getSchedule(
+        @PathVariable("id") Integer doctorId
+    ) {
+        return doctorService.getSchedule(doctorId);
     }
 
     @DeleteMapping("api/doctors/{id}")

@@ -47,7 +47,7 @@ public class DoctorMVCController {
     public String doctor(@RequestParam("id") Integer doctorId, Model model) {
         DoctorDTO doctor = doctorMapper.toDTO(doctorService.findById(doctorId));
         model.addAttribute("doctor", doctor);
-        Map<LocalDate, List<LocalTime>> schedule = appointmentService.getSchedule(doctorId);
+        Map<LocalDate, List<LocalTime>> schedule = doctorService.getSchedule(doctorId);
         model.addAttribute("schedule", schedule);
         return "doctor";
     }

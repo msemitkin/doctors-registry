@@ -7,11 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 public class AppointmentController {
@@ -39,13 +35,6 @@ public class AppointmentController {
     ) {
         AppointmentEntity entity = appointmentService.findById(appointmentId);
         return appointmentMapper.toDTO(entity);
-    }
-
-    @GetMapping("/api/doctors/{id}/schedule")
-    public Map<LocalDate, List<LocalTime>> getSchedule(
-        @PathVariable("id") Integer doctorId
-    ) {
-        return appointmentService.getSchedule(doctorId);
     }
 
 }
