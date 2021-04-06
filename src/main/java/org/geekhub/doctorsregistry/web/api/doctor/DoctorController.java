@@ -3,6 +3,8 @@ package org.geekhub.doctorsregistry.web.api.doctor;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
+import org.geekhub.doctorsregistry.web.api.appointment.AppointmentDTO;
+import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +22,16 @@ public class DoctorController {
 
     private final DoctorService doctorService;
     private final DoctorMapper doctorMapper;
+    private final AppointmentMapper appointmentMapper;
 
-    public DoctorController(DoctorService doctorService, DoctorMapper doctorMapper) {
+    public DoctorController(
+        DoctorService doctorService,
+        DoctorMapper doctorMapper,
+        AppointmentMapper appointmentMapper
+    ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
+        this.appointmentMapper = appointmentMapper;
     }
 
     @PostMapping("api/doctors")
@@ -67,6 +75,20 @@ public class DoctorController {
         @PathVariable("id") Integer doctorId
     ) {
         return doctorService.getSchedule(doctorId);
+    }
+
+    @GetMapping("/api/doctors/{id}/appointments/pending")
+    public List<AppointmentDTO> getPendingAppointments(@PathVariable("id") Integer doctorId) {
+        return doctorService.getPendingAppointments(doctorId).stream()
+            .map(appointmentMapper::toDTO)
+            .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/doctors/{id}/appointments/archive")
+    public List<AppointmentDTO> getArchivedAppointments(@PathVariable("id") Integer doctorId) {
+        return doctorService.getArchivedAppointments(doctorId).stream()
+            .map(appointmentMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     @DeleteMapping("api/doctors/{id}")

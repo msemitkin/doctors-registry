@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.domain.doctor;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.AppointmentTime;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
@@ -72,6 +73,22 @@ public class DoctorService {
             result.put(date, availableWorkingHours);
         }
         return result;
+    }
+
+    public List<AppointmentEntity> getPendingAppointments(Integer doctorId) {
+        List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
+        LocalDateTime timeNow = zonedTime.now();
+        return appointments.stream()
+            .filter(appointment -> appointment.getDateTime().isAfter(timeNow))
+            .collect(Collectors.toList());
+    }
+
+    public List<AppointmentEntity> getArchivedAppointments(Integer doctorId) {
+        List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
+        LocalDateTime timeNow = zonedTime.now();
+        return appointments.stream()
+            .filter(appointment -> appointment.getDateTime().isBefore(timeNow))
+            .collect(Collectors.toList());
     }
 
     private List<LocalTime> getAvailableWorkingHours(Integer doctorId, LocalDate date) {
