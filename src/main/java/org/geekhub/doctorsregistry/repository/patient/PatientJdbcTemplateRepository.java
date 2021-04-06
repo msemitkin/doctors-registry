@@ -25,7 +25,7 @@ public class PatientJdbcTemplateRepository {
     }
 
     public Integer getPatientId(String email) {
-        String query = "SELECT id FROM patient where email = :email";
+        String query = sqlManager.getQuery("get-patient-id-by-email");
         return jdbcTemplate.queryForObject(query, Map.of("email", email), Integer.class);
     }
 
