@@ -52,6 +52,11 @@ public class AppointmentRepository {
         }
     }
 
+    public void deleteById(Integer id) {
+        String query = sqlManager.getQuery("delete-appointment-by-id");
+        jdbcTemplate.update(query, Map.of(ID, id));
+    }
+
     private Optional<Integer> getWorkingHourId(
         Integer doctorId,
         LocalTime time,

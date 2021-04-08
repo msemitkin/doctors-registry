@@ -28,6 +28,11 @@
                 <ul class="list-group list-group-horizontal" th:each="appointment : ${pending}">
                     <li class="list-group-item" th:text="${appointment.getDoctorId()}">Patient id</li>
                     <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
+                    <li class="list-group-item">
+                        <form method="post" th:action="'/patients/me/appointments/delete?id=' + ${appointment.getId()}">
+                            <button type="submit" class="btn btn-light">Cancel</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
             <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">

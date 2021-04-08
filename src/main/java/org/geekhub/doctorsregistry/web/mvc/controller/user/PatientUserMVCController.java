@@ -1,6 +1,6 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
-import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.stream.Collectors;
 
@@ -16,10 +18,12 @@ public class PatientUserMVCController {
 
     private final PatientService patientService;
     private final AppointmentMapper appointmentMapper;
+    private final AppointmentService appointmentService;
 
-    public PatientUserMVCController(PatientService patientService, AppointmentMapper appointmentMapper) {
+    public PatientUserMVCController(PatientService patientService, AppointmentMapper appointmentMapper, AppointmentService appointmentService) {
         this.patientService = patientService;
         this.appointmentMapper = appointmentMapper;
+        this.appointmentService = appointmentService;
     }
 
     @GetMapping("/patients/me/cabinet")
@@ -32,5 +36,12 @@ public class PatientUserMVCController {
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList()));
         return "patient-cabinet";
+    }
+
+    @PostMapping("/patients/me/appointments/delete")
+    public String deleteAppointment(@RequestParam("id") Integer appointmentId,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+        appointmentService.deleteById(userDetails.getUsername(), appointmentId);
+        return "redirect:/patients/me/cabinet";
     }
 }

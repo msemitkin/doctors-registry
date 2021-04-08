@@ -1,10 +1,10 @@
 package org.geekhub.doctorsregistry.domain.appointment;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
-import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -26,13 +26,15 @@ public class AppointmentServiceTest {
     private PatientService patientService;
     @Mock
     private AppointmentValidator appointmentValidator;
+    @Mock
+    private ZonedTime zonedTime;
 
     private AppointmentService appointmentService;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        appointmentService = new AppointmentService(appointmentRepository, patientService, appointmentValidator);
+        appointmentService = new AppointmentService(appointmentRepository, patientService, appointmentValidator, zonedTime);
     }
 
     @Test(expectedExceptions = EntityNotFoundException.class)

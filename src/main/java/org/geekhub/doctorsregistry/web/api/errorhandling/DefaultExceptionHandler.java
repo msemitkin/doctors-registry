@@ -5,6 +5,7 @@ import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableExceptio
 import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointment;
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowed;
+import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -63,5 +64,10 @@ public class DefaultExceptionHandler {
             "Sorry, you can only create appointments for the next seven days"),
             HttpStatus.BAD_REQUEST
         );
+    }
+
+    @ExceptionHandler(OperationNotAllowedException.class)
+    public ResponseEntity<ErrorDTO> notAllowedOperation(OperationNotAllowedException e) {
+        return new ResponseEntity<>(ErrorDTO.withMessage("Not allowed operation"), HttpStatus.BAD_REQUEST);
     }
 }

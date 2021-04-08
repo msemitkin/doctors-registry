@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.api.appointment;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,4 +38,8 @@ public class AppointmentController {
         return appointmentMapper.toDTO(entity);
     }
 
+    @DeleteMapping("/api/appointments/{appointment-id}")
+    public void deleteById(@PathVariable("appointment-id") Integer id) {
+        appointmentService.deleteById(id);
+    }
 }
