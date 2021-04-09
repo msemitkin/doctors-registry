@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -43,5 +44,17 @@ public class PatientUserMVCController {
                                     @AuthenticationPrincipal UserDetails userDetails) {
         appointmentService.deleteById(userDetails.getUsername(), appointmentId);
         return "redirect:/patients/me/cabinet";
+    }
+
+    @GetMapping("/patients/registration")
+    public String getRegistrationForm(Model model) {
+        model.addAttribute("patient", new RegisterPatientDTO());
+        return "patient-registration";
+    }
+
+    @PostMapping("/patients/registration")
+    public String registerPatient(@ModelAttribute("patient") RegisterPatientDTO patient) {
+        patientService.save(patient);
+        return "redirect:/index";
     }
 }

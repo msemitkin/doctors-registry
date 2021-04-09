@@ -10,7 +10,8 @@ public class PatientMapper {
         return new PatientEntity(
             dto.getId(),
             dto.getFirstName(),
-            dto.getLastName()
+            dto.getLastName(),
+            dto.getEmail()
         );
     }
 
@@ -18,7 +19,8 @@ public class PatientMapper {
         return new PatientDTO(
             patientEntity.getId(),
             patientEntity.getFirstName(),
-            patientEntity.getLastName()
+            patientEntity.getLastName(),
+            patientEntity.getEmail()
         );
     }
 

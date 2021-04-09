@@ -1,10 +1,23 @@
 package org.geekhub.doctorsregistry.web.api.patient;
 
-public record PatientDTO(
-    Integer id,
-    String firstName,
-    String lastName
-) {
+public class PatientDTO {
+
+    private final Integer id;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+
+    public PatientDTO(
+        Integer id,
+        String firstName,
+        String lastName,
+        String email
+    ) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 
     public Integer getId() {
         return id;
@@ -18,4 +31,7 @@ public record PatientDTO(
         return lastName;
     }
 
+    public String getEmail() {
+        return email;
+    }
 }

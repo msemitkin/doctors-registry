@@ -2,11 +2,15 @@ package org.geekhub.doctorsregistry.domain.patient;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.domain.user.CreateUserDTO;
+import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
+import org.geekhub.doctorsregistry.web.mvc.controller.user.RegisterPatientDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,15 +21,31 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientJdbcTemplateRepository patientJdbcTemplateRepository;
     private final ZonedTime zonedTime;
+    private final UserService userService;
 
     public PatientService(
         PatientRepository patientRepository,
         PatientJdbcTemplateRepository patientJdbcTemplateRepository,
-        ZonedTime zonedTime
-    ) {
+        ZonedTime zonedTime,
+        UserService userService) {
         this.patientRepository = patientRepository;
         this.patientJdbcTemplateRepository = patientJdbcTemplateRepository;
         this.zonedTime = zonedTime;
+        this.userService = userService;
+    }
+
+    @Transactional
+    public void save(RegisterPatientDTO patient) {
+
+        CreateUserDTO userDTO = new CreateUserDTO(
+            patient.getEmail(),
+            patient.getPassword(),
+            patient.getPasswordConfirmation(),
+            new String[]{"PATIENT"}
+        );
+        userService.saveUser(userDTO);
+        PatientEntity patientEntity = new PatientEntity(null, patient.getFirstName(), patient.getLastName(), patient.getEmail());
+        patientRepository.save(patientEntity);
     }
 
     public PatientEntity save(PatientEntity patientEntity) {

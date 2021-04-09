@@ -50,8 +50,8 @@ public class PatientController {
     }
 
     @PostMapping("/api/patients/")
-    public PatientDTO newPatient(String firstName, String lastName) {
-        PatientEntity patientEntity = new PatientEntity(null, firstName, lastName);
+    public PatientDTO newPatient(String firstName, String lastName, String email) {
+        PatientEntity patientEntity = new PatientEntity(null, firstName, lastName, email);
         return patientMapper.toDTO(patientService.save(patientEntity));
     }
 }

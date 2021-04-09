@@ -16,18 +16,21 @@ public class PatientEntity {
     private Integer id;
     private String firstName;
     private String lastName;
+    private String email;
 
     protected PatientEntity() {
     }
 
-    public PatientEntity(Integer id, String firstName, String lastName) {
+    public PatientEntity(
+        Integer id,
+        String firstName,
+        String lastName,
+        String email
+    ) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public static PatientEntity withId(int id) {
-        return new PatientEntity(id, null, null);
+        this.email = email;
     }
 
     public Integer getId() {
@@ -54,25 +57,34 @@ public class PatientEntity {
         this.lastName = lastName;
     }
 
-    @Override
-    public String toString() {
-        return "Patient{" +
-               "id=" + id +
-               ", firstName='" + firstName + '\'' +
-               ", lastName='" + lastName + '\'' +
-               '}';
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PatientEntity patientEntity = (PatientEntity) o;
-        return Objects.equals(id, patientEntity.id) && Objects.equals(firstName, patientEntity.firstName) && Objects.equals(lastName, patientEntity.lastName);
+        PatientEntity that = (PatientEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName);
+        return Objects.hash(id, firstName, lastName, email);
+    }
+
+    @Override
+    public String toString() {
+        return "PatientEntity{" +
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", email='" + email + '\'' +
+               '}';
     }
 }

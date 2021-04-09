@@ -1,7 +1,10 @@
 package org.geekhub.doctorsregistry.web.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -19,13 +22,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         "/v3/api-docs"
     };
 
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole("PATIENT")
             .mvcMatchers("/doctors/me/cabinet").hasRole("DOCTOR")
             .mvcMatchers("/patients/me/cabinet").hasRole("PATIENT")
-            .mvcMatchers("/login", "/logout").permitAll()
+            .mvcMatchers("/login", "/logout", "/patients/registration").permitAll()
             .anyRequest()
             .authenticated()
             .and()
