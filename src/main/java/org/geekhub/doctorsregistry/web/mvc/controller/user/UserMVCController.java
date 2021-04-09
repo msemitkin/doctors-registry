@@ -17,6 +17,8 @@ public class UserMVCController {
             return "redirect:/doctors/me/cabinet";
         } else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))) {
             return "redirect:/patients/me/cabinet";
+        } else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            return "redirect:/admins/me/cabinet";
         } else {
             throw new RoleNotSupportedException();
         }

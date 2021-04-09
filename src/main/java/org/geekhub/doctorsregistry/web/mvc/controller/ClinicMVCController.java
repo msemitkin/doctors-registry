@@ -6,9 +6,12 @@ import org.geekhub.doctorsregistry.web.api.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.api.clinic.ClinicMapper;
 import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
+import org.geekhub.doctorsregistry.web.dto.clinic.RegisterClinicDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -47,5 +50,11 @@ public class ClinicMVCController {
         model.addAttribute("clinic", clinic);
         model.addAttribute("doctors", doctors);
         return "clinic";
+    }
+
+    @PostMapping("/clinics")
+    public String registerClinic(@ModelAttribute("clinic") RegisterClinicDTO clinicDTO) {
+        clinicService.save(clinicDTO);
+        return "redirect:/index";
     }
 }
