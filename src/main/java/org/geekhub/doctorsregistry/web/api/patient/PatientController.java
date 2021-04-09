@@ -4,9 +4,12 @@ import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.api.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
+import org.geekhub.doctorsregistry.web.mvc.controller.user.RegisterPatientDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -50,8 +53,8 @@ public class PatientController {
     }
 
     @PostMapping("/api/patients/")
-    public PatientDTO newPatient(String firstName, String lastName, String email) {
-        PatientEntity patientEntity = new PatientEntity(null, firstName, lastName, email);
-        return patientMapper.toDTO(patientService.save(patientEntity));
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newPatient(RegisterPatientDTO patientDTO) {
+        patientService.save(patientDTO);
     }
 }

@@ -48,10 +48,6 @@ public class PatientService {
         patientRepository.save(patientEntity);
     }
 
-    public PatientEntity save(PatientEntity patientEntity) {
-        return patientRepository.save(patientEntity);
-    }
-
     public PatientEntity findById(Integer id) {
         return patientRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
@@ -88,11 +84,4 @@ public class PatientService {
             .collect(Collectors.toList());
     }
 
-    public void deleteById(Integer id) {
-        if (patientRepository.existsById(id)) {
-            patientRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException(id);
-        }
-    }
 }
