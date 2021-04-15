@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cabinet</title>
+    <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script th:src="@{/js/load-nav.js}"></script>
+    <link rel="stylesheet" th:href="@{/style/schedule-style.css}">
+</head>
+<body>
+<header id="navigation">
+</header>
+
+<div class="card bg-light">
+
+    <h4 class="card-title mt-3 text-center">Add doctor</h4>
+    <form th:object="${doctor}" action="/doctors/registration" method="post">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="First name"
+                               type="text"
+                               th:field="*{firstName}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Last name"
+                               type="text"
+                               th:field="*{lastName}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Email"
+                               type="email"
+                               th:field="*{email}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-building"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Clinic id"
+                               type="number"
+                               th:field="*{clinicId}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-building"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Specialization id"
+                               type="number"
+                               th:field="*{specializationId}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">₴</span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Price"
+                               type="number"
+                               th:field="*{price}">
+                    </div>
+
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Create password"
+                               type="password"
+                               th:field="*{password}">
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input class="form-control"
+                               placeholder="Repeat password"
+                               type="password"
+                               th:field="*{passwordConfirmation}">
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="schedule">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th th:each="day : ${defaultSchedule.keySet()}">
+                                    <div th:text="${day.name()}">day</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td th:each="daySchedule, stat : ${defaultSchedule.entrySet()}">
+                                    <ul class="checkbox-toolbar">
+                                        <li th:each="timeEntry: ${daySchedule.getValue()}">
+
+                                            <input type="checkbox"
+                                                   class="checkbox-time"
+                                                   name="timetable"
+                                                   th:id="${daySchedule.getKey().name()} + ${timeEntry.toString()}"
+                                                   th:field="*{timetable}"
+                                                   th:value="${daySchedule.getKey().name()} + '&' + ${timeEntry.toString()}">
+
+                                            <label class="checkbox-label"
+                                                   th:for="${daySchedule.getKey().name()} + ${timeEntry.toString()}"
+                                                   th:text="${timeEntry}">time</label>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </div>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

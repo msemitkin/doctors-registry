@@ -1,0 +1,45 @@
+.schedule {
+    width: 900px;
+    margin: auto;
+}
+
+
+.schedule td, .schedule th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: top;
+}
+
+ul {
+    list-style: none;
+}
+
+.schedule ul {
+    padding-left: 0;
+}
+
+.checkbox-label {
+    margin: auto;
+    display: block;
+    border: solid 1px gray;
+    line-height: 20px;
+    height: 20px;
+    width: 80px;
+    border-radius: 40px;
+    margin-top: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: gray;
+    text-align: center;
+}
+
+.checkbox-time {
+    display: none;
+}
+
+.checkbox-time:checked ~ .checkbox-label {
+    border: solid 1px #39561b;
+    color: #39561b;
+    background-color: #44cc44;
+}
+

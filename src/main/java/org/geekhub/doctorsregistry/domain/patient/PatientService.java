@@ -36,14 +36,7 @@ public class PatientService {
 
     @Transactional
     public void save(RegisterPatientDTO patient) {
-
-        CreateUserDTO userDTO = new CreateUserDTO(
-            patient.getEmail(),
-            patient.getPassword(),
-            patient.getPasswordConfirmation(),
-            new String[]{"PATIENT"}
-        );
-        userService.saveUser(userDTO);
+        userService.saveUser(patient);
         PatientEntity patientEntity = new PatientEntity(null, patient.getFirstName(), patient.getLastName(), patient.getEmail());
         patientRepository.save(patientEntity);
     }

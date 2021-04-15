@@ -1,11 +1,10 @@
 package org.geekhub.doctorsregistry.domain.clinic;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.user.CreateUserDTO;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
-import org.geekhub.doctorsregistry.web.dto.clinic.RegisterClinicDTO;
+import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,19 +24,13 @@ public class ClinicService {
     }
 
     @Transactional
-    public void save(RegisterClinicDTO clinicDTO) {
+    public void save(CreateClinicUserDTO clinicDTO) {
         ClinicEntity clinicEntity = new ClinicEntity(
             null,
             clinicDTO.getName(),
             clinicDTO.getAddress()
         );
-        CreateUserDTO userDTO = new CreateUserDTO(
-            clinicDTO.getEmail(),
-            clinicDTO.getPassword(),
-            clinicDTO.getPasswordConfirmation(),
-            new String[]{"CLINIC"}
-        );
-        userService.saveUser(userDTO);
+        userService.saveUser(clinicDTO);
         clinicRepository.save(clinicEntity);
     }
 

@@ -49,9 +49,13 @@
                     <td th:each="entry : ${schedule.entrySet()}">
                         <ul class="radio-toolbar">
                             <li th:each="time: ${entry.getValue()}">
-                                <input type="radio" th:id="${entry.getKey()} + 'T' + ${time}" name="datetime"
+                                <input type="radio"
+                                       name="datetime"
+                                       th:id="${entry.getKey()} + 'T' + ${time}"
                                        th:value="${entry.getKey()} + 'T' + ${time}">
-                                <label th:for="${entry.getKey()} + 'T' + ${time}" th:text="${time}">time</label>
+
+                                <label th:for="${entry.getKey()} + 'T' + ${time}"
+                                       th:text="${time}">time</label>
                             </li>
                         </ul>
                     </td>

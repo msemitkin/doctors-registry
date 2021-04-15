@@ -2,7 +2,7 @@ package org.geekhub.doctorsregistry.web.api.clinic;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
-import org.geekhub.doctorsregistry.web.dto.clinic.RegisterClinicDTO;
+import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +30,7 @@ public class ClinicController {
 
     @PostMapping("/api/clinics")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveClinic(RegisterClinicDTO clinicDTO) {
+    public void saveClinic(CreateClinicUserDTO clinicDTO) {
         clinicService.save(clinicDTO);
     }
 

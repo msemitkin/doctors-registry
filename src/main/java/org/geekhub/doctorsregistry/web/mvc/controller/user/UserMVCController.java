@@ -13,7 +13,9 @@ public class UserMVCController {
 
     @GetMapping("/users/me/cabinet")
     public String cabinet(@AuthenticationPrincipal User user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLINIC"))) {
+            return "redirect:/clinics/me/cabinet";
+        } else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))) {
             return "redirect:/doctors/me/cabinet";
         } else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))) {
             return "redirect:/patients/me/cabinet";

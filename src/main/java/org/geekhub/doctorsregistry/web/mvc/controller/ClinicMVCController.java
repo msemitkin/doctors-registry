@@ -6,7 +6,7 @@ import org.geekhub.doctorsregistry.web.api.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.api.clinic.ClinicMapper;
 import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
-import org.geekhub.doctorsregistry.web.dto.clinic.RegisterClinicDTO;
+import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +53,7 @@ public class ClinicMVCController {
     }
 
     @PostMapping("/clinics")
-    public String registerClinic(@ModelAttribute("clinic") RegisterClinicDTO clinicDTO) {
+    public String registerClinic(@ModelAttribute("clinic") CreateClinicUserDTO clinicDTO) {
         clinicService.save(clinicDTO);
         return "redirect:/index";
     }

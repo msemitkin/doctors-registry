@@ -7,6 +7,8 @@ import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHou
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 @Service
 public class DoctorWorkingHourService {
 
@@ -33,5 +35,9 @@ public class DoctorWorkingHourService {
         );
 
         doctorWorkingHourRepository.add(doctorWorkingHour);
+    }
+
+    public void setWorkingHours(List<DoctorWorkingHourEntity> workingHours) {
+        doctorWorkingHourRepository.setDoctorWorkingHours(workingHours);
     }
 }
