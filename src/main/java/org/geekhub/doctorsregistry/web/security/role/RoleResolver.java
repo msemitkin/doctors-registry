@@ -1,10 +1,11 @@
-package org.geekhub.doctorsregistry.web.security;
+package org.geekhub.doctorsregistry.web.security.role;
 
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.mvc.controller.RoleNotSupportedException;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.geekhub.doctorsregistry.web.security.role.Role;
+import org.geekhub.doctorsregistry.web.security.role.RoleNotSupportedException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;

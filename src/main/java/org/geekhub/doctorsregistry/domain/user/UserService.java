@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.domain.user;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.security.RoleResolver;
+import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;

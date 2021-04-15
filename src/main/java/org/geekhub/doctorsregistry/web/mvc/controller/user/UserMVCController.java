@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
-import org.geekhub.doctorsregistry.web.security.Role;
-import org.geekhub.doctorsregistry.web.security.RoleResolver;
+import org.geekhub.doctorsregistry.web.security.role.Role;
+import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
