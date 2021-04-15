@@ -1,6 +1,5 @@
 package org.geekhub.doctorsregistry.repository.doctor;
 
-import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.repository.DatabaseException;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;

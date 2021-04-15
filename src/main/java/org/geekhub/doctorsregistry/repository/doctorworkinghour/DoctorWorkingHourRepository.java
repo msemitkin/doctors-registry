@@ -30,7 +30,7 @@ public class DoctorWorkingHourRepository {
 
 
     public void setDoctorWorkingHours(List<DoctorWorkingHourEntity> workingHours) {
-        String query = "INSERT INTO doctor_working_hour (doctor_id, day_of_the_week, time) VALUES (:doctor_id, :day_of_the_week, :time)";
+        String query = sqlManager.getQuery("add-working-hour");
         List<SqlParameterSource> parameters = new ArrayList<>();
         for (DoctorWorkingHourEntity doctorWorkingHour : workingHours) {
             Map<String, ?> workingHourMap = toMap(doctorWorkingHour);
