@@ -4,7 +4,7 @@ import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
 import org.geekhub.doctorsregistry.web.mvc.controller.RoleNotSupportedException;
-import org.geekhub.doctorsregistry.web.mvc.controller.user.RegisterPatientDTO;
+import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class RoleResolver {
             return Role.DOCTOR;
         } else if (userDTO instanceof CreateClinicUserDTO) {
             return Role.CLINIC;
-        } else if (userDTO instanceof RegisterPatientDTO) {
+        } else if (userDTO instanceof CreatePatientUserDTO) {
             return Role.PATIENT;
         } else {
             throw new RoleNotSupportedException();

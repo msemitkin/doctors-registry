@@ -1,9 +1,8 @@
-package org.geekhub.doctorsregistry.web.mvc.controller.user;
+package org.geekhub.doctorsregistry.web.dto.patient;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
 
-public class RegisterPatientDTO implements CreateUserDTO {
+public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
 
     private String firstName;
     private String lastName;
@@ -11,18 +10,22 @@ public class RegisterPatientDTO implements CreateUserDTO {
     private String password;
     private String passwordConfirmation;
 
+    @Override
     public String getFirstName() {
         return firstName;
     }
 
+    @Override
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @Override
     public String getLastName() {
         return lastName;
     }
 
+    @Override
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }

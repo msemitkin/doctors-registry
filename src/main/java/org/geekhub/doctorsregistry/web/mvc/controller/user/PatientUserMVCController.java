@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.mvc.controller.user;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
+import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -48,12 +49,12 @@ public class PatientUserMVCController {
 
     @GetMapping("/patients/registration")
     public String getRegistrationForm(Model model) {
-        model.addAttribute("patient", new RegisterPatientDTO());
+        model.addAttribute("patient", new CreatePatientUserDTO());
         return "patient-registration";
     }
 
     @PostMapping("/patients/registration")
-    public String registerPatient(@ModelAttribute("patient") RegisterPatientDTO patient) {
+    public String registerPatient(@ModelAttribute("patient") CreatePatientUserDTO patient) {
         patientService.save(patient);
         return "redirect:/index";
     }
