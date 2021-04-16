@@ -25,6 +25,10 @@ public class AppointmentEntity {
         this.dateTime = dateTime;
     }
 
+    public static AppointmentEntity of(Integer patientId, Integer doctorId, LocalDateTime dateTime) {
+        return new AppointmentEntity(null, patientId, doctorId, dateTime);
+    }
+
     public Integer getId() {
         return id;
     }

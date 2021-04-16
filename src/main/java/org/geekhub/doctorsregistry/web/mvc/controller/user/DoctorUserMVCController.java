@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

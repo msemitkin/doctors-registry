@@ -26,13 +26,13 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                 <ul class="list-group list-group-horizontal" th:each="appointment : ${pending}">
-                    <li class="list-group-item" th:text="${appointment.getPateintId()}">Patient id</li>
+                    <li class="list-group-item" th:text="${appointment.getPatientId()}">Patient id</li>
                     <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
                 </ul>
             </div>
             <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
                 <ul class="list-group list-group-horizontal" th:each="appointment : ${archive}">
-                    <li class="list-group-item" th:text="${appointment.getPateintId()}">Patient id</li>
+                    <li class="list-group-item" th:text="${appointment.getPatientId()}">Patient id</li>
                     <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
                 </ul>
             </div>

@@ -24,15 +24,4 @@ public class DoctorMapper {
         );
     }
 
-    public DoctorEntity toEntity(DoctorDTO doctorDTO) {
-        return new DoctorEntity(
-            doctorDTO.id(),
-            doctorDTO.getFirstName(),
-            doctorDTO.getLastName(),
-            specializationMapper.toEntity(doctorDTO.specialization()),
-            doctorDTO.clinicId(),
-            doctorDTO.price()
-        );
-    }
-
 }

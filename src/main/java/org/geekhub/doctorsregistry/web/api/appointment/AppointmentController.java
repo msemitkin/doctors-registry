@@ -1,14 +1,14 @@
 package org.geekhub.doctorsregistry.web.api.appointment;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 @RestController
 public class AppointmentController {
@@ -24,9 +24,8 @@ public class AppointmentController {
     }
 
     @PostMapping("/api/appointments")
-    public void createAppointment(Integer patientId, Integer doctorId, String inputDateTime) {
-        LocalDateTime localDateTime = LocalDateTime.parse(inputDateTime);
-        AppointmentEntity entity = new AppointmentEntity(null, patientId, doctorId, localDateTime);
+    public void createAppointment(CreateAppointmentDTO appointmentDTO) {
+        AppointmentEntity entity = appointmentMapper.toEntity(appointmentDTO);
         appointmentService.create(entity);
     }
 

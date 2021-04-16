@@ -4,18 +4,18 @@ import java.time.LocalDateTime;
 
 public class AppointmentDTO {
     private Integer id;
-    private Integer pateintId;
+    private Integer patientId;
     private Integer doctorId;
     private LocalDateTime dateTime;
 
     public AppointmentDTO(
         Integer id,
-        Integer pateintId,
+        Integer patientId,
         Integer doctorId,
         LocalDateTime dateTime
     ) {
         this.id = id;
-        this.pateintId = pateintId;
+        this.patientId = patientId;
         this.doctorId = doctorId;
         this.dateTime = dateTime;
     }
@@ -28,12 +28,12 @@ public class AppointmentDTO {
         this.id = id;
     }
 
-    public Integer getPateintId() {
-        return pateintId;
+    public Integer getPatientId() {
+        return patientId;
     }
 
-    public void setPateintId(Integer pateintId) {
-        this.pateintId = pateintId;
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
     public Integer getDoctorId() {

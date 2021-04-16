@@ -1,10 +1,10 @@
 package org.geekhub.doctorsregistry.web.api.doctor;
 
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.api.appointment.AppointmentDTO;
-import org.geekhub.doctorsregistry.web.api.appointment.AppointmentMapper;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
