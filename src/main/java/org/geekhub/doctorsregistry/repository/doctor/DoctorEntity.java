@@ -111,7 +111,12 @@ public class DoctorEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DoctorEntity that = (DoctorEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(specialization, that.specialization) && Objects.equals(clinicId, that.clinicId) && Objects.equals(price, that.price);
+        return Objects.equals(id, that.id) &&
+               Objects.equals(firstName, that.firstName) &&
+               Objects.equals(lastName, that.lastName) &&
+               Objects.equals(specialization, that.specialization) &&
+               Objects.equals(clinicId, that.clinicId) &&
+               Objects.equals(price, that.price);
     }
 
     @Override

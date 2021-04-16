@@ -2,7 +2,6 @@ package org.geekhub.doctorsregistry.domain.mapper;
 
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.api.specialization.SpecializationMapper;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorDTO;
 import org.springframework.stereotype.Component;

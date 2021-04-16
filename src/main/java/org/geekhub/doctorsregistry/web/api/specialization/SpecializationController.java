@@ -1,6 +1,8 @@
 package org.geekhub.doctorsregistry.web.api.specialization;
 
+import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
+import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

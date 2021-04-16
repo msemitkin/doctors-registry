@@ -66,7 +66,10 @@ public class AppointmentEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AppointmentEntity that = (AppointmentEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(patientId, that.patientId) && Objects.equals(doctorId, that.doctorId) && Objects.equals(dateTime, that.dateTime);
+        return Objects.equals(id, that.id) &&
+               Objects.equals(patientId, that.patientId) &&
+               Objects.equals(doctorId, that.doctorId) &&
+               Objects.equals(dateTime, that.dateTime);
     }
 
     @Override

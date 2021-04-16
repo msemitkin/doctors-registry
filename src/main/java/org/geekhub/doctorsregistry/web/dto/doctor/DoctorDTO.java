@@ -1,6 +1,6 @@
 package org.geekhub.doctorsregistry.web.dto.doctor;
 
-import org.geekhub.doctorsregistry.web.api.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 
 import java.util.Objects;
 
