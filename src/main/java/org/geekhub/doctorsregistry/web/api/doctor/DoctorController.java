@@ -2,10 +2,11 @@ package org.geekhub.doctorsregistry.web.api.doctor;
 
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
-import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
-import org.geekhub.doctorsregistry.web.api.appointment.AppointmentDTO;
+import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +39,7 @@ public class DoctorController {
 
     @PostMapping("api/doctors")
     public DoctorDTO saveDoctor(@RequestBody CreateDoctorUserDTO doctorDTO) {
-        SpecializationEntity specialization
-            = new SpecializationEntity(doctorDTO.getSpecializationId(), null);
-        DoctorEntity doctor
-            = new DoctorEntity(null, doctorDTO.getFirstName(), doctorDTO.getLastName(), specialization, doctorDTO.getClinicId(), doctorDTO.getPrice());
+        DoctorEntity doctor = doctorMapper.toEntity(doctorDTO);
         DoctorEntity saved = doctorService.save(doctor);
         return doctorMapper.toDTO(saved);
     }

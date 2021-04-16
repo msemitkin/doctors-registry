@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.api.appointment;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

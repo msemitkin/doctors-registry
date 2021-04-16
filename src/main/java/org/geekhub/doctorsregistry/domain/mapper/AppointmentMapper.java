@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.domain.mapper;
 
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
-import org.geekhub.doctorsregistry.web.api.appointment.AppointmentDTO;
+import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.springframework.stereotype.Component;
 

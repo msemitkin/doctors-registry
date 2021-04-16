@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.domain.mapper;
 
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
-import org.geekhub.doctorsregistry.web.api.clinic.ClinicDTO;
+import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicDTO;
 import org.springframework.stereotype.Component;
 

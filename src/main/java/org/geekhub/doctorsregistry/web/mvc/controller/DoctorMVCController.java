@@ -2,12 +2,10 @@ package org.geekhub.doctorsregistry.web.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
-import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +26,11 @@ public class DoctorMVCController {
     private final DoctorMapper doctorMapper;
     private final AppointmentService appointmentService;
 
-    public DoctorMVCController(DoctorService doctorService, DoctorMapper doctorMapper, AppointmentService appointmentService) {
+    public DoctorMVCController(
+        DoctorService doctorService,
+        DoctorMapper doctorMapper,
+        AppointmentService appointmentService
+    ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentService = appointmentService;

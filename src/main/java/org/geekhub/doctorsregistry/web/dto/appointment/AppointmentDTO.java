@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.web.api.appointment;
+package org.geekhub.doctorsregistry.web.dto.appointment;
 
 import java.time.LocalDateTime;
 

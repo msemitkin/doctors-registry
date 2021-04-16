@@ -2,10 +2,10 @@ package org.geekhub.doctorsregistry.web.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.web.api.clinic.ClinicDTO;
+import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
-import org.geekhub.doctorsregistry.web.api.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.api.doctor.DoctorMapper;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

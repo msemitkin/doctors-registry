@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.web.api.clinic;
+package org.geekhub.doctorsregistry.web.dto.clinic;
 
 import java.util.Objects;
 
