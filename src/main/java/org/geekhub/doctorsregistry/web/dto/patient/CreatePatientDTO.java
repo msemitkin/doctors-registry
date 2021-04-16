@@ -9,4 +9,8 @@ public interface CreatePatientDTO {
     String getLastName();
 
     void setLastName(String lastName);
+
+    String getEmail();
+
+    void setEmail(String email);
 }

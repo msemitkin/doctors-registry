@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.domain.patient;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
@@ -21,22 +22,26 @@ public class PatientService {
     private final PatientJdbcTemplateRepository patientJdbcTemplateRepository;
     private final ZonedTime zonedTime;
     private final UserService userService;
+    private final PatientMapper patientMapper;
 
     public PatientService(
         PatientRepository patientRepository,
         PatientJdbcTemplateRepository patientJdbcTemplateRepository,
         ZonedTime zonedTime,
-        UserService userService) {
+        UserService userService,
+        PatientMapper patientMapper
+    ) {
         this.patientRepository = patientRepository;
         this.patientJdbcTemplateRepository = patientJdbcTemplateRepository;
         this.zonedTime = zonedTime;
         this.userService = userService;
+        this.patientMapper = patientMapper;
     }
 
     @Transactional
     public void save(CreatePatientUserDTO patient) {
         userService.saveUser(patient);
-        PatientEntity patientEntity = new PatientEntity(null, patient.getFirstName(), patient.getLastName(), patient.getEmail());
+        PatientEntity patientEntity = patientMapper.toEntity(patient);
         patientRepository.save(patientEntity);
     }
 

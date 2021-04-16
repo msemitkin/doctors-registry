@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.web.api.patient;
+package org.geekhub.doctorsregistry.web.dto.patient;
 
 public class PatientDTO {
 

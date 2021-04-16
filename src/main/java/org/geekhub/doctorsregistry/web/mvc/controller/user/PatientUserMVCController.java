@@ -45,8 +45,10 @@ public class PatientUserMVCController {
     }
 
     @PostMapping("/patients/me/appointments/delete")
-    public String deleteAppointment(@RequestParam("id") Integer appointmentId,
-                                    @AuthenticationPrincipal UserDetails userDetails) {
+    public String deleteAppointment(
+        @RequestParam("id") Integer appointmentId,
+        @AuthenticationPrincipal UserDetails userDetails
+    ) {
         appointmentService.deleteById(userDetails.getUsername(), appointmentId);
         return "redirect:/patients/me/cabinet";
     }
