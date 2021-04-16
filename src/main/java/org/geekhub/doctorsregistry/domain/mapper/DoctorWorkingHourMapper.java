@@ -1,6 +1,7 @@
-package org.geekhub.doctorsregistry.web.api.doctorworkinghour;
+package org.geekhub.doctorsregistry.domain.mapper;
 
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
+import org.geekhub.doctorsregistry.web.dto.doctorworkinghour.DoctorWorkingHourDTO;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
@@ -20,11 +21,11 @@ public class DoctorWorkingHourMapper {
     }
 
     public DoctorWorkingHourEntity toEntity(DoctorWorkingHourDTO dto) {
-        String dayOfWeek = dto.dayOfWeek.trim().toUpperCase();
+        String dayOfWeek = dto.getDayOfWeek().trim().toUpperCase();
         return new DoctorWorkingHourEntity(
             null,
-            dto.doctorId,
-            Time.valueOf(dto.time),
+            dto.getDoctorId(),
+            Time.valueOf(dto.getTime()),
             DayOfWeek.valueOf(dayOfWeek).getValue()
         );
     }

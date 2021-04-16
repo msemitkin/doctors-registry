@@ -41,8 +41,8 @@ public class DoctorWorkingHourRepository {
 
     private Map<String, ?> toMap(DoctorWorkingHourEntity doctorWorkingHour) {
         return Map.of(
-            DOCTOR_ID, doctorWorkingHour.doctorId,
-            DAY_OF_THE_WEEK, doctorWorkingHour.dayOfTheWeek,
+            DOCTOR_ID, doctorWorkingHour.getDoctorId(),
+            DAY_OF_THE_WEEK, doctorWorkingHour.getDayOfTheWeek(),
             TIME, doctorWorkingHour.getTime()
         );
     }
@@ -50,9 +50,9 @@ public class DoctorWorkingHourRepository {
     public void add(DoctorWorkingHourEntity doctorWorkingHourEntity) {
         String query = sqlManager.getQuery("add-working-hour");
         Map<String, ?> parameters = Map.of(
-            DOCTOR_ID, doctorWorkingHourEntity.doctorId,
-            TIME, doctorWorkingHourEntity.time,
-            DAY_OF_THE_WEEK, doctorWorkingHourEntity.dayOfTheWeek
+            DOCTOR_ID, doctorWorkingHourEntity.getDoctorId(),
+            TIME, doctorWorkingHourEntity.getTime(),
+            DAY_OF_THE_WEEK, doctorWorkingHourEntity.getDayOfTheWeek()
         );
         if (!recordExists(parameters)) {
             jdbcTemplate.update(query, parameters);

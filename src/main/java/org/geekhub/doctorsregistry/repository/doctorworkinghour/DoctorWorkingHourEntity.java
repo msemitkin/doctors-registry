@@ -4,10 +4,10 @@ import java.sql.Time;
 
 public class DoctorWorkingHourEntity {
 
-    Integer id;
-    Integer doctorId;
-    Time time;
-    Integer dayOfTheWeek;
+    private Integer id;
+    private Integer doctorId;
+    private Time time;
+    private Integer dayOfTheWeek;
 
     protected DoctorWorkingHourEntity() {
     }
