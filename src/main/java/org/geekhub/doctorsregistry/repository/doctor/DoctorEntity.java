@@ -21,6 +21,7 @@ public class DoctorEntity {
     private Integer id;
     private String firstName;
     private String lastName;
+    private String email;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialization_id")
     private SpecializationEntity specialization;
@@ -34,6 +35,7 @@ public class DoctorEntity {
         Integer id,
         String firstName,
         String lastName,
+        String email,
         SpecializationEntity specialization,
         Integer clinicId,
         Integer price
@@ -41,14 +43,12 @@ public class DoctorEntity {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
         this.specialization = specialization;
         this.clinicId = clinicId;
         this.price = price;
     }
 
-    public static DoctorEntity withId(int id) {
-        return new DoctorEntity(id, null, null, null, null, null);
-    }
 
     public Integer getId() {
         return id;
@@ -72,6 +72,14 @@ public class DoctorEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public SpecializationEntity getSpecialization() {

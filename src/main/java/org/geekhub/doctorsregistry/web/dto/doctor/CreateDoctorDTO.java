@@ -26,4 +26,8 @@ public interface CreateDoctorDTO {
     List<String> getTimetable();
 
     void setTimetable(List<String> timetable);
+
+    String getEmail();
+
+    void setEmail(String email);
 }

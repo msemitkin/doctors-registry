@@ -22,6 +22,7 @@ public class DoctorMapper {
             null,
             doctorDTO.getFirstName(),
             doctorDTO.getLastName(),
+            doctorDTO.getEmail(),
             specialization,
             doctorDTO.getClinicId(),
             doctorDTO.getPrice()
