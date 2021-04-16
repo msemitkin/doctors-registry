@@ -24,6 +24,10 @@ public class ClinicEntity {
         this.address = address;
     }
 
+    public static ClinicEntity of(String name, String address) {
+        return new ClinicEntity(null, name, address);
+    }
+
     public Integer getId() {
         return id;
     }
