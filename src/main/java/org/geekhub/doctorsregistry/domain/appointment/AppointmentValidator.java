@@ -41,8 +41,8 @@ public class AppointmentValidator {
 
         if (isDateTimeNotAllowed(appointmentEntity.getDateTime())) {
             logger.warn("Not allowed date");
-            throw new TimeNotAllowed("Received appointment with now allowed date: "
-                                     + appointmentEntity.getDateTime());
+            throw new TimeNotAllowedException("Received appointment with now allowed date: "
+                                              + appointmentEntity.getDateTime());
         }
         if (patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)) {
             logger.warn("Patient already has an appointment at specified time");
@@ -50,7 +50,7 @@ public class AppointmentValidator {
         }
         if (patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)) {
             logger.warn("Second appointment with a single doctor on a specific day");
-            throw new RepeatedDayAppointment();
+            throw new RepeatedDayAppointmentException();
         }
         if (!doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())) {
             logger.info("Attempted to make an appointment with a doctor at already booked time");

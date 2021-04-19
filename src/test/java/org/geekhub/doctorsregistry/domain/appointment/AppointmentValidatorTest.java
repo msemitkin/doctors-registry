@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.domain.appointment;
 
+import org.assertj.core.api.Assertions;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
@@ -106,4 +107,51 @@ public class AppointmentValidatorTest {
         Assert.assertTrue(appointmentValidator.isDateTimeNotAllowed(givenDateTime));
     }
 
+    @Test
+    public void throws_PatientBusyException_when_patient_already_has_an_appointment_for_specified_time() {
+        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
+        Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(true);
+        Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
+        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+
+        Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
+            .isInstanceOf(PatientBusyException.class);
+    }
+
+    @Test
+    public void throws_RepeatedDayAppointmentException_when_patient_already_has_an_appointment_with_chosen_doctor_on_specified_day() {
+        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
+        Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
+        Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(true);
+        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+
+        Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
+            .isInstanceOf(RepeatedDayAppointmentException.class);
+    }
+
+    @Test
+    public void throws_DoctorNotAvailableException_when_doctor_is_not_available() {
+        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
+        Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
+        Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
+        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(false);
+
+        Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
+            .isInstanceOf(DoctorNotAvailableException.class);
+    }
+
+    @Test
+    public void do_not_throw_any_exceptions_when_given_valid_data_an_it_is_allowed_to_create_appointment() {
+        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
+        Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
+        Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
+        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+
+        Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
+            .doesNotThrowAnyException();
+    }
 }

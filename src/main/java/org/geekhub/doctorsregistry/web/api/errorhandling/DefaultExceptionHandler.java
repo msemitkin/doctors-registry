@@ -3,8 +3,8 @@ package org.geekhub.doctorsregistry.web.api.errorhandling;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableException;
 import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
-import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointment;
-import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowed;
+import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentException;
+import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
 import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +46,8 @@ public class DefaultExceptionHandler {
         );
     }
 
-    @ExceptionHandler(RepeatedDayAppointment.class)
-    public ResponseEntity<ErrorDTO> repeatedDayAppointment(RepeatedDayAppointment e) {
+    @ExceptionHandler(RepeatedDayAppointmentException.class)
+    public ResponseEntity<ErrorDTO> repeatedDayAppointment(RepeatedDayAppointmentException e) {
         logger.warn("Attempt to make multiple appointments with a doctor on a single day");
         return new ResponseEntity<>(
             ErrorDTO.withMessage(
@@ -57,8 +57,8 @@ public class DefaultExceptionHandler {
         );
     }
 
-    @ExceptionHandler(TimeNotAllowed.class)
-    public ResponseEntity<ErrorDTO> timeNotAllowed(TimeNotAllowed e) {
+    @ExceptionHandler(TimeNotAllowedException.class)
+    public ResponseEntity<ErrorDTO> timeNotAllowed(TimeNotAllowedException e) {
         logger.warn("Received appointment with not allowed time", e);
         return new ResponseEntity<>(ErrorDTO.withMessage(
             "Sorry, you can only create appointments for the next seven days"),
