@@ -10,6 +10,22 @@ public class CreateClinicUserDTO implements CreateClinicDTO, CreateUserDTO {
     private String password;
     private String passwordConfirmation;
 
+    public CreateClinicUserDTO() {}
+
+    public CreateClinicUserDTO(
+        String name,
+        String address,
+        String email,
+        String password,
+        String passwordConfirmation
+    ) {
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.password = password;
+        this.passwordConfirmation = passwordConfirmation;
+    }
+
     @Override
     public String getName() {
         return name;

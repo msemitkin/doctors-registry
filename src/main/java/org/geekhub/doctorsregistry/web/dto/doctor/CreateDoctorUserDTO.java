@@ -16,6 +16,31 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
     private String password;
     private String passwordConfirmation;
 
+    public CreateDoctorUserDTO() {
+    }
+
+    public CreateDoctorUserDTO(
+        String firstName,
+        String lastName,
+        String email,
+        Integer specializationId,
+        Integer clinicId,
+        Integer price,
+        List<String> timetable,
+        String password,
+        String passwordConfirmation
+    ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.specializationId = specializationId;
+        this.clinicId = clinicId;
+        this.price = price;
+        this.timetable = timetable;
+        this.password = password;
+        this.passwordConfirmation = passwordConfirmation;
+    }
+
     @Override
     public String getFirstName() {
         return firstName;
