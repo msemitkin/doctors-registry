@@ -12,10 +12,15 @@ import java.util.Map;
 
 @Component
 public class Schedule {
+    private final AppointmentTime appointmentTime;
+
+    public Schedule(AppointmentTime appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
 
     public Map<DayOfWeek, List<LocalTime>> getScheduleMap() {
         Map<DayOfWeek, List<LocalTime>> weekSchedule = new LinkedHashMap<>();
-        List<LocalTime> supportedTimes = AppointmentTime.getSupportedTimes();
+        List<LocalTime> supportedTimes = appointmentTime.getSupportedTimes();
         DayOfWeek[] days = DayOfWeek.values();
         for (DayOfWeek day : days) {
             List<LocalTime> daySchedule = new ArrayList<>(supportedTimes);

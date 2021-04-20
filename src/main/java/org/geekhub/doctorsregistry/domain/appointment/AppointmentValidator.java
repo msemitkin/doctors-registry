@@ -21,15 +21,18 @@ public class AppointmentValidator {
     private final ZonedTime zonedTime;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final AppointmentTime appointmentTime;
 
     public AppointmentValidator(
         ZonedTime zonedTime,
         DoctorService doctorService,
-        PatientService patientService
+        PatientService patientService,
+        AppointmentTime appointmentTime
     ) {
         this.zonedTime = zonedTime;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.appointmentTime = appointmentTime;
     }
 
     public void validate(AppointmentEntity appointmentEntity) {
@@ -63,7 +66,7 @@ public class AppointmentValidator {
         LocalDate currentDate = zonedTime.now().toLocalDate();
         LocalDate appointmentDate = dateTime.toLocalDate();
 
-        boolean timeAllowed = AppointmentTime.isTimeValid(dateTime.toLocalTime())
+        boolean timeAllowed = appointmentTime.isTimeValid(dateTime.toLocalTime())
                               && currentDate.isBefore(appointmentDate)
                               && appointmentDate.isBefore(currentDate.plusDays(8));
         return !timeAllowed;

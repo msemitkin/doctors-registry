@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.domain.doctorworkinghour;
 
+import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.AppointmentTime;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
@@ -24,13 +25,15 @@ public class DoctorWorkingHourServiceTest {
 
     @Mock
     private DoctorRepository doctorRepository;
+    @Mock
+    private AppointmentTime appointmentTime;
 
     private DoctorWorkingHourService doctorWorkingHourService;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        doctorWorkingHourService = new DoctorWorkingHourService(doctorWorkingHourRepository, doctorRepository);
+        doctorWorkingHourService = new DoctorWorkingHourService(doctorWorkingHourRepository, doctorRepository, appointmentTime);
     }
 
     @Test

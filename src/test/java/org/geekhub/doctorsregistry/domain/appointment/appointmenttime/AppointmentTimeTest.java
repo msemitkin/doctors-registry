@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.domain.appointment.appointmenttime;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -8,6 +9,14 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class AppointmentTimeTest {
+
+    private AppointmentTime appointmentTime;
+
+    @BeforeMethod
+    private void setUp() {
+        appointmentTime = new AppointmentTime();
+        appointmentTime.init();
+    }
 
     @DataProvider(name = "returns_false_when_time_is_not_valid_parameters")
     private Object[][] returns_false_when_time_is_not_valid_parameters() {
@@ -28,7 +37,7 @@ public class AppointmentTimeTest {
     @Test(dataProvider = "returns_false_when_time_is_not_valid_parameters")
     public void returns_false_when_time_is_not_valid(String timeString) {
         LocalTime time = LocalTime.parse(timeString);
-        Assert.assertFalse(AppointmentTime.isTimeValid(time));
+        Assert.assertFalse(appointmentTime.isTimeValid(time));
     }
 
     @DataProvider(name = "returns_true_when_time_is_valid_parameters")
@@ -46,7 +55,7 @@ public class AppointmentTimeTest {
     @Test(dataProvider = "returns_true_when_time_is_valid_parameters")
     public void returns_true_when_time_is_valid(String timeString) {
         LocalTime time = LocalTime.parse(timeString);
-        Assert.assertTrue(AppointmentTime.isTimeValid(time));
+        Assert.assertTrue(appointmentTime.isTimeValid(time));
     }
 
     @DataProvider(name = "returns_all_supported_timestamps_parameters")
@@ -58,7 +67,7 @@ public class AppointmentTimeTest {
 
     @Test(dataProvider = "returns_all_supported_timestamps_parameters")
     public void returns_all_supported_timestamps(String stringTime) {
-        List<LocalTime> supportedTimes = AppointmentTime.getSupportedTimes();
+        List<LocalTime> supportedTimes = appointmentTime.getSupportedTimes();
         LocalTime time = LocalTime.parse(stringTime);
         Assert.assertTrue(supportedTimes.contains(time));
     }
@@ -73,7 +82,7 @@ public class AppointmentTimeTest {
     @Test(dataProvider = "returns_only_supported_timestamps_parameters")
     public void returns_only_supported_timestamps(String stringTime) {
         LocalTime time = LocalTime.parse(stringTime);
-        List<LocalTime> supportedTimes = AppointmentTime.getSupportedTimes();
+        List<LocalTime> supportedTimes = appointmentTime.getSupportedTimes();
         Assert.assertFalse(supportedTimes.contains(time));
     }
 

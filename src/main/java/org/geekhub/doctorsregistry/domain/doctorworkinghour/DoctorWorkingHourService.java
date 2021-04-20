@@ -14,19 +14,22 @@ public class DoctorWorkingHourService {
 
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
     private final DoctorRepository doctorRepository;
+    private final AppointmentTime appointmentTime;
 
     public DoctorWorkingHourService(
         DoctorWorkingHourRepository doctorWorkingHourRepository,
-        DoctorRepository doctorRepository
+        DoctorRepository doctorRepository,
+        AppointmentTime appointmentTime
     ) {
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
         this.doctorRepository = doctorRepository;
+        this.appointmentTime = appointmentTime;
     }
 
     public void addWorkingHour(DoctorWorkingHourEntity doctorWorkingHour) {
 
         Assert.isTrue(
-            AppointmentTime.isTimeValid(doctorWorkingHour.getTime().toLocalTime()),
+            appointmentTime.isTimeValid(doctorWorkingHour.getTime().toLocalTime()),
             "Time is invalid"
         );
         Assert.isTrue(

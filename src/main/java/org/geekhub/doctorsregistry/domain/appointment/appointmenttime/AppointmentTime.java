@@ -1,5 +1,8 @@
 package org.geekhub.doctorsregistry.domain.appointment.appointmenttime;
 
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,11 +10,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class AppointmentTime {
 
-    private static final Set<LocalTime> availableTime = new HashSet<>();
+    private final Set<LocalTime> availableTime = new HashSet<>();
 
-    static {
+    @PostConstruct
+    public void init() {
         for (int hour = 8; hour < 20; hour++) {
             for (int minute : new int[]{0, 20, 40}) {
                 availableTime.add(LocalTime.of(hour, minute));
@@ -19,16 +24,14 @@ public class AppointmentTime {
         }
     }
 
-    public static boolean isTimeValid(LocalTime time) {
+    public boolean isTimeValid(LocalTime time) {
         return availableTime.contains(time);
     }
 
-    public static List<LocalTime> getSupportedTimes() {
+    public List<LocalTime> getSupportedTimes() {
         return new ArrayList<>(availableTime).stream()
             .sorted()
             .collect(Collectors.toList());
     }
 
-    private AppointmentTime() {
-    }
 }

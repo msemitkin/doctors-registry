@@ -38,6 +38,7 @@ public class DoctorService {
     private final DoctorWorkingHourService doctorWorkingHourService;
     private final UserService userService;
     private final DoctorMapper doctorMapper;
+    private final AppointmentTime appointmentTime;
 
     public DoctorService(
         DoctorRepository doctorRepository,
@@ -46,7 +47,8 @@ public class DoctorService {
         DayTimeSpliterator dayTimeSpliterator,
         DoctorWorkingHourService doctorWorkingHourService,
         UserService userService,
-        DoctorMapper doctorMapper
+        DoctorMapper doctorMapper,
+        AppointmentTime appointmentTime
     ) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
@@ -55,6 +57,7 @@ public class DoctorService {
         this.doctorWorkingHourService = doctorWorkingHourService;
         this.userService = userService;
         this.doctorMapper = doctorMapper;
+        this.appointmentTime = appointmentTime;
     }
 
     public DoctorEntity save(DoctorEntity doctorEntity) {
@@ -142,7 +145,7 @@ public class DoctorService {
 
     private List<LocalTime> getAvailableWorkingHours(Integer doctorId, LocalDate date) {
         List<LocalTime> result = new ArrayList<>();
-        List<LocalTime> supportedTimes = AppointmentTime.getSupportedTimes();
+        List<LocalTime> supportedTimes = appointmentTime.getSupportedTimes();
         for (LocalTime time : supportedTimes) {
             if (doctorAvailable(doctorId, LocalDateTime.of(date, time))) {
                 result.add(time);
