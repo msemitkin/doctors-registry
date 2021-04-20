@@ -1,16 +1,15 @@
 package org.geekhub.doctorsregistry.domain.appointment;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
-import org.geekhub.doctorsregistry.repository.DatabaseException;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
-import org.springframework.security.core.userdetails.User;
+import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,35 +18,38 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final PatientService patientService;
     private final AppointmentValidator appointmentValidator;
-    private final ZonedTime zonedTime;
+    private final UsernameExtractor usernameExtractor;
+    private final AppointmentMapper appointmentMapper;
 
     public AppointmentService(
         AppointmentRepository appointmentRepository,
         PatientService patientService,
         AppointmentValidator appointmentValidator,
-        ZonedTime zonedTime) {
+        UsernameExtractor usernameExtractor,
+        AppointmentMapper appointmentMapper
+    ) {
         this.appointmentRepository = appointmentRepository;
         this.patientService = patientService;
         this.appointmentValidator = appointmentValidator;
-        this.zonedTime = zonedTime;
+        this.usernameExtractor = usernameExtractor;
+        this.appointmentMapper = appointmentMapper;
     }
 
-    public void create(User user, Integer doctorId, LocalDateTime dateTime) {
-        Integer patientId = patientService.getIdByEmail(user.getUsername());
-        AppointmentEntity appointment = new AppointmentEntity(null, patientId, doctorId, dateTime);
-        create(appointment);
-    }
-
-    public void create(AppointmentEntity appointmentEntity) {
-        appointmentValidator.validate(appointmentEntity);
-        appointmentRepository.create(appointmentEntity);
+    public void create(CreateAppointmentDTO createAppointmentDTO) {
+        String email = usernameExtractor.getPatientUsername();
+        Integer patientId = patientService.getIdByEmail(email);
+        AppointmentEntity appointment = appointmentMapper.toEntity(createAppointmentDTO);
+        appointment.setPatientId(patientId);
+        appointmentValidator.validate(appointment);
+        appointmentRepository.create(appointment);
     }
 
     public AppointmentEntity findById(Integer id) {
         return appointmentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    public void deleteById(String email, Integer appointmentId) {
+    public void deleteById(Integer appointmentId) {
+        String email = usernameExtractor.getPatientUsername();
         int patientId = patientService.getIdByEmail(email);
         List<AppointmentEntity> appointments = patientService.getPendingAppointments(patientId);
         if (
@@ -55,17 +57,9 @@ public class AppointmentService {
                 .map(AppointmentEntity::getId)
                 .anyMatch(appointmentId::equals)
         ) {
-            deleteById(appointmentId);
+            appointmentRepository.deleteById(appointmentId);
         } else {
             throw new OperationNotAllowedException();
-        }
-    }
-
-    public void deleteById(Integer id) {
-        AppointmentEntity appointment = appointmentRepository.findById(id).orElseThrow(DatabaseException::new);
-        LocalDateTime appointmentDateTime = appointment.getDateTime();
-        if (appointmentDateTime.isAfter(zonedTime.now())) {
-            appointmentRepository.deleteById(id);
         }
     }
 

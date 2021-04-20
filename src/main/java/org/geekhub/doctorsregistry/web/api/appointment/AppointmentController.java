@@ -25,9 +25,8 @@ public class AppointmentController {
     }
 
     @PostMapping("/api/appointments")
-    public void createAppointment(CreateAppointmentDTO appointmentDTO) {
-        AppointmentEntity entity = appointmentMapper.toEntity(appointmentDTO);
-        appointmentService.create(entity);
+    public void createAppointment(CreateAppointmentDTO createAppointmentDTO) {
+        appointmentService.create(createAppointmentDTO);
     }
 
     @GetMapping("/api/appointments/{appointment-id}")

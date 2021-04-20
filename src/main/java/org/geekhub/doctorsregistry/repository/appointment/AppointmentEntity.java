@@ -10,7 +10,7 @@ public class AppointmentEntity {
     private Integer doctorId;
     private LocalDateTime dateTime;
 
-    protected AppointmentEntity() {
+    public AppointmentEntity() {
     }
 
     public AppointmentEntity(

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Behelsi</title>
+    <title>BeHelsi</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -63,7 +63,9 @@
                 </tbody>
             </table>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <input type="hidden" name="doctor-id" th:value="${param.id}">
+            <input type="hidden"
+                   name="doctor-id"
+                   th:value="${doctor.getId()}">
             <button type="submit" id="submit">OK</button>
         </form>
     </div>

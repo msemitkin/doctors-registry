@@ -2,10 +2,9 @@ package org.geekhub.doctorsregistry.web.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
+import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -56,12 +54,11 @@ public class DoctorMVCController {
 
     @PostMapping("doctor/appointments")
     public String makeAppointment(
-        @AuthenticationPrincipal User user,
-        @RequestParam("datetime") String inputDateTime,
-        @RequestParam("doctor-id") Integer doctorId
+        @RequestParam("doctor-id") Integer doctorId,
+        @RequestParam("datetime") String dateTime
     ) {
-        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime);
-        appointmentService.create(user, doctorId, dateTime);
-        return "redirect:/doctor?id=" + doctorId;
+        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(doctorId, dateTime);
+        appointmentService.create(appointmentDTO);
+        return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }
 }

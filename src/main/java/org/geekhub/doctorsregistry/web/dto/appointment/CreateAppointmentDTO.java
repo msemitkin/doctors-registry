@@ -2,19 +2,15 @@ package org.geekhub.doctorsregistry.web.dto.appointment;
 
 public class CreateAppointmentDTO {
 
-    private Integer patientId;
     private Integer doctorId;
     private String inputDateTime;
 
-    protected CreateAppointmentDTO() {
+    public CreateAppointmentDTO() {
     }
 
-    public Integer getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(Integer patientId) {
-        this.patientId = patientId;
+    public CreateAppointmentDTO(Integer doctorId, String inputDateTime) {
+        this.doctorId = doctorId;
+        this.inputDateTime = inputDateTime;
     }
 
     public Integer getDoctorId() {
