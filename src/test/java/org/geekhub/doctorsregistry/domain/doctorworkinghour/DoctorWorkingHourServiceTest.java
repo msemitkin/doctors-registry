@@ -41,7 +41,8 @@ public class DoctorWorkingHourServiceTest {
 
         Mockito.doNothing().when(doctorWorkingHourRepository).add(DOCTOR_WORKING_HOUR_TEST_ENTITY);
         Mockito.when(doctorRepository.existsById(Mockito.any())).thenReturn(true);
-
+        Mockito.when(appointmentTime.isTimeValid(DOCTOR_WORKING_HOUR_TEST_ENTITY.getTime().toLocalTime()))
+            .thenReturn(true);
         assertThatCode(
             () -> doctorWorkingHourService.addWorkingHour(DOCTOR_WORKING_HOUR_TEST_ENTITY)
         ).doesNotThrowAnyException();
