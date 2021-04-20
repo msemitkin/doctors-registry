@@ -82,15 +82,6 @@ public class DoctorService {
         return doctorRepository.findDoctorEntitiesByClinicId(clinicId);
     }
 
-    public void deleteById(int id) {
-        if (doctorRepository.existsById(id)) {
-            doctorRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException(id);
-        }
-    }
-
-
     public boolean doctorAvailable(Integer doctorId, LocalDateTime dateTime) {
         return doctorJdbcTemplateRepository.doctorWorksAt(doctorId, dateTime.getDayOfWeek(), dateTime.toLocalTime()) &&
                doctorJdbcTemplateRepository.doNotHaveAppointments(doctorId, dateTime);

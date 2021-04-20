@@ -85,9 +85,4 @@ public class DoctorController {
             .collect(Collectors.toList());
     }
 
-    @DeleteMapping("api/doctors/{id}")
-    public void deleteDoctorById(@PathVariable("id") Integer id) {
-        doctorService.deleteById(id);
-    }
-
 }

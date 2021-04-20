@@ -13,34 +13,22 @@ import java.util.List;
 public class DoctorWorkingHourService {
 
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
-    private final DoctorRepository doctorRepository;
     private final AppointmentTime appointmentTime;
 
     public DoctorWorkingHourService(
         DoctorWorkingHourRepository doctorWorkingHourRepository,
-        DoctorRepository doctorRepository,
         AppointmentTime appointmentTime
     ) {
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
-        this.doctorRepository = doctorRepository;
         this.appointmentTime = appointmentTime;
     }
 
-    public void addWorkingHour(DoctorWorkingHourEntity doctorWorkingHour) {
-
-        Assert.isTrue(
-            appointmentTime.isTimeValid(doctorWorkingHour.getTime().toLocalTime()),
-            "Time is invalid"
-        );
-        Assert.isTrue(
-            doctorRepository.existsById(doctorWorkingHour.getDoctorId()),
-            () -> "Doctor with given id does not exist: " + doctorWorkingHour.getDoctorId()
-        );
-
-        doctorWorkingHourRepository.add(doctorWorkingHour);
-    }
-
     public void setWorkingHours(List<DoctorWorkingHourEntity> workingHours) {
+        workingHours.forEach(doctorWorkingHourEntity -> Assert.isTrue(
+            appointmentTime.isTimeValid(doctorWorkingHourEntity.getTime().toLocalTime()),
+            "Time is invalid"
+            )
+        );
         doctorWorkingHourRepository.setDoctorWorkingHours(workingHours);
     }
 }

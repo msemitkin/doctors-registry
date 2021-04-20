@@ -47,12 +47,4 @@ public class ClinicService {
             .orElseThrow(EntityNotFoundException::new);
     }
 
-    public void deleteById(int id) {
-        if (clinicRepository.existsById(id)) {
-            clinicRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException(id);
-        }
-    }
-
 }

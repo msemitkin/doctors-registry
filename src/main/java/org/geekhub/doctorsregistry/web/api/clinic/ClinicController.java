@@ -6,7 +6,6 @@ import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,12 +46,6 @@ public class ClinicController {
     public ClinicDTO findClinicById(@PathVariable("id") Integer id) {
         ClinicEntity found = clinicService.findById(id);
         return clinicMapper.toDTO(found);
-    }
-
-    @DeleteMapping("/api/clinics/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteClinicById(@PathVariable("id") Integer id) {
-        clinicService.deleteById(id);
     }
 
 }
