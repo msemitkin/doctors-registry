@@ -47,32 +47,20 @@ public class DoctorJdbcTemplateRepository {
         this.sqlManager = sqlManager;
     }
 
-    public boolean doctorWorksAt(Integer doctorId, DayOfWeek dayOfWeek, LocalTime localTime) {
-        Map<String, ?> parameters = Map.of(
-            DOCTOR_ID, doctorId,
-            DAY_OF_THE_WEEK, dayOfWeek.getValue(),
-            TIME, Time.valueOf(localTime)
-        );
-        return Optional.ofNullable(
-            jdbcTemplate.queryForObject(
-                sqlManager.getQuery("if-doctor-works-at-day-and-time"),
-                parameters,
-                Boolean.class
-            )
-        ).orElse(false);
-    }
-
-    public boolean doNotHaveAppointments(Integer doctorId, LocalDateTime dateTime) {
-        String query = sqlManager.getQuery("if-doctor-do-not-have-appointment-at");
+    public boolean doctorAvailable(Integer doctorId, LocalDateTime dateTime) {
         Map<String, ?> parameters = Map.of(
             DOCTOR_ID, doctorId,
             DAY_OF_THE_WEEK, dateTime.getDayOfWeek().getValue(),
-            TIME, Time.valueOf(dateTime.toLocalTime()),
-            DATE, Date.valueOf(dateTime.toLocalDate())
+            TIME, dateTime.toLocalTime(),
+            DATE, dateTime.toLocalDate()
         );
         return Optional.ofNullable(
-            jdbcTemplate.queryForObject(query, parameters, Boolean.class)
-        ).orElse(false);
+            jdbcTemplate.queryForObject(
+                sqlManager.getQuery("if-doctor-available"),
+                parameters,
+                Boolean.class
+            )
+        ).orElseThrow(DatabaseException::new);
     }
 
     public List<AppointmentEntity> getAppointments(Integer doctorId) {

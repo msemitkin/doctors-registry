@@ -78,8 +78,7 @@ public class DoctorService {
     }
 
     public boolean doctorAvailable(Integer doctorId, LocalDateTime dateTime) {
-        return doctorJdbcTemplateRepository.doctorWorksAt(doctorId, dateTime.getDayOfWeek(), dateTime.toLocalTime()) &&
-               doctorJdbcTemplateRepository.doNotHaveAppointments(doctorId, dateTime);
+        return doctorJdbcTemplateRepository.doctorAvailable(doctorId, dateTime);
     }
 
     @Transactional
