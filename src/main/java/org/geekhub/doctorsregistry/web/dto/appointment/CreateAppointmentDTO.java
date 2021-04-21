@@ -5,9 +5,6 @@ public class CreateAppointmentDTO {
     private Integer doctorId;
     private String inputDateTime;
 
-    public CreateAppointmentDTO() {
-    }
-
     public CreateAppointmentDTO(Integer doctorId, String inputDateTime) {
         this.doctorId = doctorId;
         this.inputDateTime = inputDateTime;
