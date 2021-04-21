@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
+@ApiIgnore
 public class DoctorMVCController {
 
     private final DoctorService doctorService;

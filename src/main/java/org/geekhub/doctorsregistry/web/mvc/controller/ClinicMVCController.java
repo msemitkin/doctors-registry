@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.web.mvc.controller;
 
+import io.swagger.annotations.Api;
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@ApiIgnore
 public class ClinicMVCController {
 
     private final ClinicService clinicService;

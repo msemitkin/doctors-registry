@@ -5,10 +5,12 @@ import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
 
 @Controller
+@ApiIgnore
 public class ClinicUserMVCController {
 
     private final Schedule schedule;
