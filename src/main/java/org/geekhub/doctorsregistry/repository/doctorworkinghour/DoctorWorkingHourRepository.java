@@ -7,12 +7,17 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.geekhub.doctorsregistry.repository.DatabaseFields.*;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DATE;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DAY_OF_THE_WEEK;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DOCTOR_ID;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.TIME;
 
 @Repository
 public class DoctorWorkingHourRepository {
@@ -28,6 +33,12 @@ public class DoctorWorkingHourRepository {
         this.sqlManager = sqlManager;
     }
 
+
+    public List<LocalTime> getAvailableWorkingHours(Integer doctorId, LocalDate date) {
+        String query = sqlManager.getQuery("get-doctor-available-working-hours");
+        Map<String, ?> parameters = Map.of(DOCTOR_ID, doctorId, DATE, date, DAY_OF_THE_WEEK, date.getDayOfWeek().getValue());
+        return jdbcTemplate.query(query, parameters, (resultSet, rowNum) -> (resultSet.getTime(TIME).toLocalTime()));
+    }
 
     public void setDoctorWorkingHours(List<DoctorWorkingHourEntity> workingHours) {
         String query = sqlManager.getQuery("add-working-hour");

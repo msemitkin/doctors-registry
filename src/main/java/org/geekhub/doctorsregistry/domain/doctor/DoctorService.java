@@ -1,9 +1,7 @@
 package org.geekhub.doctorsregistry.domain.doctor;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.AppointmentTime;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.doctorworkinghour.DoctorWorkingHourService;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.domain.schedule.DayTime;
 import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
@@ -13,6 +11,7 @@ import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
+import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,29 +33,26 @@ public class DoctorService {
     private final DoctorJdbcTemplateRepository doctorJdbcTemplateRepository;
     private final ZonedTime zonedTime;
     private final DayTimeSpliterator dayTimeSpliterator;
-    private final DoctorWorkingHourService doctorWorkingHourService;
     private final UserService userService;
     private final DoctorMapper doctorMapper;
-    private final AppointmentTime appointmentTime;
+    private final DoctorWorkingHourRepository doctorWorkingHourRepository;
 
     public DoctorService(
         DoctorRepository doctorRepository,
         DoctorJdbcTemplateRepository doctorJdbcTemplateRepository,
         ZonedTime zonedTime,
         DayTimeSpliterator dayTimeSpliterator,
-        DoctorWorkingHourService doctorWorkingHourService,
         UserService userService,
         DoctorMapper doctorMapper,
-        AppointmentTime appointmentTime
+        DoctorWorkingHourRepository doctorWorkingHourRepository
     ) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
         this.zonedTime = zonedTime;
         this.dayTimeSpliterator = dayTimeSpliterator;
-        this.doctorWorkingHourService = doctorWorkingHourService;
         this.userService = userService;
         this.doctorMapper = doctorMapper;
-        this.appointmentTime = appointmentTime;
+        this.doctorWorkingHourRepository = doctorWorkingHourRepository;
     }
 
     public DoctorEntity save(DoctorEntity doctorEntity) {
@@ -103,8 +98,7 @@ public class DoctorService {
                     Time.valueOf(entry.time()),
                     entry.day().getValue())
             ).collect(Collectors.toList());
-        doctorWorkingHourService.setWorkingHours(doctorWorkingHours);
-
+        doctorWorkingHourRepository.setDoctorWorkingHours(doctorWorkingHours);
     }
 
     public Map<LocalDate, List<LocalTime>> getSchedule(Integer doctorId) {
@@ -112,7 +106,7 @@ public class DoctorService {
         LocalDate dateNow = zonedTime.now().toLocalDate();
         for (int deltaDays = 1; deltaDays < 8; deltaDays++) {
             LocalDate date = dateNow.plusDays(deltaDays);
-            List<LocalTime> availableWorkingHours = getAvailableWorkingHours(doctorId, date);
+            List<LocalTime> availableWorkingHours = doctorWorkingHourRepository.getAvailableWorkingHours(doctorId, date);
             result.put(date, availableWorkingHours);
         }
         return result;
@@ -132,17 +126,6 @@ public class DoctorService {
         return appointments.stream()
             .filter(appointment -> appointment.getDateTime().isBefore(timeNow))
             .collect(Collectors.toList());
-    }
-
-    private List<LocalTime> getAvailableWorkingHours(Integer doctorId, LocalDate date) {
-        List<LocalTime> result = new ArrayList<>();
-        List<LocalTime> supportedTimes = appointmentTime.getSupportedTimes();
-        for (LocalTime time : supportedTimes) {
-            if (doctorAvailable(doctorId, LocalDateTime.of(date, time))) {
-                result.add(time);
-            }
-        }
-        return result;
     }
 
 }

@@ -1,14 +1,13 @@
 package org.geekhub.doctorsregistry.domain.doctor;
 
-import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.AppointmentTime;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.doctorworkinghour.DoctorWorkingHourService;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
+import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -48,21 +47,19 @@ public class DoctorServiceTest {
     @Mock
     private DayTimeSpliterator dayTimeSpliterator;
     @Mock
-    private DoctorWorkingHourService doctorWorkingHourService;
-    @Mock
     private UserService userService;
     @Mock
     private DoctorMapper doctorMapper;
     @Mock
-    private AppointmentTime appointmentTime;
+    private DoctorWorkingHourRepository doctorWorkingHourRepository;
 
     private DoctorService doctorService;
 
     @BeforeMethod
     private void setUp() {
         MockitoAnnotations.openMocks(this);
-        doctorService = new DoctorService(doctorRepository, doctorJdbcTemplateRepository, zonedTime,
-            dayTimeSpliterator, doctorWorkingHourService, userService, doctorMapper, appointmentTime);
+        doctorService = new DoctorService(doctorRepository, doctorJdbcTemplateRepository,
+            zonedTime, dayTimeSpliterator, userService, doctorMapper, doctorWorkingHourRepository);
     }
 
     @Test
