@@ -8,8 +8,7 @@ before_script:
 
 build:
   stage: build
-  script: gradlew build
+  script: ./gradlew build
   artifacts:
     paths:
-      - target/demo-0.0.1-SNAPSHOT.jar
-
+      - build/libs/doctorsregistry-0.0.1-SNAPSHOT.jar
