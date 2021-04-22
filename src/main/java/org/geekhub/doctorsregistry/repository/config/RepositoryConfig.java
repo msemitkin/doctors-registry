@@ -4,37 +4,34 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.output.MigrateResult;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ComponentScan("org.geekhub.doctorsregistry")
-@PropertySource("classpath:database.properties")
 public class RepositoryConfig {
 
     @Bean("datasource")
-    @Conditional(H2DatabaseEnabled.class)
+    @Profile("dev")
     HikariDataSource h2DataSource(
-        @Value("${datasource.h2.url}") String url,
-        @Value("${datasource.h2.username}") String username,
-        @Value("${datasource.h2.password}") String password,
-        @Value("${datasource.h2.driver}") String driverClassName
+        @Value("${spring.datasource.url}") String url,
+        @Value("${spring.datasource.username}") String username,
+        @Value("${spring.datasource.password}") String password,
+        @Value("${spring.datasource.driver-class-name}") String driverClassName
     ) {
         return hikariConfig(url, username, password, driverClassName);
     }
 
     @Bean("datasource")
-    @Conditional(PostgresDatabaseEnabled.class)
+    @Profile("prod")
     HikariDataSource postgresDataSource(
-        @Value("${datasource.postgres.url}") String url,
-        @Value("${datasource.postgres.username}") String username,
-        @Value("${datasource.postgres.password}") String password,
-        @Value("${datasource.postgres.driver}") String driverClassName
+        @Value("${spring.datasource.url}") String url,
+        @Value("${spring.datasource.username}") String username,
+        @Value("${spring.datasource.password}") String password,
+        @Value("${spring.datasource.driver-class-name}") String driverClassName
     ) {
         return hikariConfig(url, username, password, driverClassName);
     }
@@ -58,7 +55,7 @@ public class RepositoryConfig {
 
     @Bean
     public MigrateResult migrateDatabase(
-        @Qualifier("datasource") HikariDataSource dataSource,
+        HikariDataSource dataSource,
         @Value("classpath:db/migration") String location
     ) {
         return Flyway.configure()
