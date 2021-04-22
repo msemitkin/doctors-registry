@@ -8,4 +8,8 @@ public interface CreateClinicDTO {
     String getAddress();
 
     void setAddress(String address);
+
+    String getEmail();
+
+    void setEmail(String email);
 }

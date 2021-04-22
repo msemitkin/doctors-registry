@@ -15,7 +15,7 @@ public class DoctorMapper {
         this.specializationMapper = specializationMapper;
     }
 
-    public DoctorEntity toEntity(CreateDoctorDTO doctorDTO) {
+    public DoctorEntity toEntity(CreateDoctorDTO doctorDTO, Integer clinicId) {
         SpecializationEntity specialization = new SpecializationEntity(doctorDTO.getSpecializationId(), null);
         return new DoctorEntity(
             null,
@@ -23,7 +23,7 @@ public class DoctorMapper {
             doctorDTO.getLastName(),
             doctorDTO.getEmail(),
             specialization,
-            doctorDTO.getClinicId(),
+            clinicId,
             doctorDTO.getPrice()
         );
     }

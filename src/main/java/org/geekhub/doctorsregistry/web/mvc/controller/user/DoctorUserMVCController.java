@@ -40,7 +40,6 @@ public class DoctorUserMVCController {
 
     @PostMapping("/doctors/registration")
     public String registerDoctor(
-        @AuthenticationPrincipal UserDetails userDetails,
         @ModelAttribute("doctor") CreateDoctorUserDTO doctor
     ) {
         doctorService.saveDoctor(doctor);

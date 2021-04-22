@@ -3,7 +3,6 @@ package org.geekhub.doctorsregistry.web.mvc.controller.user;
 import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
-import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.springframework.stereotype.Controller;
@@ -23,7 +22,11 @@ public class ClinicUserMVCController {
     private final SpecializationService specializationService;
     private final SpecializationMapper specializationMapper;
 
-    public ClinicUserMVCController(Schedule schedule, SpecializationService specializationService, SpecializationMapper specializationMapper) {
+    public ClinicUserMVCController(
+        Schedule schedule,
+        SpecializationService specializationService,
+        SpecializationMapper specializationMapper
+    ) {
         this.schedule = schedule;
         this.specializationService = specializationService;
         this.specializationMapper = specializationMapper;

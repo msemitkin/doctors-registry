@@ -15,10 +15,6 @@ public interface CreateDoctorDTO {
 
     void setSpecializationId(Integer specializationId);
 
-    Integer getClinicId();
-
-    void setClinicId(Integer clinicId);
-
     Integer getPrice();
 
     void setPrice(Integer price);

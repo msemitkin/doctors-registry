@@ -25,7 +25,7 @@ public class UserServiceTest {
     private final CreateUserDTO TEST_CLINIC_USER = new CreateClinicUserDTO("Name", "Address",
         "clinic_email@gmail.com", "password", "password");
     private final CreateUserDTO TEST_DOCTOR_USER = new CreateDoctorUserDTO("Firstname", "Lastname",
-        "doctor_email@gmail.com", 1, 1, 100, List.of("MONDAY&08:00"), "password", "password");
+        "doctor_email@gmail.com", 1, 100, List.of("MONDAY&08:00"), "password", "password");
     private final CreateUserDTO TEST_PATIENT_USER = new CreatePatientUserDTO("Firstname", "Lastname",
         "patient_email@gmail.com", "password", "password");
 

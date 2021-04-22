@@ -54,15 +54,6 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-building"></i> </span>
                         </div>
-                        <input class="form-control"
-                               placeholder="Clinic id"
-                               type="number"
-                               th:field="*{clinicId}">
-                    </div>
-                    <div class="form-group input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-building"></i> </span>
-                        </div>
                         <select class="form-control"
                                 th:field="*{specializationId}">
                             <option th:each="specialization : ${specializations}"

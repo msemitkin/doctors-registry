@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.domain.doctor;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.domain.schedule.DayTime;
@@ -13,6 +14,7 @@ import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,8 @@ public class DoctorService {
     private final UserService userService;
     private final DoctorMapper doctorMapper;
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
+    private final ClinicService clinicService;
+    private final UsernameExtractor usernameExtractor;
 
     public DoctorService(
         DoctorRepository doctorRepository,
@@ -44,8 +48,8 @@ public class DoctorService {
         DayTimeSpliterator dayTimeSpliterator,
         UserService userService,
         DoctorMapper doctorMapper,
-        DoctorWorkingHourRepository doctorWorkingHourRepository
-    ) {
+        DoctorWorkingHourRepository doctorWorkingHourRepository,
+        ClinicService clinicService, UsernameExtractor usernameExtractor) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
         this.zonedTime = zonedTime;
@@ -53,6 +57,8 @@ public class DoctorService {
         this.userService = userService;
         this.doctorMapper = doctorMapper;
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
+        this.clinicService = clinicService;
+        this.usernameExtractor = usernameExtractor;
     }
 
     public DoctorEntity save(DoctorEntity doctorEntity) {
@@ -83,7 +89,9 @@ public class DoctorService {
 
     @Transactional
     public void saveDoctor(CreateDoctorUserDTO doctorDTO) {
-        DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO);
+
+        Integer clinicId = clinicService.getIdByEmail(usernameExtractor.getClinicUserName());
+        DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO, clinicId);
 
         userService.saveUser(doctorDTO);
 

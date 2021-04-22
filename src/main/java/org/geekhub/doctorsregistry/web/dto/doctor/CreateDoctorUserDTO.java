@@ -10,7 +10,6 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
     private String lastName;
     private String email;
     private Integer specializationId;
-    private Integer clinicId;
     private Integer price;
     private List<String> timetable;
     private String password;
@@ -24,7 +23,6 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
         String lastName,
         String email,
         Integer specializationId,
-        Integer clinicId,
         Integer price,
         List<String> timetable,
         String password,
@@ -34,7 +32,6 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
         this.lastName = lastName;
         this.email = email;
         this.specializationId = specializationId;
-        this.clinicId = clinicId;
         this.price = price;
         this.timetable = timetable;
         this.password = password;
@@ -79,16 +76,6 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
     @Override
     public void setSpecializationId(Integer specializationId) {
         this.specializationId = specializationId;
-    }
-
-    @Override
-    public Integer getClinicId() {
-        return clinicId;
-    }
-
-    @Override
-    public void setClinicId(Integer clinicId) {
-        this.clinicId = clinicId;
     }
 
     @Override
