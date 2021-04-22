@@ -98,8 +98,8 @@ public class DoctorService {
                 new DoctorWorkingHourEntity(
                     null,
                     doctorId,
-                    Time.valueOf(entry.time()),
-                    entry.day().getValue())
+                    Time.valueOf(entry.getTime()),
+                    entry.getDay().getValue())
             ).collect(Collectors.toList());
         doctorWorkingHourRepository.setDoctorWorkingHours(doctorWorkingHours);
     }
