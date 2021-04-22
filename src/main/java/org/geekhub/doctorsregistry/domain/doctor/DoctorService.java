@@ -61,10 +61,6 @@ public class DoctorService {
         this.usernameExtractor = usernameExtractor;
     }
 
-    public DoctorEntity save(DoctorEntity doctorEntity) {
-        return doctorRepository.save(doctorEntity);
-    }
-
     public List<DoctorEntity> findAll() {
         return StreamSupport.stream(doctorRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
