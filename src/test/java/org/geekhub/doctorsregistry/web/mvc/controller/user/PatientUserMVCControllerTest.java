@@ -5,15 +5,20 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -90,5 +95,32 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
             .andExpect(model().hasErrors())
             .andExpect(model().attributeHasFieldErrors("patient", "email"))
             .andExpect(view().name("patient-registration"));
+    }
+
+    @Test
+    public void returns_registration_form_correct() throws Exception {
+        mockMvc.perform(get("/patients/registration"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("patient-registration"))
+            .andExpect(model().size(1))
+            .andExpect(model().attribute("patient", new CreatePatientUserDTO()));
+    }
+
+    @Test
+    public void returns_patient_cabinet_correct() throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
+            SecurityMockMvcRequestPostProcessors.user("patient@gmail.com").password("password").roles("PATIENT");
+        mockMvc.perform(get("/patients/me/cabinet").with(patient))
+            .andExpect(status().isOk())
+            .andExpect(view().name("patient-cabinet"))
+            .andExpect(model().size(2))
+            .andExpect(model().attribute("pending", Matchers.any(List.class)))
+            .andExpect(model().attribute("archive", Matchers.any(List.class)));
+    }
+
+    @Test
+    public void only_authenticated_users_have_access_to_their_personal_cabinets() throws Exception {
+        mockMvc.perform(get("/patients/me/cabinet"))
+            .andExpect(status().isFound());
     }
 }

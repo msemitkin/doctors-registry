@@ -7,6 +7,7 @@ import org.geekhub.doctorsregistry.web.validation.UniqueEmail;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @FieldsMatch(first = "password", second = "passwordConfirmation", message = "Passwords do not match")
 public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
@@ -94,6 +95,19 @@ public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
     @Override
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CreatePatientUserDTO that = (CreatePatientUserDTO) o;
+        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(passwordConfirmation, that.passwordConfirmation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email, password, passwordConfirmation);
     }
 
     @Override
