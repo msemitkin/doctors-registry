@@ -15,7 +15,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleResolver roleResolver;
 
-    public UserService(UserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder, RoleResolver roleResolver) {
+    public UserService(
+        UserDetailsManager userDetailsManager,
+        PasswordEncoder passwordEncoder,
+        RoleResolver roleResolver
+    ) {
         this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
         this.roleResolver = roleResolver;
@@ -39,6 +43,10 @@ public class UserService {
                 .roles(roles)
                 .build();
         userDetailsManager.createUser(userDetails);
+    }
+
+    public boolean userExists(String email) {
+        return userDetailsManager.userExists(email);
     }
 
     private boolean passwordsMatch(String password, String passwordConfirmation) {

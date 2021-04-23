@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.dto.patient;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
 import org.geekhub.doctorsregistry.web.validation.FieldsMatch;
+import org.geekhub.doctorsregistry.web.validation.UniqueEmail;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
     @NotNull
     @NotBlank(message = "Email is required")
     @Email(message = "Email format is not valid")
+    @UniqueEmail
     private String email;
     @NotNull
     @NotBlank(message = "Password is required")
@@ -96,7 +98,7 @@ public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
 
     @Override
     public String toString() {
-        return "RegisterPatientDTO{" +
+        return "CreatePatientUserDTO{" +
                "firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
                ", email='" + email + '\'' +
@@ -104,5 +106,4 @@ public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
                ", passwordConfirmation='" + passwordConfirmation + '\'' +
                '}';
     }
-
 }
