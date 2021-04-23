@@ -14,7 +14,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockReset;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.DataProvider;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,7 +55,6 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private UsernameExtractor usernameExtractor;
-
 
     @DataProvider(name = "roles_except_patient")
     private Object[][] roles_except_patient() {
@@ -93,14 +95,14 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void unauthorized_users_do_not_have_access() throws Exception {
         int patientId = 1;
 
         mockMvc.perform(get("/api/patients/{id}", patientId))
             .andExpect(status().isFound());
 
-        Mockito.verify(patientService, Mockito.times(0)).findById(Mockito.anyInt());
-
+        Mockito.verify(patientService, Mockito.never()).findById(anyInt());
     }
 
     @Test
