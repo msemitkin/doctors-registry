@@ -28,17 +28,22 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
 
     @Autowired
     @MockBean
-    PatientService patientService;
+    private PatientService patientService;
     @Autowired
     @MockBean
-    AppointmentMapper appointmentMapper;
+    private AppointmentMapper appointmentMapper;
     @Autowired
     @MockBean
-    AppointmentService appointmentService;
+    private AppointmentService appointmentService;
+    @Autowired
+    @MockBean
+    private UserService userService;
+
 
     @Test
     public void returns_errors_when_submit_empty_form() throws Exception {
         Mockito.doNothing().when(patientService).save(new CreatePatientUserDTO());
+        Mockito.when(userService.userExists(null)).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf()))
             .andExpect(status().isOk())
             .andExpect(model().hasErrors())
@@ -54,6 +59,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
             "Firstname", "Lastname", "patient-email@gmail.com",
             "password", "password");
         Mockito.doNothing().when(patientService).save(patient);
+        Mockito.when(userService.userExists(patient.getEmail())).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf())
             .param("firstName", patient.getFirstName())
             .param("lastName", patient.getLastName())
@@ -64,5 +70,25 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/index"))
             .andExpect(model().hasNoErrors());
+    }
+
+    @Test
+    public void returns_error_when_user_with_given_email_already_exists() throws Exception {
+        CreatePatientUserDTO patient = new CreatePatientUserDTO(
+            "Firstname", "Lastname", "patient-email@gmail.com",
+            "password", "password");
+        Mockito.doNothing().when(patientService).save(patient);
+        Mockito.when(userService.userExists(patient.getEmail())).thenReturn(true);
+        mockMvc.perform(post("/patients/registration").with(csrf())
+            .param("firstName", patient.getFirstName())
+            .param("lastName", patient.getLastName())
+            .param("email", patient.getEmail())
+            .param("password", patient.getPassword())
+            .param("passwordConfirmation", patient.getPasswordConfirmation())
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().hasErrors())
+            .andExpect(model().attributeHasFieldErrors("patient", "email"))
+            .andExpect(view().name("patient-registration"));
     }
 }
