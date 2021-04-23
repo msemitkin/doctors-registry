@@ -1,13 +1,30 @@
 package org.geekhub.doctorsregistry.web.dto.patient;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
+import org.geekhub.doctorsregistry.web.validation.FieldsMatch;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+@FieldsMatch(first = "password", second = "passwordConfirmation", message = "Passwords do not match")
 public class CreatePatientUserDTO implements CreateUserDTO, CreatePatientDTO {
 
+    @NotNull
+    @NotBlank(message = "First name is required")
     private String firstName;
+    @NotNull
+    @NotBlank(message = "Last name is required")
     private String lastName;
+    @NotNull
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email format is not valid")
     private String email;
+    @NotNull
+    @NotBlank(message = "Password is required")
     private String password;
+    @NotNull
+    @NotBlank(message = "Password confirmation is required")
     private String passwordConfirmation;
 
     public CreatePatientUserDTO() {
