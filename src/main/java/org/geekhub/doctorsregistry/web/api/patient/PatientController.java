@@ -7,6 +7,7 @@ import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.dto.patient.PatientDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +25,18 @@ public class PatientController {
     private final PatientService patientService;
     private final PatientMapper patientMapper;
     private final AppointmentMapper appointmentMapper;
+    private final UsernameExtractor usernameExtractor;
 
     public PatientController(
         PatientService patientService,
         PatientMapper patientMapper,
-        AppointmentMapper appointmentMapper
+        AppointmentMapper appointmentMapper,
+        UsernameExtractor usernameExtractor
     ) {
         this.patientService = patientService;
         this.patientMapper = patientMapper;
         this.appointmentMapper = appointmentMapper;
+        this.usernameExtractor = usernameExtractor;
     }
 
     @GetMapping("/api/patients/{id}")
@@ -41,21 +45,23 @@ public class PatientController {
         return patientMapper.toDTO(found);
     }
 
-    @GetMapping("/api/patients/{id}/appointments/pending")
-    public List<AppointmentDTO> getPendingAppointments(@PathVariable("id") Integer patientId) {
+    @GetMapping("/api/patients/me/appointments/pending")
+    public List<AppointmentDTO> getPendingAppointments() {
+        int patientId = patientService.getIdByEmail(usernameExtractor.getPatientUsername());
         return patientService.getPendingAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    @GetMapping("/api/patients/{id}/appointments/archive")
-    public List<AppointmentDTO> getArchivedAppointments(@PathVariable("id") Integer patientId) {
-        return patientService.getArchivedAppointments(patientId).stream()
+    @GetMapping("/api/patients/me/appointments/archive")
+    public List<AppointmentDTO> getArchivedAppointments() {
+        int id = patientService.getIdByEmail(usernameExtractor.getPatientUsername());
+        return patientService.getArchivedAppointments(id).stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    @PostMapping("/api/patients/")
+    @PostMapping("/api/patients")
     @ResponseStatus(HttpStatus.CREATED)
     public void newPatient(@Valid CreatePatientUserDTO patientDTO) {
         patientService.save(patientDTO);

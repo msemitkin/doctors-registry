@@ -28,9 +28,7 @@ public class DefaultExceptionHandler {
     public ResponseEntity<ErrorDTO> entityNotFound(EntityNotFoundException e) {
         logger.error("Entity was not found", e);
         return new ResponseEntity<>(
-            ErrorDTO.withMessage("Requested entity does not exist"),
-            HttpStatus.BAD_REQUEST
-        );
+            ErrorDTO.withMessage("Requested entity does not exist"), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DoctorNotAvailableException.class)

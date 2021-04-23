@@ -32,7 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .mvcMatchers("/login", "/logout", "/patients/registration").permitAll()
+            .mvcMatchers(HttpMethod.POST, "/api/patients").permitAll()
+
             .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole("PATIENT")
+            .mvcMatchers("/api/patients/me/appointments/archive",
+                "/api/patients/me/appointments/pending").hasRole("PATIENT")
             .mvcMatchers("/patients/me/cabinet").hasRole("PATIENT")
 
             .mvcMatchers("/doctors/me/cabinet").hasRole("DOCTOR")
