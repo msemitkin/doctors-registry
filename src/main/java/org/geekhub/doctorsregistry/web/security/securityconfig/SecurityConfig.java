@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .mvcMatchers(HttpMethod.POST, "/doctors/registration").hasRole("CLINIC")
 
             .mvcMatchers(HttpMethod.POST, "clinics/").hasRole("ADMIN")
-            .mvcMatchers("/admins/me/cabinet").hasRole("ADMIN")
+            .mvcMatchers("/admins/me/cabinet", "/actuator/**").hasRole("ADMIN")
 
             .anyRequest()
             .authenticated()
@@ -54,6 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .logout()
             .and()
-            .csrf().ignoringAntMatchers(SWAGGER_WHITELIST);
+            .csrf()
+            .ignoringAntMatchers(SWAGGER_WHITELIST)
+            .ignoringAntMatchers("/actuator/**");
     }
 }

@@ -21,6 +21,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 
     implementation 'com.zaxxer:HikariCP:4.0.1'
     implementation 'org.flywaydb:flyway-core'
