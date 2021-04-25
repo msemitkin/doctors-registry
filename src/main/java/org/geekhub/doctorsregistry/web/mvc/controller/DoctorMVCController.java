@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -51,15 +52,12 @@ public class DoctorMVCController {
         model.addAttribute("doctor", doctor);
         Map<LocalDate, List<LocalTime>> schedule = doctorService.getSchedule(doctorId);
         model.addAttribute("schedule", schedule);
+        model.addAttribute("appointment", new CreateAppointmentDTO());
         return "doctor";
     }
 
-    @PostMapping("doctor/appointments")
-    public String makeAppointment(
-        @RequestParam("doctor-id") Integer doctorId,
-        @RequestParam("datetime") String dateTime
-    ) {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(doctorId, dateTime);
+    @PostMapping("/doctor/appointments")
+    public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
         appointmentService.create(appointmentDTO);
         return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }

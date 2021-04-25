@@ -35,7 +35,7 @@
         <p><a th:href="'/clinic?id=' + ${doctor.getClinicId()}">Clinic</a></p>
     </div>
     <div class="schedule">
-        <form method="post" action="/doctor/appointments">
+        <form method="post" action="/doctor/appointments" th:object="${appointment}">
             <table>
                 <thead>
                 <tr>
@@ -50,9 +50,9 @@
                         <ul class="radio-toolbar">
                             <li th:each="time: ${entry.getValue()}">
                                 <input type="radio"
-                                       name="datetime"
                                        th:id="${entry.getKey()} + 'T' + ${time}"
-                                       th:value="${entry.getKey()} + 'T' + ${time}">
+                                       th:value="${entry.getKey()} + 'T' + ${time}"
+                                       name="inputDateTime">
 
                                 <label th:for="${entry.getKey()} + 'T' + ${time}"
                                        th:text="${time}">time</label>
@@ -64,8 +64,8 @@
             </table>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden"
-                   name="doctor-id"
-                   th:value="${doctor.getId()}">
+                   th:value="${doctor.getId()}"
+                   name="doctorId">
             <button type="submit" id="submit">OK</button>
         </form>
     </div>
