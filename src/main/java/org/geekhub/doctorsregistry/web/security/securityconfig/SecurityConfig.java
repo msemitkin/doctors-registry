@@ -39,7 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/patients/me/appointments/pending").hasRole("PATIENT")
             .mvcMatchers("/patients/me/cabinet").hasRole("PATIENT")
 
-            .mvcMatchers("/doctors/me/cabinet").hasRole("DOCTOR")
+            .mvcMatchers("/doctors/me/cabinet", "/api/doctors/me/appointments/archive",
+                "/api/doctors/me/appointments/pending").hasRole("DOCTOR")
 
             .mvcMatchers("/clinics/me/cabinet").hasRole("CLINIC")
             .mvcMatchers(HttpMethod.POST, "/doctors/registration").hasRole("CLINIC")

@@ -38,20 +38,20 @@ public class DoctorController {
         this.appointmentMapper = appointmentMapper;
     }
 
-    @PostMapping("api/doctors")
+    @PostMapping("/api/doctors")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveDoctor(@RequestBody CreateDoctorUserDTO doctorDTO) {
         doctorService.saveDoctor(doctorDTO);
     }
 
-    @GetMapping("api/doctors")
+    @GetMapping("/api/doctors")
     public List<DoctorDTO> getAllDoctors() {
         return doctorService.findAll().stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    @GetMapping("api/doctors/{id}")
+    @GetMapping("/api/doctors/{id}")
     public DoctorDTO getDoctorById(@PathVariable("id") Integer id) {
         DoctorEntity found = doctorService.findById(id);
         return doctorMapper.toDTO(found);
@@ -71,7 +71,7 @@ public class DoctorController {
         return doctorService.getSchedule(doctorId);
     }
 
-    @GetMapping("/api/doctors/{me/appointments/pending")
+    @GetMapping("/api/doctors/me/appointments/pending")
     public List<AppointmentDTO> getPendingAppointments() {
         return doctorService.getPendingAppointments().stream()
             .map(appointmentMapper::toDTO)
