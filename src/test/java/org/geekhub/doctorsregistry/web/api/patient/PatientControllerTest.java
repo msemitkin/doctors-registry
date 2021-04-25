@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.web.api.patient;
 
+import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
@@ -14,15 +15,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockReset;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
@@ -56,22 +54,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     @MockBean
     private UsernameExtractor usernameExtractor;
 
-    @DataProvider(name = "roles_except_patient")
-    private Object[][] roles_except_patient() {
-        return Arrays.stream(Role.values())
-            .filter(role -> !role.equals(Role.PATIENT))
-            .map(role -> new Object[]{role})
-            .toArray(Object[][]::new);
-    }
-
-    @DataProvider(name = "roles")
-    private Object[][] roles() {
-        return Arrays.stream(Role.values())
-            .map(role -> new Object[]{role})
-            .toArray(Object[][]::new);
-    }
-
-    @Test(dataProvider = "roles")
+    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void every_authorized_user_has_access(Role role) throws Exception {
         int patientId = 1;
         PatientEntity patientEntity = new PatientEntity(patientId, "PatientName",
@@ -212,7 +195,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$").isEmpty());
     }
 
-    @Test(dataProvider = "roles_except_patient")
+    @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_have_access_to_their_archived_appointments(Role role) throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").password("password").roles(role.toString());
@@ -222,7 +205,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$").doesNotExist());
     }
 
-    @Test(dataProvider = "roles_except_patient")
+    @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_have_access_to_their_pending_appointments(Role role) throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").password("password").roles(role.toString());
