@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.dto.doctor;
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
 
@@ -116,5 +117,40 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
     @Override
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CreateDoctorUserDTO that = (CreateDoctorUserDTO) o;
+        return Objects.equals(firstName, that.firstName) &&
+               Objects.equals(lastName, that.lastName) &&
+               Objects.equals(email, that.email) &&
+               Objects.equals(specializationId, that.specializationId) &&
+               Objects.equals(price, that.price) &&
+               Objects.equals(timetable, that.timetable) &&
+               Objects.equals(password, that.password) &&
+               Objects.equals(passwordConfirmation, that.passwordConfirmation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email, specializationId,
+            price, timetable, password, passwordConfirmation);
+    }
+
+    @Override
+    public String toString() {
+        return "CreateDoctorUserDTO{" +
+               "firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", email='" + email + '\'' +
+               ", specializationId=" + specializationId +
+               ", price=" + price +
+               ", timetable=" + timetable +
+               ", password='" + password + '\'' +
+               ", passwordConfirmation='" + passwordConfirmation + '\'' +
+               '}';
     }
 }
