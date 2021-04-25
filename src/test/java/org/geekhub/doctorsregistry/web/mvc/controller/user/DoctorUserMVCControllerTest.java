@@ -82,9 +82,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
             new AppointmentEntity(3, 15, 1, LocalDateTime.parse("2021-10-11T08:00"))
         );
         List<AppointmentDTO> archivedAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 5, 1, LocalDateTime.parse("2021-10-10T10:00")),
-            new AppointmentDTO(2, 10, 1, LocalDateTime.parse("2021-10-10T10:20")),
-            new AppointmentDTO(3, 15, 1, LocalDateTime.parse("2021-10-11T08:00"))
+            new AppointmentDTO(1, 5, 1, "2021-10-10T10:00"),
+            new AppointmentDTO(2, 10, 1, "2021-10-10T10:20"),
+            new AppointmentDTO(3, 15, 1, "2021-10-11T08:00")
         );
         List<AppointmentEntity> pendingAppointments = List.of(
             new AppointmentEntity(1, 20, 1, LocalDateTime.parse("2021-10-20T10:00")),
@@ -92,9 +92,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
             new AppointmentEntity(3, 30, 1, LocalDateTime.parse("2021-10-21T08:00"))
         );
         List<AppointmentDTO> pendingAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 20, 1, LocalDateTime.parse("2021-10-20T10:00")),
-            new AppointmentDTO(2, 25, 1, LocalDateTime.parse("2021-10-20T10:20")),
-            new AppointmentDTO(3, 30, 1, LocalDateTime.parse("2021-10-21T08:00"))
+            new AppointmentDTO(1, 20, 1, "2021-10-20T10:00"),
+            new AppointmentDTO(2, 25, 1, "2021-10-20T10:20"),
+            new AppointmentDTO(3, 30, 1, "2021-10-21T08:00")
         );
 
         Mockito.when(doctorService.getArchivedAppointments()).thenReturn(archivedAppointments);
@@ -122,7 +122,7 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     }
 
     @Test
-    public void saves_clinic_correct() throws Exception {
+    public void saves_doctor_correct() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor clinic =
             user("email@gmail.com").roles("CLINIC").password("password");
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");

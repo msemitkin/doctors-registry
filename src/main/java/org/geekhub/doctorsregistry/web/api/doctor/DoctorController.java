@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -40,7 +41,7 @@ public class DoctorController {
 
     @PostMapping("/api/doctors")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveDoctor(@RequestBody CreateDoctorUserDTO doctorDTO) {
+    public void saveDoctor(@Valid @RequestBody CreateDoctorUserDTO doctorDTO) {
         doctorService.saveDoctor(doctorDTO);
     }
 

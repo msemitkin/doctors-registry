@@ -1,14 +1,17 @@
 package org.geekhub.doctorsregistry.web.api.doctor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
+import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.geekhub.doctorsregistry.web.security.role.Role;
@@ -26,12 +29,14 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,6 +46,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     @MockBean
@@ -51,6 +58,9 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private AppointmentMapper appointmentMapper;
+    @Autowired
+    @MockBean
+    private UserService userService;
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_doctors(Role role) throws Exception {
@@ -222,6 +232,128 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
 
         mockMvc.perform(get("/api/doctors/me/appointments/archive").with(user))
             .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @DataProvider(name = "appointments")
+    private Object[][] appointments() {
+        return new Object[][]{
+            {List.of(
+                new AppointmentEntity(1, 1, 1, LocalDateTime.parse("2021-10-10T10:00")),
+                new AppointmentEntity(2, 3, 1, LocalDateTime.parse("2021-10-12T08:00"))
+            ), List.of(
+                new AppointmentDTO(1, 1, 1, "2021-10-10T10:00"),
+                new AppointmentDTO(2, 3, 1, "2021-10-12T08:00")
+            )}
+        };
+    }
+
+    @Test(dataProvider = "appointments")
+    public void returns_pending_appointments_correct(List<AppointmentEntity> appointmentEntities, List<AppointmentDTO> appointmentDTOs) throws Exception {
+        Mockito.when(doctorService.getPendingAppointments()).thenReturn(appointmentEntities);
+        for (int i = 0; i < appointmentEntities.size(); i++) {
+            Mockito.when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
+        }
+
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").password("password").roles("DOCTOR");
+
+        ResultActions perform = mockMvc.perform(get("/api/doctors/me/appointments/pending").with(user));
+        perform
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$", hasSize(appointmentEntities.size())));
+        for (int i = 0; i < appointmentEntities.size(); i++) {
+            String path = "$[" + i + "]";
+            AppointmentDTO dto = appointmentDTOs.get(i);
+            perform
+                .andExpect(jsonPath(path + ".id", Matchers.is(dto.getId())))
+                .andExpect(jsonPath(path + ".patientId", Matchers.is(dto.getPatientId())))
+                .andExpect(jsonPath(path + ".doctorId", Matchers.is(dto.getDoctorId())))
+                .andExpect(jsonPath(path + ".dateTime", Matchers.is(dto.getDateTime())));
+        }
+    }
+
+    @Test(dataProvider = "appointments")
+    public void returns_pending_archived_correct(List<AppointmentEntity> appointmentEntities, List<AppointmentDTO> appointmentDTOs) throws Exception {
+        Mockito.when(doctorService.getArchivedAppointments()).thenReturn(appointmentEntities);
+        for (int i = 0; i < appointmentEntities.size(); i++) {
+            Mockito.when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
+        }
+
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").password("password").roles("DOCTOR");
+
+        ResultActions perform = mockMvc.perform(get("/api/doctors/me/appointments/archive").with(user));
+        perform
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$", hasSize(appointmentEntities.size())));
+        for (int i = 0; i < appointmentEntities.size(); i++) {
+            String path = "$[" + i + "]";
+            AppointmentDTO dto = appointmentDTOs.get(i);
+            perform
+                .andExpect(jsonPath(path + ".id", Matchers.is(dto.getId())))
+                .andExpect(jsonPath(path + ".patientId", Matchers.is(dto.getPatientId())))
+                .andExpect(jsonPath(path + ".doctorId", Matchers.is(dto.getDoctorId())))
+                .andExpect(jsonPath(path + ".dateTime", Matchers.is(dto.getDateTime())));
+        }
+    }
+
+    @Test(dataProvider = "roles_except_clinic", dataProviderClass = RolesDataProviders.class)
+    public void only_clinic_can_register_doctor(Role role) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notAdmin =
+            user("email@gmail.com").password("password").roles(role.toString());
+
+        mockMvc.perform(post("/api/doctors").with(notAdmin)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(new CreateDoctorUserDTO())))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @Test
+    public void returns_errors_when_given_not_valid_data() throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notAdmin =
+            user("email@gmail.com").password("password").roles("CLINIC");
+        CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("", "",
+            "", null, null, Collections.emptyList(), "", "");
+
+        Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
+
+        mockMvc.perform(post("/api/doctors")
+            .with(notAdmin)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(doctorDTO))
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.errors").isMap())
+            .andExpect(jsonPath("$.errors.firstName.message").exists())
+            .andExpect(jsonPath("$.errors.lastName.message").exists())
+            .andExpect(jsonPath("$.errors.specializationId.message").exists())
+            .andExpect(jsonPath("$.errors.price.message").exists())
+            .andExpect(jsonPath("$.errors.timetable.message").exists())
+            .andExpect(jsonPath("$.errors.passwordConfirmation.message").exists());
+    }
+
+    @Test
+    public void saves_doctor_correct() throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notAdmin =
+            user("email@gmail.com").password("password").roles("CLINIC");
+        List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
+        CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
+            "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
+
+        Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
+
+        mockMvc.perform(post("/api/doctors").with(notAdmin)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(doctorDTO)))
+            .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());
     }
 }

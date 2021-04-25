@@ -23,7 +23,7 @@ public class AppointmentMapper {
             appointmentEntity.getId(),
             appointmentEntity.getPatientId(),
             appointmentEntity.getPatientId(),
-            appointmentEntity.getDateTime()
+            appointmentEntity.getDateTime().toString()
         );
     }
 }
