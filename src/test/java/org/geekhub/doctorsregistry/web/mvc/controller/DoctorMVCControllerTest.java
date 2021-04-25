@@ -1,0 +1,173 @@
+package org.geekhub.doctorsregistry.web.mvc.controller;
+
+import org.geekhub.doctorsregistry.RolesDataProviders;
+import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
+import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
+import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.security.role.Role;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testng.annotations.Test;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+@WebMvcTest(DoctorMVCController.class)
+public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    @MockBean
+    private DoctorService doctorService;
+    @Autowired
+    @MockBean
+    private DoctorMapper doctorMapper;
+    @Autowired
+    @MockBean
+    private AppointmentService appointmentService;
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    public void only_authenticated_users_can_see_doctors() throws Exception {
+        mockMvc.perform(get("/doctors"))
+            .andExpect(status().isFound());
+        Mockito.verify(doctorService, Mockito.never()).findAll();
+    }
+
+    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
+    public void all_roles_can_see_doctors_list(Role role) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").roles(role.toString()).password("password");
+
+        List<DoctorEntity> doctors = List.of(
+            new DoctorEntity(1, "name1", "surname1", "email1@gmail.com",
+                new SpecializationEntity(1, "specialization1"), 100, 100),
+            new DoctorEntity(2, "name2", "surname2", "email2@gmail.com",
+                new SpecializationEntity(2, "specialization2"), 200, 100),
+            new DoctorEntity(2, "name3", "surname3", "email3@gmail.com",
+                new SpecializationEntity(3, "specialization3"), 300, 100)
+        );
+
+        List<DoctorDTO> doctorDTOs = List.of(
+            new DoctorDTO(1, "name1", "surname1",
+                new SpecializationDTO(1, "specialization1"), 100, 100),
+            new DoctorDTO(2, "name2", "surname2",
+                new SpecializationDTO(2, "specialization2"), 200, 100),
+            new DoctorDTO(2, "name3", "surname3",
+                new SpecializationDTO(3, "specialization3"), 300, 100)
+        );
+        Mockito.when(doctorService.findAll()).thenReturn(doctors);
+        for (int i = 0; i < doctors.size(); i++) {
+            Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
+        }
+        mockMvc.perform(get("/doctors").with(user))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().size(1))
+            .andExpect(model().attribute("doctors", doctorDTOs));
+    }
+
+    @Test
+    public void works_correct_when_there_are_no_doctors() throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").roles("PATIENT").password("password");
+
+        Mockito.when(doctorService.findAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/doctors").with(user))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().size(1))
+            .andExpect(model().attribute("doctors", Collections.emptyList()));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    public void only_authenticated_users_can_see_doctor_page() throws Exception {
+        int doctorId = 5;
+        mockMvc.perform(get("/doctor").param("id", String.valueOf(doctorId)))
+            .andExpect(status().isFound());
+        Mockito.verify(doctorService, Mockito.never()).findById(doctorId);
+    }
+
+    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
+    public void all_roles_can_see_doctor_page(Role role) throws Exception {
+        int doctorId = 5;
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").roles(role.toString()).password("password");
+
+        DoctorEntity doctorEntity = new DoctorEntity(1, "name", "surname", "email@gmail.com",
+            new SpecializationEntity(10, "specialization"), 10, 250);
+        DoctorDTO doctorDTO = new DoctorDTO(1, "name", "surname",
+            new SpecializationDTO(1, "specialization"), 10, 100);
+
+        List<LocalTime> times = List.of("08:00", "08:20", "08:40").stream()
+            .map(LocalTime::parse)
+            .collect(Collectors.toList());
+        Map<LocalDate, List<LocalTime>> schedule = LocalDate.parse("2021-10-10").datesUntil(LocalDate.parse("2021-10-18"))
+            .collect(Collectors.toMap(date -> date, date -> times));
+
+        Mockito.when(doctorService.findById(doctorId)).thenReturn(doctorEntity);
+        Mockito.when(doctorMapper.toDTO(doctorEntity)).thenReturn(doctorDTO);
+        Mockito.when(doctorService.getSchedule(doctorId)).thenReturn(schedule);
+
+        mockMvc.perform(get("/doctor").param("id", String.valueOf(doctorId)).with(user))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(view().name("doctor"))
+            .andExpect(model().size(2))
+            .andExpect(model().attribute("doctor", doctorDTO))
+            .andExpect(model().attribute("schedule", schedule));
+    }
+
+    @Test
+    public void returns_error_message_when_doctor_with_given_id_does_not_exist() throws Exception {
+        int doctorId = 5;
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("email@gmail.com").roles("PATIENT").password("password");
+        Mockito.when(doctorService.findById(doctorId)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/doctor").param("id", String.valueOf(doctorId)).with(user))
+            .andExpect(status().isNotFound())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.message", is("Requested entity does not exist")));
+    }
+
+    @Test
+    public void unauthenticated_users_can_not_make_appointments() throws Exception {
+        mockMvc.perform(post("doctor/appointments")
+            .param("doctor-id")
+        )
+            .andExpect(status().isFound());
+    }
+
+}
