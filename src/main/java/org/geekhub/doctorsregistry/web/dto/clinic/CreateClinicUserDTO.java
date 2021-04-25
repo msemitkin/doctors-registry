@@ -19,6 +19,7 @@ public class CreateClinicUserDTO implements CreateClinicDTO, CreateUserDTO {
     @NotBlank(message = "Address is required")
     private String address;
     @NotNull
+    @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
     @UniqueEmail
     private String email;

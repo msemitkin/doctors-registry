@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public class ClinicController {
 
     @PostMapping("/api/clinics")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveClinic(CreateClinicUserDTO clinicDTO) {
+    public void saveClinic(@Valid CreateClinicUserDTO clinicDTO) {
         clinicService.save(clinicDTO);
     }
 
