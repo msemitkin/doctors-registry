@@ -1,21 +1,22 @@
 package org.geekhub.doctorsregistry.web.mvc.controller;
 
-import io.swagger.annotations.Api;
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
-import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
-import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
+import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,13 @@ public class ClinicMVCController {
     }
 
     @PostMapping("/clinics")
-    public String registerClinic(@ModelAttribute("clinic") CreateClinicUserDTO clinicDTO) {
+    public String registerClinic(
+        @Valid @ModelAttribute("clinic") CreateClinicUserDTO clinicDTO,
+        BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "admin-cabinet";
+        }
         clinicService.save(clinicDTO);
         return "redirect:/index";
     }
