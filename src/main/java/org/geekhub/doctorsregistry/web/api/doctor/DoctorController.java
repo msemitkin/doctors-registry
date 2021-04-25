@@ -71,16 +71,16 @@ public class DoctorController {
         return doctorService.getSchedule(doctorId);
     }
 
-    @GetMapping("/api/doctors/{id}/appointments/pending")
-    public List<AppointmentDTO> getPendingAppointments(@PathVariable("id") Integer doctorId) {
-        return doctorService.getPendingAppointments(doctorId).stream()
+    @GetMapping("/api/doctors/{me/appointments/pending")
+    public List<AppointmentDTO> getPendingAppointments() {
+        return doctorService.getPendingAppointments().stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    @GetMapping("/api/doctors/{id}/appointments/archive")
-    public List<AppointmentDTO> getArchivedAppointments(@PathVariable("id") Integer doctorId) {
-        return doctorService.getArchivedAppointments(doctorId).stream()
+    @GetMapping("/api/doctors/me/appointments/archive")
+    public List<AppointmentDTO> getArchivedAppointments() {
+        return doctorService.getArchivedAppointments().stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }

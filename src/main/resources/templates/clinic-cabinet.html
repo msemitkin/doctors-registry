@@ -11,6 +11,19 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
     <link rel="stylesheet" th:href="@{/style/schedule-style.css}">
+    <style>
+        .alert {
+            margin-bottom: 5px;
+            height: 40px;
+            line-height: 35px;
+            padding: 0px 15px;
+        }
+
+        .timetable-error {
+            width: 600px;
+        }
+
+    </style>
 </head>
 <body>
 <header id="navigation">
@@ -23,6 +36,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('firstName')}">
+                        <p th:each="error: ${#fields.errors('firstName')}"
+                           th:text="${error}"
+                        >Firstname Error</p>
+                    </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
@@ -31,6 +49,11 @@
                                placeholder="First name"
                                type="text"
                                th:field="*{firstName}">
+                    </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('lastName')}">
+                        <p th:each="error: ${#fields.errors('lastName')}"
+                           th:text="${error}"
+                        >Lastname Error</p>
                     </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
@@ -41,6 +64,11 @@
                                type="text"
                                th:field="*{lastName}">
                     </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('email')}">
+                        <p th:each="error: ${#fields.errors('email')}"
+                           th:text="${error}"
+                        >Email Error</p>
+                    </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
@@ -49,6 +77,11 @@
                                placeholder="Email"
                                type="email"
                                th:field="*{email}">
+                    </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('specializationId')}">
+                        <p th:each="error: ${#fields.errors('specializationId')}"
+                           th:text="${error}"
+                        >Specialization Error</p>
                     </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
@@ -61,6 +94,11 @@
                                     th:value="${specialization.getId()}"></option>
                         </select>
                     </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('price')}">
+                        <p th:each="error: ${#fields.errors('price')}"
+                           th:text="${error}"
+                        >Price Error</p>
+                    </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">₴</span>
@@ -70,7 +108,11 @@
                                type="number"
                                th:field="*{price}">
                     </div>
-
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('password')}">
+                        <p th:each="error: ${#fields.errors('password')}"
+                           th:text="${error}"
+                        >Password Error</p>
+                    </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
@@ -79,6 +121,11 @@
                                placeholder="Create password"
                                type="password"
                                th:field="*{password}">
+                    </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('passwordConfirmation')}">
+                        <p th:each="error: ${#fields.errors('passwordConfirmation')}"
+                           th:text="${error}"
+                        >Password Confirmation Error</p>
                     </div>
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
@@ -92,6 +139,12 @@
                 </div>
                 <div class="col-xs-6 col-sm-6 col-md-6">
                     <div class="schedule">
+                        <div class="alert alert-danger timetable-error" role="alert"
+                             th:if="${#fields.hasErrors('timetable')}">
+                            <p th:each="error: ${#fields.errors('timetable')}"
+                               th:text="${error}"
+                            >Timetable Error</p>
+                        </div>
                         <table>
                             <thead>
                             <tr>

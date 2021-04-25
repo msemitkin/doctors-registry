@@ -23,6 +23,14 @@ public class RolesDataProviders {
             .toArray(Object[][]::new);
     }
 
+    @DataProvider(name = "roles_except_doctor")
+    public Object[][] roles_except_doctor() {
+        return Arrays.stream(Role.values())
+            .filter(role -> !role.equals(Role.DOCTOR))
+            .map(role -> new Object[]{role})
+            .toArray(Object[][]::new);
+    }
+
     @DataProvider(name = "roles_except_patient")
     public Object[][] roles_except_patient() {
         return Arrays.stream(Role.values())

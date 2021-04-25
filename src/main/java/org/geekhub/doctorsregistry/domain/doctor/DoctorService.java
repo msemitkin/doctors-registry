@@ -115,7 +115,9 @@ public class DoctorService {
         return result;
     }
 
-    public List<AppointmentEntity> getPendingAppointments(Integer doctorId) {
+    public List<AppointmentEntity> getPendingAppointments() {
+        String email = usernameExtractor.getDoctorUserName();
+        int doctorId = getIdByEmail(email);
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()
@@ -123,7 +125,9 @@ public class DoctorService {
             .collect(Collectors.toList());
     }
 
-    public List<AppointmentEntity> getArchivedAppointments(Integer doctorId) {
+    public List<AppointmentEntity> getArchivedAppointments() {
+        String email = usernameExtractor.getDoctorUserName();
+        int doctorId = getIdByEmail(email);
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()

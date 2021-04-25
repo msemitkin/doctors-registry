@@ -1,19 +1,47 @@
 package org.geekhub.doctorsregistry.web.dto.doctor;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
+import org.geekhub.doctorsregistry.web.validation.FieldsMatch;
+import org.geekhub.doctorsregistry.web.validation.UniqueEmail;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 
+@FieldsMatch(
+    first = "password",
+    second = "passwordConfirmation",
+    message = "Passwords do not match"
+)
 public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
-
+    @NotNull
+    @NotBlank(message = "Firstname is required")
     private String firstName;
+    @NotNull
+    @NotBlank(message = "Lastname is required")
     private String lastName;
+    @NotNull
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email is not valid")
+    @UniqueEmail
     private String email;
+    @NotNull
     private Integer specializationId;
+    @NotNull
+    @Min(value = 1, message = "Price must be positive number")
     private Integer price;
+    @NotNull
+    @Size(min = 1, message = "Please select doctor working hours")
     private List<String> timetable;
+    @NotNull
+    @NotBlank(message = "Password is required")
     private String password;
+    @NotNull
+    @NotBlank(message = "Password confirmation is required")
     private String passwordConfirmation;
 
     public CreateDoctorUserDTO() {
