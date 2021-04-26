@@ -68,10 +68,4 @@ public class DoctorJdbcTemplateRepository {
         return jdbcTemplate.query(query, Map.of(DOCTOR_ID, doctorId), rowMapper);
     }
 
-    public int getIdByEmail(String email) {
-        String query = sqlManager.getQuery("get-doctor-id-by-email");
-        Integer id = jdbcTemplate.queryForObject(query, Map.of("email", email), Integer.class);
-        return Optional.ofNullable(id).orElseThrow(DatabaseException::new);
-    }
-
 }

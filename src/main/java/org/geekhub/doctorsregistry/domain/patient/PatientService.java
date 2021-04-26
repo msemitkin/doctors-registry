@@ -50,7 +50,7 @@ public class PatientService {
     }
 
     public int getIdByEmail(String email) {
-        return patientJdbcTemplateRepository.getPatientId(email);
+        return patientRepository.getIdByEmail(email);
     }
 
     public boolean patientHasAppointmentOnSelectedTime(AppointmentEntity appointmentEntity) {

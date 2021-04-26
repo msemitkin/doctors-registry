@@ -74,7 +74,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(Collections.emptyList());
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         Assert.assertTrue(doctorService.getPendingAppointments().isEmpty());
     }
 
@@ -85,7 +85,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(PAST_APPOINTMENTS);
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         Assert.assertTrue(doctorService.getPendingAppointments().isEmpty());
     }
 
@@ -96,7 +96,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(FUTURE_APPOINTMENTS);
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> foundFutureAppointments = doctorService.getPendingAppointments();
 
         Assert.assertEquals(foundFutureAppointments, FUTURE_APPOINTMENTS);
@@ -112,7 +112,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(allAppointments);
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> foundFutureAppointments = doctorService.getPendingAppointments();
 
         Assert.assertEquals(foundFutureAppointments, FUTURE_APPOINTMENTS);
@@ -125,7 +125,7 @@ public class DoctorServiceTest {
         Mockito.when(zonedTime.now()).thenReturn(TEST_TIME);
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID)).thenReturn(Collections.emptyList());
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> pastAppointments = doctorService.getArchivedAppointments();
         Assert.assertTrue(pastAppointments.isEmpty());
     }
@@ -136,7 +136,7 @@ public class DoctorServiceTest {
         Mockito.when(zonedTime.now()).thenReturn(TEST_TIME);
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID)).thenReturn(Collections.emptyList());
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> pastAppointments = doctorService.getPendingAppointments();
         Assert.assertTrue(pastAppointments.isEmpty());
     }
@@ -148,7 +148,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(PAST_APPOINTMENTS);
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> foundPastAppointments = doctorService.getArchivedAppointments();
 
         Assert.assertEquals(foundPastAppointments, PAST_APPOINTMENTS);
@@ -165,7 +165,7 @@ public class DoctorServiceTest {
         Mockito.when(doctorJdbcTemplateRepository.getAppointments(TEST_DOCTOR_ID))
             .thenReturn(allAppointments);
         Mockito.when(usernameExtractor.getDoctorUserName()).thenReturn(doctorEmail);
-        Mockito.when(doctorJdbcTemplateRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
+        Mockito.when(doctorRepository.getIdByEmail(doctorEmail)).thenReturn(TEST_DOCTOR_ID);
         List<AppointmentEntity> foundPastAppointments = doctorService.getArchivedAppointments();
 
         Assert.assertEquals(foundPastAppointments, PAST_APPOINTMENTS);

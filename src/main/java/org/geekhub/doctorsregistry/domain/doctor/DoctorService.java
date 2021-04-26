@@ -69,7 +69,7 @@ public class DoctorService {
     }
 
     public int getIdByEmail(String email) {
-        return doctorJdbcTemplateRepository.getIdByEmail(email);
+        return doctorRepository.getIdByEmail(email);
     }
 
     public DoctorEntity findById(int id) {

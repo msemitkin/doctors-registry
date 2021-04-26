@@ -40,11 +40,6 @@ public class PatientJdbcTemplateRepository {
         this.sqlManager = sqlManager;
     }
 
-    public Integer getPatientId(String email) {
-        String query = sqlManager.getQuery("get-patient-id-by-email");
-        return jdbcTemplate.queryForObject(query, Map.of("email", email), Integer.class);
-    }
-
     public boolean patientDoNotHaveAppointment(Integer patientId, LocalDateTime dateTime) {
         String query = sqlManager.getQuery("if-patient-has-appointment-at");
         Map<String, ?> parameters = Map.of(
