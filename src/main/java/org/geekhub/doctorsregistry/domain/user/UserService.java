@@ -45,6 +45,11 @@ public class UserService {
         userDetailsManager.createUser(userDetails);
     }
 
+    public void changePassword(String oldPassword, String newPassword) {
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        userDetailsManager.changePassword(oldPassword, newEncodedPassword);
+    }
+
     public boolean userExists(String email) {
         return userDetailsManager.userExists(email);
     }
