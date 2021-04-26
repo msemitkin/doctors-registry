@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
+import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.mockito.Mockito;
@@ -25,6 +26,9 @@ public class UserMVCControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    @MockBean
+    private UserService userService;
     @Autowired
     @MockBean
     private RoleResolver roleResolver;
