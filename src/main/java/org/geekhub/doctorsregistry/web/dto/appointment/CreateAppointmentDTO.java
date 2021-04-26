@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.web.dto.appointment;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -8,6 +9,7 @@ public class CreateAppointmentDTO {
     @NotNull(message = "Doctor id must be specified")
     private Integer doctorId;
     @NotNull(message = "Appointment date and time must be specified")
+    @NotBlank(message = "Appointment date and time must be specified")
     private String inputDateTime;
 
     public CreateAppointmentDTO(Integer doctorId, String inputDateTime) {
