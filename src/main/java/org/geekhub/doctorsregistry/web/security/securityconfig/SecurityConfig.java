@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final int TOKEN_VALIDITY_SECONDS = 7 * 24 * 60 * 60;
     private static final String[] SWAGGER_WHITELIST = {
         "/api/**",
         "/configuration/ui",
@@ -53,8 +54,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticated()
             .and()
             .formLogin()
+            .loginPage("/login")
             .and()
-            .logout()
+            .logout().deleteCookies("JSESSIONID")
+            .and()
+            .rememberMe()
+            .key("uniqueAndSecret")
+            .tokenValiditySeconds(TOKEN_VALIDITY_SECONDS)
+            .rememberMeParameter("remember-me")
             .and()
             .csrf()
             .ignoringAntMatchers(SWAGGER_WHITELIST)
