@@ -1,9 +1,9 @@
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor1@gmail.com', '$2y$12$SiLh3fIQVu4gsFlhdIDTn.idR02rG6/hxxo9o7dfYRTAd0O6/avUK');
+VALUES ('OlegNechytailo@gmail.com', '$2y$12$i0MX.XFnvoFsgz7Rw8pEaOfkFbItYTNW.0ebuMIX.GyYfnQMy1MhO');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor1@gmail.com', 'ROLE_DOCTOR');
+VALUES ('OlegNechytailo@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Oleg', 'Nechytailo', 'test_doctor1@gmail.com', '1', '1', '100');
+VALUES ('Oleg', 'Nechytailo', 'OlegNechytailo@gmail.com', '1', '1', '100');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('1', '1', '08:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
@@ -23,11 +23,11 @@ VALUES ('1', '2', '13:00:00');
 
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor2@gmail.com', '$2y$12$tjMqGYf7gKNUAEM66uBkQuEtE8fETRLafLBOLribsfVnZxG9.Qze.');
+VALUES ('IvanKolyvan@gmail.com', '$2y$12$tmh1AecVsWiMGaxFj2WL2ezdqvQ16T/zDMBVcy7dXsTDuTnDIWkxy');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor2@gmail.com', 'ROLE_DOCTOR');
+VALUES ('IvanKolyvan@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Ivan', 'Kolyvan', 'test_doctor2@gmail.com', '2', '1', '75');
+VALUES ('Ivan', 'Kolyvan', 'IvanKolyvan@gmail.com', '2', '1', '75');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('2', '2', '08:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
@@ -47,11 +47,11 @@ VALUES ('2', '3', '13:00:00');
 
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor3@gmail.com', '$2y$12$wINggZKCwWgFEphlFkKWZuzosE4TobDFesAWAFmEDyB7wIn3/skqy');
+VALUES ('AndriyZalizniak@gmail.com', '$2y$12$wsmLRyGvmG/9svtDB25Xw.wiOBSaeFGzOMERRY/jHtySyWtjcZZFO');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor3@gmail.com', 'ROLE_DOCTOR');
+VALUES ('AndriyZalizniak@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Andriy', 'Zalizniak', 'test_doctor3@gmail.com', '3', '1', '300');
+VALUES ('Andriy', 'Zalizniak', 'AndriyZalizniak@gmail.com', '3', '1', '300');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('3', '3', '08:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
@@ -71,11 +71,11 @@ VALUES ('3', '4', '13:00:00');
 
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor4@gmail.com', '$2y$12$5y261MVsYaBi7DeIn/BpO.acjGHFE63XVCsOwfyG5cgK/A4XuFnqm');
+VALUES ('AnastasiaPischanska@gmail.com', '$2y$12$yfngZkLwS1emGRif9WT7OOtYcHvcx0./1OfJryj7pJ9uHymi550rG');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor4@gmail.com', 'ROLE_DOCTOR');
+VALUES ('AnastasiaPischanska@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Anastasia', 'Pischanska', 'test_doctor4@gmail.com', '4', '1', '250');
+VALUES ('Anastasia', 'Pischanska', 'AnastasiaPischanska@gmail.com', '4', '1', '250');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('4', '4', '17:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
@@ -95,11 +95,11 @@ VALUES ('4', '5', '12:00:00');
 
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor5@gmail.com', '$2y$12$QlSXZkvXVb8Atv6kNIMbfO66.fuMezRJder75Jz6dZY5iD3yiM4gq');
+VALUES ('SvitlanaHoloven@gmail.com', '$2y$12$ZPxdz0YTw9kDDOiO8pZ.beUGQKi77KtX74Ugl8QkZF97m87/Nj4vm');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor5@gmail.com', 'ROLE_DOCTOR');
+VALUES ('SvitlanaHoloven@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Svitlana', 'Holoven', 'test_doctor5@gmail.com', '6', '2', '500');
+VALUES ('Svitlana', 'Holoven', 'SvitlanaHoloven@gmail.com', '6', '2', '500');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('5', '5', '08:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
@@ -119,11 +119,11 @@ VALUES ('5', '5', '13:00:00');
 
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_doctor6@gmail.com', '$2y$12$G6.lokD9Mu.gdiN.T9qQceR3NMKMxhwJ4mgl4TF5gc9g5XXJJk5LG');
+VALUES ('MykhailoSemitkin@gmail.com', '$2y$12$pvBvUI8JFYbp.DYK21C8QukKz3FW/sOSDSlDR.30CDp1Mp3JQNtX6');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_doctor6@gmail.com', 'ROLE_DOCTOR');
+VALUES ('MykhailoSemitkin@gmail.com', 'ROLE_DOCTOR');
 INSERT INTO doctor (first_name, last_name, email, specialization_id, clinic_id, price)
-VALUES ('Mykhailo', 'Semitkin', 'test_doctor6@gmail.com', '5', '2', '750');
+VALUES ('Mykhailo', 'Semitkin', 'MykhailoSemitkin@gmail.com', '5', '2', '750');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)
 VALUES ('6', '6', '08:00:00');
 INSERT INTO doctor_working_hour(doctor_id, day_of_the_week, time)

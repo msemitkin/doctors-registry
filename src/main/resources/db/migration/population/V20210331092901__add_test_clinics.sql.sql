@@ -1,20 +1,20 @@
 INSERT INTO user_credentials (email, password)
-VALUES ('test_clinic1@gmail.com', '$2y$12$gyGcWLk4rykqw2wHNJvAgeNJTl9baa//awArnhL1naJmZeYJJWGHK');
+VALUES ('UniversumClinic@gmail.com', '$2y$12$hUD.6zFE19bW1rIlDYgKneZYgu.OwWnOHV3hING0cTIL4qkP4ncie');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_clinic1@gmail.com', 'ROLE_CLINIC');
+VALUES ('UniversumClinic@gmail.com', 'ROLE_CLINIC');
 INSERT INTO clinic (email, name, address)
-VALUES ('test_clinic1@gmail.com', 'test_clinic1_name', 'test-clinic1 address, 153');
+VALUES ('UniversumClinic@gmail.com', 'Universum Clinic', 'Volodymyra Vynnychenka St, 4');
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_clinic2@gmail.com', '$2y$12$GZbbTtKhw/s0LrRDeZXdxeLmuev89SvpvYZN8xVNG1tHhid.Vbp2q');
+VALUES ('MEDIKOM@gmail.com', '$2y$12$CkUXwIxKGzCeqpUJUa/6BejyMDZi27/K1TamAgdWO4SgpRmJkqqE2');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_clinic2@gmail.com', 'ROLE_CLINIC');
+VALUES ('MEDIKOM@gmail.com', 'ROLE_CLINIC');
 INSERT INTO clinic (email, name, address)
-VALUES ('test_clinic2@gmail.com', 'test_clinic2_name', 'test-clinic2 address, 200');
+VALUES ('MEDIKOM@gmail.com', 'MEDIKOM', 'Borshchahivska St, 129/131');
 
 INSERT INTO user_credentials (email, password)
-VALUES ('test_clinic3@gmail.com', '$2y$12$UZ3Miv2t.146YISy/IUYXOhKpYBEihgsNogvy0d6qZNUkC4e/7bkK');
+VALUES ('AcademicMedicalCentre@gmail.com', '$2y$12$upuEPFOYmm8dIxos5j6HreppL3YoNtBw1thuwqBsVuGfs5R/aZtmG');
 INSERT INTO authority (email, authority_name)
-VALUES ('test_clinic3@gmail.com', 'ROLE_CLINIC');
+VALUES ('AcademicMedicalCentre@gmail.com', 'ROLE_CLINIC');
 INSERT INTO clinic (email, name, address)
-VALUES ('test_clinic3@gmail.com', 'test_clinic3_name', 'test-clinic3 address, 300');
+VALUES ('AcademicMedicalCentre@gmail.com', 'Academic Medical Centre', 'Rohnidynska St, 5/14');
