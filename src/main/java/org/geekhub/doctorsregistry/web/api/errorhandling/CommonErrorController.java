@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.api.errorhandling;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,16 +20,16 @@ public class CommonErrorController implements ErrorController {
         if (status != null) {
             int statusCode = Integer.parseInt(status.toString());
             if (statusCode == 400) {
-                return new ErrorWithStatusDTO(statusCode, "Bad request");
+                return new ErrorWithStatusDTO(HttpStatus.BAD_REQUEST, "Bad request");
             } else if (statusCode == 403) {
-                return new ErrorWithStatusDTO(statusCode, "Sorry, you are not allowed to to that");
+                return new ErrorWithStatusDTO(HttpStatus.FORBIDDEN, "Sorry, you are not allowed to to that");
             } else if (statusCode == 404) {
-                return new ErrorWithStatusDTO(statusCode, "Page you are looking for does not exist");
+                return new ErrorWithStatusDTO(HttpStatus.NOT_FOUND, "Page you are looking for does not exist");
             } else if (statusCode < 500 && statusCode >= 400) {
-                return new ErrorWithStatusDTO(statusCode, "Some unexpected error happened");
+                return new ErrorWithStatusDTO(HttpStatus.resolve(statusCode), "Some unexpected error happened");
             }
         }
-        return new ErrorWithStatusDTO(500, "Some unexpected error happened");
+        return new ErrorWithStatusDTO(HttpStatus.INTERNAL_SERVER_ERROR, "Some unexpected error happened");
     }
 
     @Override

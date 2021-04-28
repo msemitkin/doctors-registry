@@ -1,16 +1,18 @@
 package org.geekhub.doctorsregistry.web.api.errorhandling;
 
+import org.springframework.http.HttpStatus;
+
 public class ErrorWithStatusDTO {
 
-    private Integer status;
+    private HttpStatus status;
     private String message;
 
-    public ErrorWithStatusDTO(Integer status, String message) {
+    public ErrorWithStatusDTO(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    public Integer getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 
