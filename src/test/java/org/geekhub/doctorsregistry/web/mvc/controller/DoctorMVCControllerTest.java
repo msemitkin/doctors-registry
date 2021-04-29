@@ -167,9 +167,10 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
         mockMvc.perform(get("/doctor").param("id", String.valueOf(doctorId)).with(user))
             .andExpect(status().isNotFound())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isMap())
-            .andExpect(jsonPath("$.message", is("Requested entity does not exist")));
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(view().name("error"))
+            .andExpect(model().size(1))
+            .andExpect(model().attributeExists("error"));
     }
 
     @Test
@@ -219,9 +220,9 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
             .param("inputDateTime", appointmentDTO.getInputDateTime())
         )
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$").isMap())
-            .andExpect(jsonPath("$.*", hasSize(1)))
-            .andExpect(jsonPath("$.message", is(message)));
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().size(1))
+            .andExpect(model().attributeExists("error"));
     }
 
     @Test

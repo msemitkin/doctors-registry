@@ -76,4 +76,11 @@ public class DefaultMVCExceptionHandler {
         return "error";
     }
 
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception e, Model model) {
+        logger.warn("Unexpected exception: ", e);
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        model.addAttribute("error", new ErrorWithStatusDTO(httpStatus, httpStatus.getReasonPhrase()));
+        return "error";
+    }
 }

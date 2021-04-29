@@ -10,11 +10,13 @@ import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
+import org.geekhub.doctorsregistry.web.api.errorhandling.ErrorWithStatusDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.geekhub.doctorsregistry.web.security.role.Role;
+import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -129,10 +132,10 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
 
         mockMvc.perform(get("/clinic").param("id", String.valueOf(clinicId)).with(patient))
             .andExpect(status().isNotFound())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isMap())
-            .andExpect(jsonPath("$.*", hasSize(1)))
-            .andExpect(jsonPath("$.message").isString());
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(view().name("error"))
+            .andExpect(model().size(1))
+            .andExpect(model().attributeExists("error"));
     }
 
     @Test

@@ -12,31 +12,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice(annotations = RestController.class)
-public class DefaultExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
+@RestControllerAdvice(annotations = RestController.class)
+public class DefaultRestExceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultRestExceptionHandler.class);
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorDTO> entityNotFound(EntityNotFoundException e) {
         logger.error("Entity was not found", e);
         return new ResponseEntity<>(
-            ErrorDTO.withMessage("Requested entity does not exist"), HttpStatus.NOT_FOUND);
+            ErrorDTO.withMessage(
+                "Requested entity does not exist"),
+            HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DoctorNotAvailableException.class)
-    public ResponseEntity<ErrorDTO> doctorNotAvailable(DoctorNotAvailableException e) {
+    public ResponseEntity<Object> doctorNotAvailable(DoctorNotAvailableException e, WebRequest webRequest) {
         logger.info("Doctor is not available at this time", e);
         return new ResponseEntity<>(
-            ErrorDTO.withMessage("Doctor is not available at this time"),
+            ErrorDTO.withMessage(
+                "Doctor is not available at this time"),
             HttpStatus.BAD_REQUEST
         );
     }
@@ -46,8 +50,7 @@ public class DefaultExceptionHandler {
         logger.info("Patient busy", e);
         return new ResponseEntity<>(
             ErrorDTO.withMessage(
-                "Sorry, you already have an appointment at selected time"
-            ),
+                "Sorry, you already have an appointment at selected time"),
             HttpStatus.BAD_REQUEST
         );
     }
@@ -57,8 +60,7 @@ public class DefaultExceptionHandler {
         logger.warn("Attempt to make multiple appointments with a doctor on a single day");
         return new ResponseEntity<>(
             ErrorDTO.withMessage(
-                "Sorry, you already have an appointment with this doctor on selected day"
-            ),
+                "Sorry, you already have an appointment with this doctor on selected day"),
             HttpStatus.BAD_REQUEST
         );
     }
@@ -66,15 +68,19 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(TimeNotAllowedException.class)
     public ResponseEntity<ErrorDTO> timeNotAllowed(TimeNotAllowedException e) {
         logger.warn("Received appointment with not allowed time", e);
-        return new ResponseEntity<>(ErrorDTO.withMessage(
-            "Sorry, you can only create appointments for the next seven days"),
+        return new ResponseEntity<>(
+            ErrorDTO.withMessage(
+                "Sorry, you can only create appointments for the next seven days"),
             HttpStatus.BAD_REQUEST
         );
     }
 
     @ExceptionHandler(OperationNotAllowedException.class)
     public ResponseEntity<ErrorDTO> notAllowedOperation(OperationNotAllowedException e) {
-        return new ResponseEntity<>(ErrorDTO.withMessage("Not allowed operation"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+            ErrorDTO.withMessage(
+                "Not allowed operation"),
+            HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BindException.class)
@@ -90,4 +96,12 @@ public class DefaultExceptionHandler {
         });
         return new ErrorMapDTO(errors);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ErrorWithStatusDTO handleException(Exception e) {
+        logger.warn("Unexpected exception: ", e);
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ErrorWithStatusDTO(httpStatus, httpStatus.getReasonPhrase());
+    }
+
 }
