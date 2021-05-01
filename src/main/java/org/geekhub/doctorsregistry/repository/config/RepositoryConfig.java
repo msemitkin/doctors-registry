@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile;
 @ComponentScan("org.geekhub.doctorsregistry")
 public class RepositoryConfig {
 
-    @Bean("datasource")
     @Profile("dev")
     HikariDataSource h2DataSource(
         @Value("${spring.datasource.url}") String url,
@@ -25,7 +24,6 @@ public class RepositoryConfig {
         return hikariConfig(url, username, password, driverClassName);
     }
 
-    @Bean("datasource")
     @Profile("prod")
     HikariDataSource postgresDataSource(
         @Value("${spring.datasource.url}") String url,
