@@ -13,15 +13,23 @@ import java.util.stream.Collectors;
 @Service
 public class AppointmentTime {
 
-    private final Set<LocalTime> availableTime = new HashSet<>();
+    private final Set<LocalTime> availableTime = init();
+    private static final LocalTime WORKING_DAY_STARTS_AT = LocalTime.parse("08:00");
+    private static final LocalTime WORKING_DAY_ENDS_AT = LocalTime.parse("20:00");
+    private static final int MINUTES_FREQUENCY = 20;
 
-    @PostConstruct
-    public void init() {
-        for (int hour = 8; hour < 20; hour++) {
-            for (int minute : new int[]{0, 20, 40}) {
-                availableTime.add(LocalTime.of(hour, minute));
+    private Set<LocalTime> init() {
+        Set<LocalTime> times = new HashSet<>();
+        LocalTime time = WORKING_DAY_STARTS_AT;
+        while (true) {
+            LocalTime appointmentEndsAt = time.plusMinutes(MINUTES_FREQUENCY);
+            if (appointmentEndsAt.isAfter(WORKING_DAY_ENDS_AT)) {
+                break;
             }
+            times.add(time);
+            time = time.plusMinutes(MINUTES_FREQUENCY);
         }
+        return times;
     }
 
     public boolean isTimeValid(LocalTime time) {

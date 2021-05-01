@@ -15,7 +15,6 @@ public class AppointmentTimeTest {
     @BeforeMethod
     private void setUp() {
         appointmentTime = new AppointmentTime();
-        appointmentTime.init();
     }
 
     @DataProvider(name = "returns_false_when_time_is_not_valid_parameters")
