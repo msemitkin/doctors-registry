@@ -24,7 +24,8 @@
         </h2>
         <ul>
             <li>Specialization: <span th:text="${doctor.getSpecialization().getName()}">specialization</span></li>
-            <li>Price starts at: <span th:text="${doctor.getPrice()}"></span></li>
+            <li>Price starts at: <span th:text="${doctor.getPrice()}">price</span>
+                <span th:text="${@environment.getProperty('currency')}">CURRENCY</span></li>
         </ul>
         <p><a th:href="'/clinic?id=' + ${doctor.getClinicId()}">Clinic</a></p>
     </div>
