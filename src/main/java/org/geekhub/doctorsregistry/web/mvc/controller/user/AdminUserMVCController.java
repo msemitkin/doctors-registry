@@ -16,4 +16,9 @@ public class AdminUserMVCController {
         return "admin-cabinet";
     }
 
+    @GetMapping("/users/analytics")
+    public String getAnalytics() {
+        return "analytics";
+    }
+
 }
