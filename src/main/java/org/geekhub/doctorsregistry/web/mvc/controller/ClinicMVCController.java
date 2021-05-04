@@ -42,11 +42,7 @@ public class ClinicMVCController {
     }
 
     @GetMapping("/clinics")
-    public String clinics(Model model) {
-        List<ClinicDTO> clinics = clinicService.findAll().stream()
-            .map(clinicMapper::toDTO)
-            .collect(Collectors.toList());
-        model.addAttribute("clinics", clinics);
+    public String clinics() {
         return "clinics";
     }
 

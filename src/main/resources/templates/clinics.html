@@ -11,7 +11,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
     <script type="text/javascript">
-        function clinic(id) {
+        $.get("/api/clinics", function (data) {
+            let html = '';
+            data.forEach(clinic => {
+                html += appendClinic(clinic);
+            });
+            $("#clinics").append(html);
+        });
+
+        function appendClinic(clinic) {
+            console.log(clinic);
+            return `<li class="clinic" onclick=clinicUrl(${clinic.id})>
+                        <h4>${clinic.name}</h4>
+                        <p>Address: <span>${clinic.address}</span></p>
+                    </li>`;
+        }
+
+        function clinicUrl(id) {
             window.location.href = "/clinic?id=" + id;
         }
     </script>
@@ -20,11 +36,7 @@
 <header id="navigation">
 </header>
 <div id="content">
-    <ul>
-        <li class="clinic" th:each="clinic : ${clinics}" th:onclick="'clinic(' + ${clinic.getId()} + ')'">
-            <h4 th:text="${clinic.getName()}">clinic-name</h4>
-            <p>Address: <span th:text="${clinic.getAddress()}">address</span></p>
-        </li>
+    <ul id="clinics">
     </ul>
 </div>
 </body>

@@ -72,55 +72,25 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
     public void only_authenticated_users_can_get_clinics_list() throws Exception {
         mockMvc.perform(get("/clinics"))
             .andExpect(status().isFound());
-        Mockito.verify(clinicService, Mockito.never()).findAll();
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_have_access_to_clinics_list(Role role) throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles(role.toString()).password("password");
-        Mockito.when(clinicService.findAll()).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/clinics").with(user))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(view().name("clinics"))
-            .andExpect(model().size(1))
-            .andExpect(model().attribute("clinics", Collections.emptyList()));
-    }
-
-    @Test
-    public void returns_all_clinics() throws Exception {
-        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
-            user("email@gmail.com").roles("PATIENT").password("password");
-        List<ClinicEntity> clinics = List.of(
-            new ClinicEntity(1, "ClinicName1", "ClinicAddress1", "ClinicEmail1@gmail.com"),
-            new ClinicEntity(2, "ClinicName2", "ClinicAddress2", "ClinicEmail2@gmail.com"),
-            new ClinicEntity(3, "ClinicName3", "ClinicAddress3", "ClinicEmail3@gmail.com")
-        );
-        List<ClinicDTO> clinicDTOs = List.of(
-            new ClinicDTO(1, "ClinicName1", "ClinicAddress1"),
-            new ClinicDTO(2, "ClinicName2", "ClinicAddress2"),
-            new ClinicDTO(3, "ClinicName3", "ClinicAddress3")
-        );
-        Mockito.when(clinicService.findAll()).thenReturn(clinics);
-        for (int i = 0; i < clinics.size(); i++) {
-            Mockito.when(clinicMapper.toDTO(clinics.get(i))).thenReturn(clinicDTOs.get(i));
-        }
-        mockMvc.perform(get("/clinics").with(user))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-            .andExpect(view().name("clinics"))
-            .andExpect(model().size(1))
-            .andExpect(model().attribute("clinics", clinicDTOs));
+            .andExpect(model().size(0));
     }
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void only_authenticated_users_can_get_clinic_by_id() throws Exception {
         int clinicId = 12345;
-        mockMvc.perform(get("/clinics"))
+        mockMvc.perform(get("/clinic").param("id", String.valueOf(clinicId)))
             .andExpect(status().isFound());
-        Mockito.verify(clinicService, Mockito.never()).findById(clinicId);
     }
 
     @Test
