@@ -16,7 +16,7 @@
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-            $.get('/api/analytics', function (jsonData) {
+            $.get('/api/users/analytics', function (jsonData) {
                 let arrayData = Object.entries(jsonData.analytics);
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'User Type');
@@ -34,7 +34,6 @@
     </script>
     <script th:src="@{/js/load-nav.js}"></script>
 </head>
-q
 <body>
 <header id="navigation"></header>
 <div class="container">
