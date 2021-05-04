@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>BeHelsi</title>
@@ -44,7 +46,8 @@
                                 <input type="radio"
                                        th:id="${entry.getKey()} + 'T' + ${time}"
                                        th:value="${entry.getKey()} + 'T' + ${time}"
-                                       name="inputDateTime">
+                                       name="inputDateTime"
+                                       th:disabled="!${#authorization.expression('hasRole(''ROLE_PATIENT'')')}">
 
                                 <label th:for="${entry.getKey()} + 'T' + ${time}"
                                        th:text="${time}">time</label>
@@ -58,7 +61,10 @@
             <input type="hidden"
                    th:value="${doctor.getId()}"
                    name="doctorId">
-            <button type="submit" id="submit">OK</button>
+            <button type="submit"
+                    id="submit"
+                    sec:authorize="hasRole('PATIENT')">OK
+            </button>
         </form>
     </div>
 </div>
