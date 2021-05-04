@@ -76,46 +76,11 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles(role.toString()).password("password");
 
-        List<DoctorEntity> doctors = List.of(
-            new DoctorEntity(1, "name1", "surname1", "email1@gmail.com",
-                new SpecializationEntity(1, "specialization1"), 100, 100),
-            new DoctorEntity(2, "name2", "surname2", "email2@gmail.com",
-                new SpecializationEntity(2, "specialization2"), 200, 100),
-            new DoctorEntity(2, "name3", "surname3", "email3@gmail.com",
-                new SpecializationEntity(3, "specialization3"), 300, 100)
-        );
-
-        List<DoctorDTO> doctorDTOs = List.of(
-            new DoctorDTO(1, "name1", "surname1",
-                new SpecializationDTO(1, "specialization1"), 100, 100),
-            new DoctorDTO(2, "name2", "surname2",
-                new SpecializationDTO(2, "specialization2"), 200, 100),
-            new DoctorDTO(2, "name3", "surname3",
-                new SpecializationDTO(3, "specialization3"), 300, 100)
-        );
-        Mockito.when(doctorService.findAll()).thenReturn(doctors);
-        for (int i = 0; i < doctors.size(); i++) {
-            Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
-        }
         mockMvc.perform(get("/doctors").with(user))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-            .andExpect(model().size(1))
-            .andExpect(model().attribute("doctors", doctorDTOs));
-    }
-
-    @Test
-    public void works_correct_when_there_are_no_doctors() throws Exception {
-        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
-            user("email@gmail.com").roles("PATIENT").password("password");
-
-        Mockito.when(doctorService.findAll()).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/doctors").with(user))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-            .andExpect(model().size(1))
-            .andExpect(model().attribute("doctors", Collections.emptyList()));
+            .andExpect(view().name("doctors"))
+            .andExpect(model().size(0));
     }
 
     @Test

@@ -11,8 +11,28 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
     <script type="text/javascript">
-        function doctor(id) {
+        function doctorUrl(id) {
             window.location.href = "/doctor?id=" + id;
+        }
+
+        $.get("/api/doctors", function (doctors) {
+            $(".doctors").append(renderDoctors(doctors))
+        });
+
+        function renderDoctors(doctors) {
+            let result = '';
+            doctors.forEach(doctor => {
+                result += renderSingleDoctor(doctor);
+            });
+            return result;
+        }
+
+        function renderSingleDoctor(doctor) {
+            return `<li class="doctor" onclick=doctorUrl(${doctor.id})>
+                        <h5> <span>${doctor.firstName}</span> <span>${doctor.lastName}</span></h5>
+                        <p>Specialization: <span>${doctor.specialization.name}</span></p>
+                        <p><a href="/clinic?id=${doctor.clinicId}">Clinic</a></p >
+                    </li>`;
         }
     </script>
 </head>
@@ -20,16 +40,7 @@
 <header id="navigation">
 </header>
 <div id="content">
-    <ul>
-        <li class="doctor" th:each="doctor : ${doctors}" th:onclick="'doctor(' + ${doctor.getId()} + ')'">
-            <h5>
-                <span th:text="${doctor.getFirstName()}">first-name</span>
-                <span th:text="${doctor.getLastName()}">last-name</span>
-            </h5>
-            <p>Specialization: <span th:text="${doctor.getSpecialization().getName()}">specialization</span>
-            </p>
-            <p><a th:href="'/clinic?id=' + ${doctor.getClinicId()}">Clinic</a></p>
-        </li>
+    <ul class="doctors">
     </ul>
 </div>
 </body>

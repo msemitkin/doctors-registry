@@ -38,11 +38,7 @@ public class DoctorMVCController {
     }
 
     @GetMapping("/doctors")
-    public String doctors(Model model) {
-        List<DoctorDTO> doctors = doctorService.findAll().stream()
-            .map(doctorMapper::toDTO)
-            .collect(Collectors.toList());
-        model.addAttribute("doctors", doctors);
+    public String doctors() {
         return "doctors";
     }
 
