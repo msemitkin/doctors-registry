@@ -1,11 +1,9 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
-import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
-import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,8 +12,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,9 +30,6 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     @Autowired
     @MockBean
     private PatientService patientService;
-    @Autowired
-    @MockBean
-    private AppointmentMapper appointmentMapper;
     @Autowired
     @MockBean
     private AppointmentService appointmentService;
@@ -113,9 +106,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
         mockMvc.perform(get("/patients/me/cabinet").with(patient))
             .andExpect(status().isOk())
             .andExpect(view().name("patient-cabinet"))
-            .andExpect(model().size(2))
-            .andExpect(model().attribute("pending", Matchers.any(List.class)))
-            .andExpect(model().attribute("archive", Matchers.any(List.class)));
+            .andExpect(model().size(0));
     }
 
     @Test
