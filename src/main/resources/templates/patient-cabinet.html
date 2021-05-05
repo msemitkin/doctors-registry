@@ -38,9 +38,17 @@
 
             function renderPendingAppointment(appointment) {
                 let doctorFullName = getDoctorNameById(appointment.doctorId);
+                let splits = appointment.dateTime.split('T');
+                let date = splits[0];
+                let time = splits[1];
                 return `<ul class="list-group list-group-horizontal">
                         <li class="list-group-item"><a href="/doctor?id=${appointment.doctorId}">${doctorFullName}</a></li>
-                        <li class="list-group-item">${appointment.dateTime}</li>
+                        <li class="list-group-item">
+                            <ul className="list-group list-group-flush">
+                                <li className="list-group-item">Date: ${date}</li>
+                                <li className="list-group-item">Time: ${time}</li>
+                            </ul>
+                        </li>
                         <li class="list-group-item">
                             <form method="post" action="/patients/me/appointments/delete?id=${appointment.id}">
                                 <input type="hidden" name="_csrf" value=${$("meta[name='_csrf']").attr("content")}>
@@ -52,9 +60,17 @@
 
             function renderArchivedAppointment(appointment) {
                 let doctorFullName = getDoctorNameById(appointment.doctorId);
+                let splits = appointment.dateTime.split('T');
+                let date = splits[0];
+                let time = splits[1];
                 return `<ul class="list-group list-group-horizontal">
                         <li class="list-group-item"><a href="/doctor?id=${appointment.doctorId}">${doctorFullName}</a></li>
-                        <li class="list-group-item">${appointment.dateTime}</li>
+                        <li class="list-group-item">
+                            <ul className="list-group list-group-flush">
+                                <li className="list-group-item">Date: ${date}</li>
+                                <li className="list-group-item">Time: ${time}</li>
+                            </ul>
+                        </li>
                     </ul>`;
             }
 
