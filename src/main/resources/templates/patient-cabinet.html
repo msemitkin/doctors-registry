@@ -9,6 +9,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
+    <script type="text/javascript">
+        $.get("/api/patients/me/appointments/pending", function (appointments) {
+            $("#list-pending").append(renderPendingAppointments(appointments));
+        });
+        $.get("/api/patients/me/appointments/archive", function (appointments) {
+            $("#list-archive").append(renderArchivedAppointments(appointments));
+        });
+
+        function renderPendingAppointments(appointments) {
+            let result = '';
+            appointments.forEach(appointment => {
+                result += renderPendingAppointment(appointment)
+            });
+            return result;
+        }
+
+        function renderArchivedAppointments(appointments) {
+            let result = '';
+            appointments.forEach(appointment => {
+                result += renderArchivedAppointment(appointment)
+            });
+            return result;
+        }
+
+        function renderPendingAppointment(appointment) {
+            return `<ul class="list-group list-group-horizontal">
+                        <li class="list-group-item">${appointment.doctorId}</li>
+                        <li class="list-group-item">${appointment.dateTime}</li>
+                        <li class="list-group-item">
+                            <form method="post" action="'/patients/me/appointments/delete?id=' + ${appointment.id}">
+                                <button type="submit" class="btn btn-light">Cancel</button>
+                            </form>
+                        </li>
+                    </ul>`;
+        }
+
+        function renderArchivedAppointment(appointment) {
+            return `<ul class="list-group list-group-horizontal">
+                        <li class="list-group-item">${appointment.doctorId}</li>
+                        <li class="list-group-item">${appointment.dateTime}</li>
+                    </ul>`;
+        }
+    </script>
 </head>
 <body>
 <header id="navigation">
@@ -16,30 +59,31 @@
 <div class="row">
     <div class="col-4">
         <div class="list-group" id="list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
-               href="#list-home" role="tab" aria-controls="home">Pending</a>
-            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
-               href="#list-profile" role="tab" aria-controls="profile">Archive</a>
+            <a class="list-group-item list-group-item-action active"
+               id="list-home-list"
+               data-toggle="list"
+               href="#list-pending"
+               role="tab"
+               aria-controls="home">Pending</a>
+            <a class="list-group-item list-group-item-action"
+               id="list-profile-list"
+               data-toggle="list"
+               href="#list-archive"
+               role="tab"
+               aria-controls="profile">Archive</a>
         </div>
     </div>
     <div class="col-8">
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                <ul class="list-group list-group-horizontal" th:each="appointment : ${pending}">
-                    <li class="list-group-item" th:text="${appointment.getDoctorId()}">Patient id</li>
-                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
-                    <li class="list-group-item">
-                        <form method="post" th:action="'/patients/me/appointments/delete?id=' + ${appointment.getId()}">
-                            <button type="submit" class="btn btn-light">Cancel</button>
-                        </form>
-                    </li>
-                </ul>
+            <div class="tab-pane fade show active"
+                 id="list-pending"
+                 role="tabpanel"
+                 aria-labelledby="list-home-list">
             </div>
-            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-                <ul class="list-group list-group-horizontal" th:each="appointment : ${archive}">
-                    <li class="list-group-item" th:text="${appointment.getDoctorId()}">Patient id</li>
-                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
-                </ul>
+            <div class="tab-pane fade"
+                 id="list-archive"
+                 role="tabpanel"
+                 aria-labelledby="list-profile-list">
             </div>
         </div>
     </div>
