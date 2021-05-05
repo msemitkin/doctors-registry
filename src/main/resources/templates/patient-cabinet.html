@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Cabinet</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -38,7 +40,8 @@
                         <li class="list-group-item">${appointment.doctorId}</li>
                         <li class="list-group-item">${appointment.dateTime}</li>
                         <li class="list-group-item">
-                            <form method="post" action="'/patients/me/appointments/delete?id=' + ${appointment.id}">
+                            <form method="post" action="/patients/me/appointments/delete?id=${appointment.id}">
+                                <input type="hidden" name="_csrf" value=${$("meta[name='_csrf']").attr("content")}>
                                 <button type="submit" class="btn btn-light">Cancel</button>
                             </form>
                         </li>
