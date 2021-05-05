@@ -9,6 +9,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $.get("/api/doctors/me/appointments/pending", function (appointments) {
+                $("#list-pending").append(renderAppointments(appointments));
+            });
+            $.get("/api/doctors/me/appointments/archive", function (appointments) {
+                $("#list-archive").append(renderAppointments(appointments));
+            });
+
+            function renderAppointments(appointments) {
+                let result = '';
+                appointments.forEach(appointment => {
+                    result += renderAppointment(appointment)
+                });
+                return result;
+            }
+
+            function renderAppointment(appointment) {
+                let patientFullName = getPatientNameById(appointment.patientId);
+                let splits = appointment.dateTime.split('T');
+                let date = splits[0];
+                let time = splits[1];
+                return `<ul class="list-group list-group-horizontal">
+                        <li class="list-group-item">${patientFullName}</li>
+                        <li class="list-group-item">
+                            <ul className="list-group list-group-flush">
+                                <li className="list-group-item">Date: ${date}</li>
+                                <li className="list-group-item">Time: ${time}</li>
+                            </ul>
+                        </li>
+                    </ul>`;
+            }
+
+            function getPatientNameById(patientId) {
+                let patientFullName = '';
+                $.get({
+                    url: `/api/patients/${patientId}`,
+                    success: function (patient) {
+                        patientFullName = ''.concat(`${patient.firstName}`, ' ', `${patient.lastName}`);
+                    },
+                    async: false
+                });
+                return patientFullName;
+            }
+        });
+    </script>
 </head>
 <body>
 <header id="navigation">
@@ -16,25 +62,31 @@
 <div class="row">
     <div class="col-4">
         <div class="list-group" id="list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
-               href="#list-home" role="tab" aria-controls="home">Pending</a>
-            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
-               href="#list-profile" role="tab" aria-controls="profile">Archive</a>
+            <a class="list-group-item list-group-item-action active"
+               id="list-home-list"
+               data-toggle="list"
+               href="#list-pending"
+               role="tab"
+               aria-controls="home">Pending</a>
+            <a class="list-group-item list-group-item-action"
+               id="list-profile-list"
+               data-toggle="list"
+               href="#list-archive"
+               role="tab"
+               aria-controls="profile">Archive</a>
         </div>
     </div>
     <div class="col-8">
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                <ul class="list-group list-group-horizontal" th:each="appointment : ${pending}">
-                    <li class="list-group-item" th:text="${appointment.getPatientId()}">Patient id</li>
-                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
-                </ul>
+            <div class="tab-pane fade show active"
+                 id="list-pending"
+                 role="tabpanel"
+                 aria-labelledby="list-home-list">
             </div>
-            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-                <ul class="list-group list-group-horizontal" th:each="appointment : ${archive}">
-                    <li class="list-group-item" th:text="${appointment.getPatientId()}">Patient id</li>
-                    <li class="list-group-item" th:text="${appointment.getDateTime()}">DateTime</li>
-                </ul>
+            <div class="tab-pane fade"
+                 id="list-archive"
+                 role="tabpanel"
+                 aria-labelledby="list-profile-list">
             </div>
         </div>
     </div>

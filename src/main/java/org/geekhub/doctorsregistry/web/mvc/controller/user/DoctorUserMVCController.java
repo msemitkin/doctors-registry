@@ -24,33 +24,24 @@ import java.util.stream.Collectors;
 public class DoctorUserMVCController {
 
     private final DoctorService doctorService;
-    private final AppointmentMapper appointmentMapper;
     private final Schedule schedule;
     private final SpecializationService specializationService;
     private final SpecializationMapper specializationMapper;
 
     public DoctorUserMVCController(
         DoctorService doctorService,
-        AppointmentMapper appointmentMapper,
         Schedule schedule,
         SpecializationService specializationService,
         SpecializationMapper specializationMapper
     ) {
         this.doctorService = doctorService;
-        this.appointmentMapper = appointmentMapper;
         this.schedule = schedule;
         this.specializationService = specializationService;
         this.specializationMapper = specializationMapper;
     }
 
     @GetMapping("/doctors/me/cabinet")
-    public String cabinet(Model model) {
-        model.addAttribute("archive", doctorService.getArchivedAppointments().stream()
-            .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList()));
-        model.addAttribute("pending", doctorService.getPendingAppointments().stream()
-            .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList()));
+    public String cabinet() {
         return "doctor-cabinet";
     }
 

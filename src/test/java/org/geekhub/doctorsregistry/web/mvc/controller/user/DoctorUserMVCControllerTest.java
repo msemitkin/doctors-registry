@@ -43,9 +43,6 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     private DoctorService doctorService;
     @Autowired
     @MockBean
-    private AppointmentMapper appointmentMapper;
-    @Autowired
-    @MockBean
     private Schedule schedule;
     @Autowired
     @MockBean
@@ -72,45 +69,13 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     }
 
     @Test
-    public void returns_doctor_cabinet_with_future_and_past_appointments_correct() throws Exception {
+    public void returns_doctor_cabinet_correct() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor doctor =
             user("email@gmail.com").roles("DOCTOR").password("password");
-
-        List<AppointmentEntity> archivedAppointments = List.of(
-            new AppointmentEntity(1, 5, 1, LocalDateTime.parse("2021-10-10T10:00")),
-            new AppointmentEntity(2, 10, 1, LocalDateTime.parse("2021-10-10T10:20")),
-            new AppointmentEntity(3, 15, 1, LocalDateTime.parse("2021-10-11T08:00"))
-        );
-        List<AppointmentDTO> archivedAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 5, 1, "2021-10-10T10:00"),
-            new AppointmentDTO(2, 10, 1, "2021-10-10T10:20"),
-            new AppointmentDTO(3, 15, 1, "2021-10-11T08:00")
-        );
-        List<AppointmentEntity> pendingAppointments = List.of(
-            new AppointmentEntity(1, 20, 1, LocalDateTime.parse("2021-10-20T10:00")),
-            new AppointmentEntity(2, 25, 1, LocalDateTime.parse("2021-10-20T10:20")),
-            new AppointmentEntity(3, 30, 1, LocalDateTime.parse("2021-10-21T08:00"))
-        );
-        List<AppointmentDTO> pendingAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 20, 1, "2021-10-20T10:00"),
-            new AppointmentDTO(2, 25, 1, "2021-10-20T10:20"),
-            new AppointmentDTO(3, 30, 1, "2021-10-21T08:00")
-        );
-
-        Mockito.when(doctorService.getArchivedAppointments()).thenReturn(archivedAppointments);
-        Mockito.when(doctorService.getPendingAppointments()).thenReturn(pendingAppointments);
-        for (int i = 0; i < archivedAppointments.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(archivedAppointments.get(i))).thenReturn(archivedAppointmentsDTOs.get(i));
-        }
-        for (int i = 0; i < archivedAppointments.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(pendingAppointments.get(i))).thenReturn(pendingAppointmentsDTOs.get(i));
-        }
         mockMvc.perform(get("/doctors/me/cabinet").with(doctor))
             .andExpect(status().isOk())
             .andExpect(view().name("doctor-cabinet"))
-            .andExpect(model().size(2))
-            .andExpect(model().attribute("archive", archivedAppointmentsDTOs))
-            .andExpect(model().attribute("pending", pendingAppointmentsDTOs));
+            .andExpect(model().size(0));
     }
 
     @Test(dataProvider = "roles_except_clinic", dataProviderClass = RolesDataProviders.class)
