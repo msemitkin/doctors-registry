@@ -22,7 +22,7 @@ public class AppointmentMapper {
         return new AppointmentDTO(
             appointmentEntity.getId(),
             appointmentEntity.getPatientId(),
-            appointmentEntity.getPatientId(),
+            appointmentEntity.getDoctorId(),
             appointmentEntity.getDateTime().toString()
         );
     }
