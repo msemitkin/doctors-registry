@@ -12,32 +12,34 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/load-nav.js}"></script>
     <script type="text/javascript">
-        $.get("/api/patients/me/appointments/pending", function (appointments) {
-            $("#list-pending").append(renderPendingAppointments(appointments));
-        });
-        $.get("/api/patients/me/appointments/archive", function (appointments) {
-            $("#list-archive").append(renderArchivedAppointments(appointments));
-        });
-
-        function renderPendingAppointments(appointments) {
-            let result = '';
-            appointments.forEach(appointment => {
-                result += renderPendingAppointment(appointment)
+        $(function () {
+            $.get("/api/patients/me/appointments/pending", function (appointments) {
+                $("#list-pending").append(renderPendingAppointments(appointments));
             });
-            return result;
-        }
-
-        function renderArchivedAppointments(appointments) {
-            let result = '';
-            appointments.forEach(appointment => {
-                result += renderArchivedAppointment(appointment)
+            $.get("/api/patients/me/appointments/archive", function (appointments) {
+                $("#list-archive").append(renderArchivedAppointments(appointments));
             });
-            return result;
-        }
 
-        function renderPendingAppointment(appointment) {
-            return `<ul class="list-group list-group-horizontal">
-                        <li class="list-group-item">${appointment.doctorId}</li>
+            function renderPendingAppointments(appointments) {
+                let result = '';
+                appointments.forEach(appointment => {
+                    result += renderPendingAppointment(appointment)
+                });
+                return result;
+            }
+
+            function renderArchivedAppointments(appointments) {
+                let result = '';
+                appointments.forEach(appointment => {
+                    result += renderArchivedAppointment(appointment)
+                });
+                return result;
+            }
+
+            function renderPendingAppointment(appointment) {
+                let doctorFullName = getDoctorNameById(appointment.doctorId);
+                return `<ul class="list-group list-group-horizontal">
+                        <li class="list-group-item"><a href="/doctor?id=${appointment.doctorId}">${doctorFullName}</a></li>
                         <li class="list-group-item">${appointment.dateTime}</li>
                         <li class="list-group-item">
                             <form method="post" action="/patients/me/appointments/delete?id=${appointment.id}">
@@ -46,14 +48,28 @@
                             </form>
                         </li>
                     </ul>`;
-        }
+            }
 
-        function renderArchivedAppointment(appointment) {
-            return `<ul class="list-group list-group-horizontal">
-                        <li class="list-group-item">${appointment.doctorId}</li>
+            function renderArchivedAppointment(appointment) {
+                let doctorFullName = getDoctorNameById(appointment.doctorId);
+                return `<ul class="list-group list-group-horizontal">
+                        <li class="list-group-item"><a href="/doctor?id=${appointment.doctorId}">${doctorFullName}</a></li>
                         <li class="list-group-item">${appointment.dateTime}</li>
                     </ul>`;
-        }
+            }
+
+            function getDoctorNameById(doctorId) {
+                let doctorFullName = '';
+                $.get({
+                    url: `/api/doctors/${doctorId}`,
+                    success: function (doctor) {
+                        doctorFullName = ''.concat(`${doctor.firstName}`, ' ', `${doctor.lastName}`);
+                    },
+                    async: false
+                });
+                return doctorFullName;
+            }
+        });
     </script>
 </head>
 <body>
