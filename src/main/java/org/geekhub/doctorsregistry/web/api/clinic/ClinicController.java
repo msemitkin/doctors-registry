@@ -36,15 +36,18 @@ public class ClinicController {
         clinicService.save(clinicDTO);
     }
 
-    @GetMapping("/api/clinics")
-    public List<ClinicDTO> findAllClinics() {
-        return clinicService.findAll().stream()
+    @GetMapping("/api/clinics/pages/{page}")
+    public List<ClinicDTO> findAllClinics(@PathVariable(value = "page") int page) {
+        if (page < 0) {
+            page = 0;
+        }
+        return clinicService.findAll(page).stream()
             .map(clinicMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("/api/clinics/{id}")
-    public ClinicDTO findClinicById(@PathVariable("id") Integer id) {
+    public ClinicDTO findClinicById(@PathVariable("id") int id) {
         ClinicEntity found = clinicService.findById(id);
         return clinicMapper.toDTO(found);
     }

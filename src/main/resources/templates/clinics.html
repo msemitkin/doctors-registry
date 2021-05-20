@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="page" th:content="${param.page} == null ? '0' : ${param.page}">
     <title>Clinics</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
     <link rel="stylesheet" th:href="@{/style/clinics-style.css}">
@@ -14,13 +15,31 @@
         function clinic(id) {
             window.location.href = "/clinic?id=" + id;
         }
+
+        function previousPage() {
+            window.location = `/clinics?page=`.concat((parseInt($('meta[name=page]').attr('content')) - 1).toString())
+        }
+
+        function nextPage() {
+            window.location = `/clinics?page=`.concat((parseInt($('meta[name=page]').attr('content')) + 1).toString());
+        }
     </script>
 </head>
 <body>
 <header id="navigation">
 </header>
 <div id="content">
-    <ul>
+    <ul class="pagination d-flex justify-content-center">
+        <li class="page-item"><p class="page-link"
+                                 onclick="previousPage()">
+            Previous</p>
+        </li>
+        <li class="page-item"><p class="page-link"
+                                 onclick="nextPage()">
+            Next</p>
+        </li>
+    </ul>
+    <ul style="width: 600px; margin: auto; padding-left: 0">
         <li class="clinic" th:each="clinic : ${clinics}" th:onclick="'clinic(' + ${clinic.getId()} + ')'">
             <h4 th:text="${clinic.getName()}">clinic-name</h4>
             <p>Address: <span th:text="${clinic.getAddress()}">address</span></p>

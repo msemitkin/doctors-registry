@@ -15,6 +15,7 @@ import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHou
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class DoctorService {
+
+    private static final int PAGE_SIZE = 10;
 
     private final DoctorRepository doctorRepository;
     private final DoctorJdbcTemplateRepository doctorJdbcTemplateRepository;
@@ -63,9 +65,8 @@ public class DoctorService {
         this.usernameExtractor = usernameExtractor;
     }
 
-    public List<DoctorEntity> findAll() {
-        return StreamSupport.stream(doctorRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+    public List<DoctorEntity> findAll(int page) {
+        return doctorRepository.findAll(PageRequest.of(page, PAGE_SIZE)).toList();
     }
 
     public int getIdByEmail(String email) {

@@ -42,8 +42,14 @@ public class ClinicMVCController {
     }
 
     @GetMapping("/clinics")
-    public String clinics(Model model) {
-        List<ClinicDTO> clinics = clinicService.findAll().stream()
+    public String clinics(
+        @RequestParam(value = "page", required = false) Integer page,
+        Model model
+    ) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        List<ClinicDTO> clinics = clinicService.findAll(page).stream()
             .map(clinicMapper::toDTO)
             .collect(Collectors.toList());
         model.addAttribute("clinics", clinics);
@@ -51,7 +57,10 @@ public class ClinicMVCController {
     }
 
     @GetMapping("/clinic")
-    public String clinic(@RequestParam("id") Integer clinicId, Model model) {
+    public String clinic(
+        @RequestParam("id") Integer clinicId,
+        Model model
+    ) {
         ClinicDTO clinic = clinicMapper.toDTO(clinicService.findById(clinicId));
         List<DoctorDTO> doctors = doctorService.findDoctorsByClinic(clinicId).stream()
             .map(doctorMapper::toDTO)

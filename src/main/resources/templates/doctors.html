@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="page" th:content="${param.page} == null ? '0' : ${param.page}">
     <title>Doctors</title>
     <link rel="shortcut icon" th:href="@{/media/logo.ico}"/>
     <link rel="stylesheet" th:href="@{/style/doctors-style.css}">
@@ -14,13 +15,33 @@
         function doctor(id) {
             window.location.href = "/doctor?id=" + id;
         }
+
+        function previousPage() {
+            window.location = `/doctors?page=`.concat((parseInt($('meta[name=page]').attr('content')) - 1).toString())
+        }
+
+        function nextPage() {
+            window.location = `/doctors?page=`.concat((parseInt($('meta[name=page]').attr('content')) + 1).toString());
+        }
     </script>
 </head>
 <body>
 <header id="navigation">
 </header>
 <div id="content">
-    <ul>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item"><p class="page-link"
+                                     onclick="previousPage()">
+                Previous</p>
+            </li>
+            <li class="page-item"><p class="page-link"
+                                     onclick="nextPage()">
+                Next</p>
+            </li>
+        </ul>
+    </nav>
+    <ul style="margin: auto; width: 600px; padding-left: 0">
         <li class="doctor" th:each="doctor : ${doctors}" th:onclick="'doctor(' + ${doctor.getId()} + ')'">
             <h5>
                 <span th:text="${doctor.getFirstName()}">first-name</span>

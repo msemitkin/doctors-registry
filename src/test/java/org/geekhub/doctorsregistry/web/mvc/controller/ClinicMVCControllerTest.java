@@ -72,14 +72,14 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
     public void only_authenticated_users_can_get_clinics_list() throws Exception {
         mockMvc.perform(get("/clinics"))
             .andExpect(status().isFound());
-        Mockito.verify(clinicService, Mockito.never()).findAll();
+        Mockito.verify(clinicService, Mockito.never()).findAll(Mockito.anyInt());
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_have_access_to_clinics_list(Role role) throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles(role.toString()).password("password");
-        Mockito.when(clinicService.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(clinicService.findAll(Mockito.anyInt())).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/clinics").with(user))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
@@ -102,7 +102,7 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
             new ClinicDTO(2, "ClinicName2", "ClinicAddress2"),
             new ClinicDTO(3, "ClinicName3", "ClinicAddress3")
         );
-        Mockito.when(clinicService.findAll()).thenReturn(clinics);
+        Mockito.when(clinicService.findAll(0)).thenReturn(clinics);
         for (int i = 0; i < clinics.size(); i++) {
             Mockito.when(clinicMapper.toDTO(clinics.get(i))).thenReturn(clinicDTOs.get(i));
         }

@@ -80,12 +80,12 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
                 new SpecializationDTO(20, "specialization2"), 2, 200)
         );
 
-        Mockito.when(doctorService.findAll()).thenReturn(doctors);
+        Mockito.when(doctorService.findAll(0)).thenReturn(doctors);
         for (int i = 0; i < doctors.size(); i++) {
             Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
         }
 
-        ResultActions perform = mockMvc.perform(get("/api/doctors").with(user));
+        ResultActions perform = mockMvc.perform(get("/api/doctors/pages/{page}", 0).with(user));
         perform
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

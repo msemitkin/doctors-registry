@@ -38,8 +38,14 @@ public class DoctorMVCController {
     }
 
     @GetMapping("/doctors")
-    public String doctors(Model model) {
-        List<DoctorDTO> doctors = doctorService.findAll().stream()
+    public String doctors(
+        @RequestParam(value = "page", required = false) Integer page,
+        Model model
+    ) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        List<DoctorDTO> doctors = doctorService.findAll(page).stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
         model.addAttribute("doctors", doctors);

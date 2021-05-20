@@ -45,21 +45,24 @@ public class DoctorController {
         doctorService.saveDoctor(doctorDTO);
     }
 
-    @GetMapping("/api/doctors")
-    public List<DoctorDTO> getAllDoctors() {
-        return doctorService.findAll().stream()
+    @GetMapping("/api/doctors/pages/{page}")
+    public List<DoctorDTO> getAllDoctors(@PathVariable(value = "page") int page) {
+        if (page < 0) {
+            page = 0;
+        }
+        return doctorService.findAll(page).stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("/api/doctors/{id}")
-    public DoctorDTO getDoctorById(@PathVariable("id") Integer id) {
+    public DoctorDTO getDoctorById(@PathVariable("id") int id) {
         DoctorEntity found = doctorService.findById(id);
         return doctorMapper.toDTO(found);
     }
 
     @GetMapping("/api/clinics/{id}/doctors")
-    public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") Integer id) {
+    public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") int id) {
         return doctorService.findDoctorsByClinic(id).stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
@@ -67,7 +70,7 @@ public class DoctorController {
 
     @GetMapping("/api/doctors/{id}/schedule")
     public Map<LocalDate, List<LocalTime>> getSchedule(
-        @PathVariable("id") Integer doctorId
+        @PathVariable("id") int doctorId
     ) {
         return doctorService.getSchedule(doctorId);
     }

@@ -6,15 +6,15 @@ import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ClinicService {
+    private static final int PAGE_SIZE = 10;
 
     private final ClinicRepository clinicRepository;
     private final UserService userService;
@@ -37,9 +37,8 @@ public class ClinicService {
         clinicRepository.save(clinicEntity);
     }
 
-    public List<ClinicEntity> findAll() {
-        return StreamSupport.stream(clinicRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+    public List<ClinicEntity> findAll(int page) {
+        return clinicRepository.findAll(PageRequest.of(page, PAGE_SIZE)).toList();
     }
 
     public ClinicEntity findById(int id) {

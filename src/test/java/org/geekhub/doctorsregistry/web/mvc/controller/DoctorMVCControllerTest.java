@@ -68,7 +68,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     public void only_authenticated_users_can_see_doctors() throws Exception {
         mockMvc.perform(get("/doctors"))
             .andExpect(status().isFound());
-        Mockito.verify(doctorService, Mockito.never()).findAll();
+        Mockito.verify(doctorService, Mockito.never()).findAll(Mockito.anyInt());
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
@@ -93,7 +93,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
             new DoctorDTO(2, "name3", "surname3",
                 new SpecializationDTO(3, "specialization3"), 300, 100)
         );
-        Mockito.when(doctorService.findAll()).thenReturn(doctors);
+        Mockito.when(doctorService.findAll(0)).thenReturn(doctors);
         for (int i = 0; i < doctors.size(); i++) {
             Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
         }
@@ -109,7 +109,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
 
-        Mockito.when(doctorService.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(doctorService.findAll(0)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/doctors").with(user))
             .andExpect(status().isOk())

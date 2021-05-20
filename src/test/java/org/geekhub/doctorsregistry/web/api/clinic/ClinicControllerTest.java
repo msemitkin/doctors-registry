@@ -57,24 +57,24 @@ public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/api/clinics"))
             .andDo(print())
             .andExpect(status().isFound());
-        Mockito.verify(clinicService, Mockito.never()).findAll();
+        Mockito.verify(clinicService, Mockito.never()).findAll(Mockito.anyInt());
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_clinics(Role role) throws Exception {
-        Mockito.when(clinicService.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(clinicService.findAll(Mockito.anyInt())).thenReturn(Collections.emptyList());
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles(role.toString()).password("password");
-        mockMvc.perform(get("/api/clinics").with(patient))
+        mockMvc.perform(get("/api/clinics/pages/{page}", 0).with(patient))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
     public void returns_empty_list_when_there_are_no_saved_clinics() throws Exception {
-        Mockito.when(clinicService.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(clinicService.findAll(Mockito.anyInt())).thenReturn(Collections.emptyList());
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient = user("email@gmail.com").roles("PATIENT").password("password");
-        mockMvc.perform(get("/api/clinics").with(patient))
+        mockMvc.perform(get("/api/clinics/pages/{page}", 0).with(patient))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$").isArray())
@@ -94,7 +94,7 @@ public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
             new ClinicDTO(3, "name3", "address3")
         );
 
-        Mockito.when(clinicService.findAll()).thenReturn(clinics);
+        Mockito.when(clinicService.findAll(0)).thenReturn(clinics);
         for (int i = 0; i < clinics.size(); i++) {
             Mockito.when(clinicMapper.toDTO(clinics.get(i))).thenReturn(clinicDTOs.get(i));
         }
@@ -102,7 +102,7 @@ public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient
             = user("email@gmail.com").roles("PATIENT").password("password");
 
-        ResultActions perform = mockMvc.perform(get("/api/clinics").with(patient));
+        ResultActions perform = mockMvc.perform(get("/api/clinics/pages/{page}", 0).with(patient));
         perform
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
