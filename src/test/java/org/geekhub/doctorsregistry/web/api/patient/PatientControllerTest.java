@@ -6,9 +6,7 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
-import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
-import org.geekhub.doctorsregistry.web.dto.patient.PatientDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.mockito.Mockito;
@@ -28,7 +26,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,29 +51,6 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     @MockBean
     private UsernameExtractor usernameExtractor;
 
-    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
-    public void every_authorized_user_has_access(Role role) throws Exception {
-        int patientId = 1;
-        PatientEntity patientEntity = new PatientEntity(patientId, "PatientName",
-            "PatientSurname", "patientemail@gmail.com");
-        PatientDTO patientDTO = new PatientDTO(patientEntity.getId(), patientEntity.getFirstName(),
-            patientEntity.getLastName(), patientEntity.getEmail());
-        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
-            user("email@gmail.com").password("password").roles(role.toString());
-
-        Mockito.when(patientService.findById(patientId)).thenReturn(patientEntity);
-        Mockito.when(patientMapper.toDTO(patientEntity)).thenReturn(patientDTO);
-
-        mockMvc.perform(get("/api/patients/{id}", patientId).with(user))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isMap())
-            .andExpect(jsonPath("$.id", is(patientEntity.getId())))
-            .andExpect(jsonPath("$.firstName", is(patientEntity.getFirstName())))
-            .andExpect(jsonPath("$.lastName", is(patientEntity.getLastName())))
-            .andExpect(jsonPath("$.email", is(patientEntity.getEmail())));
-    }
-
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void unauthorized_users_do_not_have_access() throws Exception {
@@ -93,7 +67,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
         int patientId = 1;
 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
-            user("email@gmail.com").password("password").roles("PATIENT");
+            user("email@gmail.com").password("password").roles("ADMIN");
 
         Mockito.when(patientService.findById(patientId)).thenThrow(EntityNotFoundException.class);
         mockMvc.perform(get("/api/patients/{id}", patientId).with(user))
@@ -247,7 +221,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void admin_can_see_patients_list() throws Exception {
+    public void admin_can_see_patients_data() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor admin =
             user("email@gmail.com").password("password").roles("ADMIN");
         mockMvc.perform(get("/api/patients/{id}", 1).with(admin))

@@ -135,9 +135,9 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
         mockMvc.perform(delete("/api/appointments/{appointment-id}", appointmentId)
             .with(patient)
         )
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isForbidden())
             .andExpect(jsonPath("$").isMap())
-            .andExpect(jsonPath("$.message", Matchers.is("Not allowed operation")));
+            .andExpect(jsonPath("$.message", Matchers.is("Forbidden")));
     }
 
     @Test
