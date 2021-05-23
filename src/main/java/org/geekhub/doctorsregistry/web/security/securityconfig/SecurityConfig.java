@@ -32,8 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .mvcMatchers("/login", "/logout", "/patients/registration").permitAll()
-            .mvcMatchers(HttpMethod.POST, "/api/patients").permitAll()
+            .mvcMatchers("/login", "/logout").permitAll()
+            .mvcMatchers("/patients/registration").hasRole("ANONYMOUS")
+            .mvcMatchers(HttpMethod.POST, "/api/patients").hasRole("ANONYMOUS")
 
             .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole("PATIENT")
             .mvcMatchers("/api/patients/me/appointments/archive",
@@ -48,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .mvcMatchers(HttpMethod.POST, "/doctors/registration", "/api/doctors").hasRole("CLINIC")
 
             .mvcMatchers(HttpMethod.POST, "/clinics", "/api/clinics").hasRole("ADMIN")
+            .mvcMatchers(HttpMethod.GET, "/api/patients").hasRole("ADMIN")
             .mvcMatchers("/admins/me/cabinet", "/actuator/**", "/api/users/analytics", "/analytics").hasRole("ADMIN")
 
             .anyRequest()

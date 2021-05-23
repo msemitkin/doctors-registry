@@ -122,6 +122,15 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$").doesNotExist());
     }
 
+    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
+    public void only_unauthorized_users_can_register_patients(Role role) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            user("patient@gmail.com").password("password").roles(role.name());
+
+        mockMvc.perform(post("/api/patients").with(user))
+            .andExpect(status().isForbidden());
+    }
+
     @Test
     public void returns_bad_request_when_user_with_given_email_already_exists() throws Exception {
         CreatePatientUserDTO patientDTO = new CreatePatientUserDTO("Firstname", "Lastname",
@@ -227,5 +236,21 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test(dataProvider = "roles_except_admin", dataProviderClass = RolesDataProviders.class)
+    public void only_admin_can_see_patients_data(Role role) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor not_admin =
+            user("email@gmail.com").password("password").roles(role.name());
+        mockMvc.perform(get("/api/patients/{id}", 1).with(not_admin))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void admin_can_see_patients_list() throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor admin =
+            user("email@gmail.com").password("password").roles("ADMIN");
+        mockMvc.perform(get("/api/patients/{id}", 1).with(admin))
+            .andExpect(status().isOk());
     }
 }

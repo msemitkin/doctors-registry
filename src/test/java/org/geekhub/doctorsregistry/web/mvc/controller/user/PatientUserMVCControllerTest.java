@@ -1,10 +1,12 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
+import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,14 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     @MockBean
     private UserService userService;
 
+
+    @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
+    public void only_anonymous_user_can_register_patients(Role role) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
+            SecurityMockMvcRequestPostProcessors.user("email@gmail.com").password("password").roles(role.name());
+        mockMvc.perform(post("/patients/registration").with(user))
+            .andExpect(status().isForbidden());
+    }
 
     @Test
     public void returns_errors_when_submit_empty_form() throws Exception {

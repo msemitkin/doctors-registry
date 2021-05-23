@@ -76,11 +76,10 @@ public class DefaultRestExceptionHandler {
     }
 
     @ExceptionHandler(OperationNotAllowedException.class)
-    public ResponseEntity<ErrorDTO> notAllowedOperation(OperationNotAllowedException e) {
+    public ResponseEntity<ErrorWithStatusDTO> notAllowedOperation() {
+        HttpStatus httpStatus = HttpStatus.FORBIDDEN;
         return new ResponseEntity<>(
-            ErrorDTO.withMessage(
-                "Not allowed operation"),
-            HttpStatus.BAD_REQUEST);
+            new ErrorWithStatusDTO(httpStatus, httpStatus.getReasonPhrase()), httpStatus);
     }
 
     @ExceptionHandler(BindException.class)
