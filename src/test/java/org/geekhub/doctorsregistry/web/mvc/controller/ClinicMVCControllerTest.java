@@ -223,7 +223,6 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
             .param("password", clinicDTO.getPassword())
             .param("passwordConfirmation", clinicDTO.getPasswordConfirmation())
         )
-            .andDo(print())
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/index"));
         Mockito.verify(clinicService, Mockito.times(1)).save(clinicDTO);
@@ -234,7 +233,6 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor admin =
             user("email@gmail.com").roles("ADMIN").password("password");
         mockMvc.perform(post("/clinics").with(admin).with(csrf()))
-            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(view().name("admin-cabinet"))
             .andExpect(model().hasErrors())

@@ -55,7 +55,6 @@ public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
     @Test
     public void only_authenticated_users_can_see_clinics() throws Exception {
         mockMvc.perform(get("/api/clinics"))
-            .andDo(print())
             .andExpect(status().isFound());
         Mockito.verify(clinicService, Mockito.never()).findAll(Mockito.anyInt());
     }
