@@ -7,9 +7,9 @@ import java.util.Objects;
 public class SingleRowUsersAnalyticsEntity {
 
     private final Role role;
-    private final Integer count;
+    private final int count;
 
-    public SingleRowUsersAnalyticsEntity(Role role, Integer count) {
+    public SingleRowUsersAnalyticsEntity(Role role, int count) {
         this.role = role;
         this.count = count;
     }
@@ -18,7 +18,7 @@ public class SingleRowUsersAnalyticsEntity {
         return role;
     }
 
-    public Integer getCount() {
+    public int getCount() {
         return count;
     }
 

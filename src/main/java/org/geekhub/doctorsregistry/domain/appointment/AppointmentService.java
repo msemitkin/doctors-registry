@@ -44,7 +44,7 @@ public class AppointmentService {
         appointmentRepository.create(appointment);
     }
 
-    public AppointmentEntity findById(Integer id) {
+    public AppointmentEntity findById(int id) {
         return appointmentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
