@@ -1,14 +1,15 @@
 package org.geekhub.doctorsregistry;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.Test;
 
 @SpringBootTest
-class DoctorsRegistryTest {
+public class DoctorsRegistryTest extends AbstractTestNGSpringContextTests {
 
     @Test
-    void context_loads() {
+    public void context_loads() {
         Assertions.assertDoesNotThrow(() -> {});
     }
 

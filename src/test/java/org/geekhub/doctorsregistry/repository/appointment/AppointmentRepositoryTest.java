@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @JdbcTest
 @ContextConfiguration(classes = {AppointmentRepository.class, SQLManagerConfig.class})
-class AppointmentRepositoryTest extends AbstractTestNGSpringContextTests {
+public class AppointmentRepositoryTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
