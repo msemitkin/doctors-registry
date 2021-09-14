@@ -1,3 +1,10 @@
-rootProject.name = 'doctorsregistry'
+rootProject.name = 'doctors-registry'
 
-include 'doctors-registry-api'
+include 'doctors-registry-web'
+include 'doctors-registry-api:doctors-registry-domain'
+include 'doctors-registry-api:doctors-registry-domain:entities'
+include 'doctors-registry-api:doctors-registry-domain:ports'
+include 'doctors-registry-api:doctors-registry-domain:ports:input'
+include 'doctors-registry-api:doctors-registry-domain:ports:output'
+include 'doctors-registry-api:doctors-registry-web'
+include 'doctors-registry-api:doctors-registry-persistance'
