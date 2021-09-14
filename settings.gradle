@@ -1,1 +1,3 @@
 rootProject.name = 'doctorsregistry'
+
+include 'doctors-registry-api'
