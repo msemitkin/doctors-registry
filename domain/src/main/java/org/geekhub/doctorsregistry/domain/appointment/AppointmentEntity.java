@@ -1,4 +1,4 @@
-package org.geekhub.doctorsregistry.repository.appointment;
+package org.geekhub.doctorsregistry.domain.appointment;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

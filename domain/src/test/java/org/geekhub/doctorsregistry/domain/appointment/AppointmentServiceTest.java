@@ -3,7 +3,6 @@ package org.geekhub.doctorsregistry.domain.appointment;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.mockito.Mock;

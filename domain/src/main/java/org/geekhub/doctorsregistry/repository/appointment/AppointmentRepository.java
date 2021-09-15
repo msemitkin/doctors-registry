@@ -1,9 +1,12 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
+import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
@@ -41,14 +44,15 @@ public class AppointmentRepository {
         this.sqlManager = sqlManager;
     }
 
-    public Optional<AppointmentEntity> findById(Integer id) {
+    @NonNull
+    public AppointmentEntity findById(Integer id) {
         try {
             String query = sqlManager.getQuery("find-appointment-by-id");
             return Optional.ofNullable(
                 jdbcTemplate.queryForObject(query, Map.of(ID, id), rowMapper)
-            );
+            ).orElseThrow(EntityNotFoundException::new);
         } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
+            throw new EntityNotFoundException();
         }
     }
 
@@ -67,13 +71,13 @@ public class AppointmentRepository {
         );
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
-                query,
-                Map.of(
-                    DOCTOR_ID, doctorId,
-                    TIME, Time.valueOf(time),
-                    DAY_OF_THE_WEEK, dayOfWeek.getValue()
-                ),
-                Integer.class
+                    query,
+                    Map.of(
+                        DOCTOR_ID, doctorId,
+                        TIME, Time.valueOf(time),
+                        DAY_OF_THE_WEEK, dayOfWeek.getValue()
+                    ),
+                    Integer.class
                 )
             );
         } catch (EmptyResultDataAccessException e) {
@@ -92,9 +96,9 @@ public class AppointmentRepository {
         );
 
         jdbcTemplate.update(sqlManager.getQuery("save-appointment"), Map.of(
-            PATIENT_ID, appointmentEntity.getPatientId(),
-            DOCTOR_WORKING_HOUR_ID, workingHourId,
-            DATE, Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
+                PATIENT_ID, appointmentEntity.getPatientId(),
+                DOCTOR_WORKING_HOUR_ID, workingHourId,
+                DATE, Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
             )
         );
 

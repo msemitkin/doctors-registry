@@ -4,7 +4,6 @@ import org.geekhub.doctorsregistry.domain.appointment.appointmenttime.Appointmen
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
