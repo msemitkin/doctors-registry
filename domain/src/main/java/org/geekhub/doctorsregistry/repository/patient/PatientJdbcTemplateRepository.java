@@ -1,7 +1,7 @@
 package org.geekhub.doctorsregistry.repository.patient;
 
 import org.geekhub.doctorsregistry.repository.DatabaseException;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

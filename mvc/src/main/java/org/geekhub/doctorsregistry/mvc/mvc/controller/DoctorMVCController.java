@@ -1,6 +1,8 @@
 package org.geekhub.doctorsregistry.mvc.mvc.controller;
 
+import org.geekhub.doctorsregistry.domain.AuthenticationResolver;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
+import org.geekhub.doctorsregistry.domain.appointment.CreateAppointmentCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.mvc.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.mvc.dto.doctor.DoctorDTO;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -24,15 +27,18 @@ public class DoctorMVCController {
     private final DoctorService doctorService;
     private final DoctorMapper doctorMapper;
     private final AppointmentService appointmentService;
+    private final AuthenticationResolver authenticationResolver;
 
     public DoctorMVCController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
-        AppointmentService appointmentService
+        AppointmentService appointmentService,
+        AuthenticationResolver authenticationResolver
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentService = appointmentService;
+        this.authenticationResolver = authenticationResolver;
     }
 
     @GetMapping("/doctors")
@@ -62,7 +68,13 @@ public class DoctorMVCController {
 
     @PostMapping("/doctor/appointments")
     public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
-        appointmentService.create(appointmentDTO);
+        int patientId = authenticationResolver.getUserId();
+        CreateAppointmentCommand createAppointmentCommand = new CreateAppointmentCommand(
+            patientId,
+            appointmentDTO.getDoctorId(),
+            LocalDateTime.parse(appointmentDTO.getInputDateTime())
+        );
+        appointmentService.create(createAppointmentCommand);
         return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }
 }

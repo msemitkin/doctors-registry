@@ -3,7 +3,7 @@ package org.geekhub.doctorsregistry.domain.patient;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.user.UserService;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
 import org.mockito.Mock;

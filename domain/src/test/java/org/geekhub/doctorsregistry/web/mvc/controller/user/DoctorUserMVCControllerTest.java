@@ -7,7 +7,7 @@ import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.security.role.Role;

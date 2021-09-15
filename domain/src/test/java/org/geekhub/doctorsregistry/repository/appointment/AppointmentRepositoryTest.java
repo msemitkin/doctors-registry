@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManagerConfig;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;

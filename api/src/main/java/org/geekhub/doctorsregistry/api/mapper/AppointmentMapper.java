@@ -2,7 +2,7 @@ package org.geekhub.doctorsregistry.api.mapper;
 
 import org.geekhub.doctorsregistry.api.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.api.dto.appointment.CreateAppointmentDTO;
-import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
