@@ -1,1 +1,5 @@
 rootProject.name = 'doctors-registry'
+include ':domain'
+include ':mvc'
+include ':api'
+include ':common'
