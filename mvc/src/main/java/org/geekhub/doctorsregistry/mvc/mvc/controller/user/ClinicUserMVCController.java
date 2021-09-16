@@ -1,14 +1,13 @@
 package org.geekhub.doctorsregistry.mvc.mvc.controller.user;
 
-import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
-import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
-import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.mvc.dto.doctor.CreateDoctorUserDTO;
+import org.geekhub.doctorsregistry.mvc.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.mvc.mapper.SpecializationMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
 import java.util.List;

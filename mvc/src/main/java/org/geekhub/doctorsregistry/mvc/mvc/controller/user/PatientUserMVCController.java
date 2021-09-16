@@ -1,9 +1,10 @@
 package org.geekhub.doctorsregistry.mvc.mvc.controller.user;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
-import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.patient.CreatePatientCommand;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
-import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.geekhub.doctorsregistry.mvc.dto.patient.CreatePatientUserDTO;
+import org.geekhub.doctorsregistry.mvc.mapper.AppointmentMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -67,7 +67,20 @@ public class PatientUserMVCController {
         if (bindingResult.hasErrors()) {
             return "patient-registration";
         }
-        patientService.save(patient);
+
+        CreatePatientCommand createPatientCommand = toCreatePatientCommand(patient);
+        patientService.save(createPatientCommand);
+
         return "redirect:/index";
+    }
+
+    private CreatePatientCommand toCreatePatientCommand(CreatePatientUserDTO patient) {
+        return new CreatePatientCommand(
+            patient.getFirstName(),
+            patient.getLastName(),
+            patient.getEmail(),
+            patient.getPassword(),
+            patient.getPasswordConfirmation()
+        );
     }
 }
