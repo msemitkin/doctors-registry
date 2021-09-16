@@ -1,6 +1,6 @@
 package org.geekhub.doctorsregistry.domain.analytics;
 
-import org.geekhub.doctorsregistry.web.security.role.Role;
+import org.geekhub.doctorsregistry.domain.role.Role;
 
 import java.util.Map;
 import java.util.Objects;

@@ -1,9 +1,9 @@
 package org.geekhub.doctorsregistry.repository.analytics;
 
-import org.geekhub.doctorsregistry.domain.analytics.UsersAnalyticsEntity;
 import org.geekhub.doctorsregistry.domain.analytics.SingleRowUsersAnalyticsEntity;
+import org.geekhub.doctorsregistry.domain.analytics.UsersAnalyticsEntity;
+import org.geekhub.doctorsregistry.domain.role.Role;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
-import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
