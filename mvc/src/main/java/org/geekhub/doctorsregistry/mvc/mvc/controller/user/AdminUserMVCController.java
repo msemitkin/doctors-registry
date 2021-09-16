@@ -1,10 +1,9 @@
 package org.geekhub.doctorsregistry.mvc.mvc.controller.user;
 
-import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
+import org.geekhub.doctorsregistry.mvc.dto.clinic.CreateClinicUserDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 public class AdminUserMVCController {

@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.mvc.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.CreateClinicCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.mvc.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.mvc.dto.clinic.CreateClinicUserDTO;
@@ -76,7 +77,20 @@ public class ClinicMVCController {
         if (bindingResult.hasErrors()) {
             return "admin-cabinet";
         }
-        clinicService.save(clinicDTO);
+
+        CreateClinicCommand createClinicCommand = toCreateClinicCommand(clinicDTO);
+        clinicService.save(createClinicCommand);
+
         return "redirect:/index";
+    }
+
+    private CreateClinicCommand toCreateClinicCommand(CreateClinicUserDTO clinicDTO) {
+        return new CreateClinicCommand(
+            clinicDTO.getName(),
+            clinicDTO.getAddress(),
+            clinicDTO.getEmail(),
+            clinicDTO.getPassword(),
+            clinicDTO.getPasswordConfirmation()
+        );
     }
 }

@@ -69,12 +69,19 @@ public class DoctorMVCController {
     @PostMapping("/doctor/appointments")
     public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
         int patientId = authenticationResolver.getUserId();
-        CreateAppointmentCommand createAppointmentCommand = new CreateAppointmentCommand(
+        CreateAppointmentCommand createAppointmentCommand = toCreateAppointmentCommand(appointmentDTO, patientId);
+        appointmentService.create(createAppointmentCommand);
+        return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
+    }
+
+    private CreateAppointmentCommand toCreateAppointmentCommand(
+        CreateAppointmentDTO appointmentDTO,
+        int patientId
+    ) {
+        return new CreateAppointmentCommand(
             patientId,
             appointmentDTO.getDoctorId(),
             LocalDateTime.parse(appointmentDTO.getInputDateTime())
         );
-        appointmentService.create(createAppointmentCommand);
-        return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }
 }
