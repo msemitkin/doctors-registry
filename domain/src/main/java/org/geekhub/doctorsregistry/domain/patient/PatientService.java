@@ -1,14 +1,14 @@
 package org.geekhub.doctorsregistry.domain.patient;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
-import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
+import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
+import org.geekhub.doctorsregistry.domain.role.Role;
+import org.geekhub.doctorsregistry.domain.user.User;
+import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
-import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,26 +22,25 @@ public class PatientService {
     private final PatientJdbcTemplateRepository patientJdbcTemplateRepository;
     private final ZonedTime zonedTime;
     private final UserService userService;
-    private final PatientMapper patientMapper;
 
     public PatientService(
         PatientRepository patientRepository,
         PatientJdbcTemplateRepository patientJdbcTemplateRepository,
         ZonedTime zonedTime,
-        UserService userService,
-        PatientMapper patientMapper
+        UserService userService
     ) {
         this.patientRepository = patientRepository;
         this.patientJdbcTemplateRepository = patientJdbcTemplateRepository;
         this.zonedTime = zonedTime;
         this.userService = userService;
-        this.patientMapper = patientMapper;
     }
 
     @Transactional
-    public void save(CreatePatientUserDTO patient) {
-        userService.saveUser(patient);
-        PatientEntity patientEntity = patientMapper.toEntity(patient);
+    public void save(CreatePatientCommand createPatientCommand) {
+        User user = toUser(createPatientCommand);
+        userService.saveUser(user);
+
+        PatientEntity patientEntity = toPatientEntity(createPatientCommand);
         patientRepository.save(patientEntity);
     }
 
@@ -79,6 +78,24 @@ public class PatientService {
         return patientJdbcTemplateRepository.getAppointments(patientId).stream()
             .filter(appointment -> appointment.getDateTime().isBefore(dateTimeNow))
             .collect(Collectors.toList());
+    }
+
+    private User toUser(CreatePatientCommand createPatientCommand) {
+        return new User(
+            createPatientCommand.getEmail(),
+            createPatientCommand.getPassword(),
+            createPatientCommand.getPasswordConfirmation(),
+            Role.PATIENT
+        );
+    }
+
+    private PatientEntity toPatientEntity(CreatePatientCommand createPatientCommand) {
+        return new PatientEntity(
+            null,
+            createPatientCommand.getFirstName(),
+            createPatientCommand.getLastName(),
+            createPatientCommand.getEmail()
+        );
     }
 
 }
