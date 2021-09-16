@@ -1,11 +1,11 @@
 package org.geekhub.doctorsregistry.domain.clinic;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
+import org.geekhub.doctorsregistry.domain.role.Role;
+import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
-import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,22 +18,21 @@ public class ClinicService {
 
     private final ClinicRepository clinicRepository;
     private final UserService userService;
-    private final ClinicMapper clinicMapper;
 
     public ClinicService(
         ClinicRepository clinicRepository,
-        UserService userService,
-        ClinicMapper clinicMapper
+        UserService userService
     ) {
         this.clinicRepository = clinicRepository;
         this.userService = userService;
-        this.clinicMapper = clinicMapper;
     }
 
     @Transactional
-    public void save(CreateClinicUserDTO clinicDTO) {
-        ClinicEntity clinicEntity = clinicMapper.toEntity(clinicDTO);
-        userService.saveUser(clinicDTO);
+    public void save(CreateClinicCommand createClinicCommand) {
+        User user = toUser(createClinicCommand);
+        userService.saveUser(user);
+
+        ClinicEntity clinicEntity = toClinicEntity(createClinicCommand);
         clinicRepository.save(clinicEntity);
     }
 
@@ -48,6 +47,23 @@ public class ClinicService {
 
     public Integer getIdByEmail(String email) {
         return clinicRepository.getIdByEmail(email);
+    }
+
+    private User toUser(CreateClinicCommand createClinicCommand) {
+        return new User(
+            createClinicCommand.getEmail(),
+            createClinicCommand.getPassword(),
+            createClinicCommand.getPasswordConfirmation(),
+            Role.CLINIC
+        );
+    }
+
+    private ClinicEntity toClinicEntity(CreateClinicCommand createClinicCommand) {
+        return ClinicEntity.of(
+            createClinicCommand.getName(),
+            createClinicCommand.getAddress(),
+            createClinicCommand.getEmail()
+        );
     }
 
 }
