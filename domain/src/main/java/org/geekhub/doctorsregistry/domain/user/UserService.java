@@ -1,8 +1,5 @@
 package org.geekhub.doctorsregistry.domain.user;
 
-import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -13,35 +10,32 @@ public class UserService {
 
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
-    private final RoleResolver roleResolver;
 
+    //TODO get rid of Spring UserDetailsManager implementation
     public UserService(
         UserDetailsManager userDetailsManager,
-        PasswordEncoder passwordEncoder,
-        RoleResolver roleResolver
+        PasswordEncoder passwordEncoder
     ) {
         this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
-        this.roleResolver = roleResolver;
     }
 
-    public void saveUser(CreateUserDTO userDTO) {
+    public void saveUser(User user) {
 
-        if (userDetailsManager.userExists(userDTO.getEmail())) {
+        if (userDetailsManager.userExists(user.getEmail())) {
             throw new UserAlreadyExistsException("User with given email already exists");
         }
-        if (!passwordsMatch(userDTO.getPassword(), userDTO.getPasswordConfirmation())) {
+        if (!passwordsMatch(user.getPassword(), user.getPasswordConfirmation())) {
             throw new PasswordsDoNotMatchException("Passwords do not match");
         }
 
-        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-        String[] roles = new String[]{roleResolver.resolveRole(userDTO).name()};
-        UserDetails userDetails =
-            User.builder()
-                .username(userDTO.getEmail())
-                .password(encodedPassword)
-                .roles(roles)
-                .build();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        String[] roles = new String[]{user.getRole().name()};
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+            .username(user.getEmail())
+            .password(encodedPassword)
+            .roles(roles)
+            .build();
         userDetailsManager.createUser(userDetails);
     }
 

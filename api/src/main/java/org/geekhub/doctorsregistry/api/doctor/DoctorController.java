@@ -5,6 +5,8 @@ import org.geekhub.doctorsregistry.api.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.api.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.api.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.api.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.domain.AuthenticationResolver;
+import org.geekhub.doctorsregistry.domain.doctor.CreateDoctorCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.springframework.http.HttpStatus;
@@ -28,21 +30,26 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final DoctorMapper doctorMapper;
     private final AppointmentMapper appointmentMapper;
+    private final AuthenticationResolver authenticationResolver;
 
     public DoctorController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
-        AppointmentMapper appointmentMapper
+        AppointmentMapper appointmentMapper,
+        AuthenticationResolver authenticationResolver
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentMapper = appointmentMapper;
+        this.authenticationResolver = authenticationResolver;
     }
 
     @PostMapping("/api/doctors")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveDoctor(@Valid @RequestBody CreateDoctorUserDTO doctorDTO) {
-        doctorService.saveDoctor(doctorDTO);
+        int clinicId = authenticationResolver.getUserId();
+        CreateDoctorCommand createDoctorCommand = toCreateDoctorCommand(doctorDTO);
+        doctorService.saveDoctor(createDoctorCommand, clinicId);
     }
 
     @GetMapping("/api/doctors/pages/{page}")
@@ -77,16 +84,31 @@ public class DoctorController {
 
     @GetMapping("/api/doctors/me/appointments/pending")
     public List<AppointmentDTO> getPendingAppointments() {
-        return doctorService.getPendingAppointments().stream()
+        int doctorId = authenticationResolver.getUserId();
+        return doctorService.getPendingAppointments(doctorId).stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
     }
 
     @GetMapping("/api/doctors/me/appointments/archive")
     public List<AppointmentDTO> getArchivedAppointments() {
-        return doctorService.getArchivedAppointments().stream()
+        int doctorId = authenticationResolver.getUserId();
+        return doctorService.getArchivedAppointments(doctorId).stream()
             .map(appointmentMapper::toDTO)
             .collect(Collectors.toList());
+    }
+
+    private CreateDoctorCommand toCreateDoctorCommand(CreateDoctorUserDTO doctorDTO) {
+        return new CreateDoctorCommand(
+            doctorDTO.getFirstName(),
+            doctorDTO.getLastName(),
+            doctorDTO.getEmail(),
+            doctorDTO.getSpecializationId(),
+            doctorDTO.getPrice(),
+            doctorDTO.getTimetable(),
+            doctorDTO.getPassword(),
+            doctorDTO.getPasswordConfirmation()
+        );
     }
 
 }
