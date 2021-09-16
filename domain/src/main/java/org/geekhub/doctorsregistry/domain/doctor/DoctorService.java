@@ -1,20 +1,20 @@
 package org.geekhub.doctorsregistry.domain.doctor;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.domain.role.Role;
 import org.geekhub.doctorsregistry.domain.schedule.DayTime;
 import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
+import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
-import org.geekhub.doctorsregistry.domain.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
-import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +38,8 @@ public class DoctorService {
     private final ZonedTime zonedTime;
     private final DayTimeSpliterator dayTimeSpliterator;
     private final UserService userService;
-    private final DoctorMapper doctorMapper;
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
     private final ClinicRepository clinicRepository;
-    private final UsernameExtractor usernameExtractor;
 
     public DoctorService(
         DoctorRepository doctorRepository,
@@ -49,20 +47,16 @@ public class DoctorService {
         ZonedTime zonedTime,
         DayTimeSpliterator dayTimeSpliterator,
         UserService userService,
-        DoctorMapper doctorMapper,
         DoctorWorkingHourRepository doctorWorkingHourRepository,
-        ClinicRepository clinicRepository,
-        UsernameExtractor usernameExtractor
+        ClinicRepository clinicRepository
     ) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
         this.zonedTime = zonedTime;
         this.dayTimeSpliterator = dayTimeSpliterator;
         this.userService = userService;
-        this.doctorMapper = doctorMapper;
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
         this.clinicRepository = clinicRepository;
-        this.usernameExtractor = usernameExtractor;
     }
 
     public List<DoctorEntity> findAll(int page) {
@@ -91,22 +85,17 @@ public class DoctorService {
     }
 
     @Transactional
-    public void saveDoctor(CreateDoctorUserDTO doctorDTO) {
-        Integer clinicId = clinicRepository.getIdByEmail(usernameExtractor.getClinicUserName());
-        DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO, clinicId);
+    public void saveDoctor(CreateDoctorCommand doctor, int clinicId) {
+        User user = toUser(doctor);
+        userService.saveUser(user);
 
-        userService.saveUser(doctorDTO);
-
+        DoctorEntity doctorEntity = toDoctorEntity(doctor, clinicId);
         Integer doctorId = doctorRepository.save(doctorEntity).getId();
-        List<DayTime> doctorTimetable = dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable());
+
+        List<DayTime> doctorTimetable = dayTimeSpliterator.splitToDayTime(doctor.getTimetable());
         List<DoctorWorkingHourEntity> doctorWorkingHours = doctorTimetable.stream()
-            .map(entry ->
-                new DoctorWorkingHourEntity(
-                    null,
-                    doctorId,
-                    Time.valueOf(entry.getTime()),
-                    entry.getDay().getValue())
-            ).collect(Collectors.toList());
+            .map(entry -> buildDoctorWorkingHour(entry, doctorId))
+            .collect(Collectors.toList());
         doctorWorkingHourRepository.setDoctorWorkingHours(doctorWorkingHours);
     }
 
@@ -121,9 +110,7 @@ public class DoctorService {
         return result;
     }
 
-    public List<AppointmentEntity> getPendingAppointments() {
-        String email = usernameExtractor.getDoctorUserName();
-        int doctorId = getIdByEmail(email);
+    public List<AppointmentEntity> getPendingAppointments(int doctorId) {
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()
@@ -131,14 +118,42 @@ public class DoctorService {
             .collect(Collectors.toList());
     }
 
-    public List<AppointmentEntity> getArchivedAppointments() {
-        String email = usernameExtractor.getDoctorUserName();
-        int doctorId = getIdByEmail(email);
+    public List<AppointmentEntity> getArchivedAppointments(int doctorId) {
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()
             .filter(appointment -> appointment.getDateTime().isBefore(timeNow))
             .collect(Collectors.toList());
+    }
+
+    private User toUser(CreateDoctorCommand doctor) {
+        return new User(
+            doctor.getEmail(),
+            doctor.getPassword(),
+            doctor.getPasswordConfirmation(),
+            Role.DOCTOR
+        );
+    }
+
+    private DoctorEntity toDoctorEntity(CreateDoctorCommand doctor, int clinicId) {
+        return new DoctorEntity(
+            null,
+            doctor.getFirstName(),
+            doctor.getLastName(),
+            doctor.getEmail(),
+            new SpecializationEntity(doctor.getSpecializationId(), null),
+            clinicId,
+            doctor.getPrice()
+        );
+    }
+
+    private DoctorWorkingHourEntity buildDoctorWorkingHour(DayTime workingTime, int doctorId) {
+        return new DoctorWorkingHourEntity(
+            null,
+            doctorId,
+            Time.valueOf(workingTime.getTime()),
+            workingTime.getDay().getValue()
+        );
     }
 
 }
