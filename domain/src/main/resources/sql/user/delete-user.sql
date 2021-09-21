@@ -1,3 +1,3 @@
 delete
 from user_credentials
-where email = ?
+where email = :email

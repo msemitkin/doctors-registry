@@ -1,3 +1,3 @@
-select email as username, password, enabled
+select email, password, enabled
 from user_credentials
-where email = ?
+where email = :email

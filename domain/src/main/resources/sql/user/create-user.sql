@@ -1,2 +1,2 @@
 insert into user_credentials (email, password, enabled)
-values (?, ?, ?);
+values (:email, :password, :enabled);

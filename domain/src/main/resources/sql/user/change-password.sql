@@ -1,3 +1,3 @@
 update user_credentials
-set password = ?
-where email = ?
+set password = :password
+where email = :email
