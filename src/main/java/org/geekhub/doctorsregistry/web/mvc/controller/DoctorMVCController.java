@@ -5,7 +5,7 @@ import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,18 +27,18 @@ public class DoctorMVCController {
     private final DoctorService doctorService;
     private final DoctorMapper doctorMapper;
     private final AppointmentService appointmentService;
-    private final UsernameExtractor usernameExtractor;
+    private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     public DoctorMVCController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
         AppointmentService appointmentService,
-        UsernameExtractor usernameExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentService = appointmentService;
-        this.usernameExtractor = usernameExtractor;
+        this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
     }
 
     @GetMapping("/doctors")
@@ -66,7 +66,7 @@ public class DoctorMVCController {
 
     @PostMapping("/doctor/appointments")
     public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
-        Integer currentPatientId = usernameExtractor.getPatientId();
+        int currentPatientId = authenticationPrincipalExtractor.getPrincipal().userId();
         appointmentService.create(currentPatientId, appointmentDTO);
         return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }

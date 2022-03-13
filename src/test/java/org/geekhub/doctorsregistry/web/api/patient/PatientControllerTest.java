@@ -7,7 +7,8 @@ import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     private UserService userService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -162,7 +163,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void returns_empty_list_when_there_are_no_archived_appointments() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("patient@gmail.com").password("password").roles("PATIENT");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
 
         mockMvc.perform(get("/api/patients/me/appointments/archive").with(patient))
             .andExpect(status().isOk())
@@ -194,7 +195,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void returns_empty_list_when_there_are_no_pending_appointments() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("patient@gmail.com").password("password").roles("PATIENT");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
 
         mockMvc.perform(get("/api/patients/me/appointments/pending").with(patient))
             .andExpect(status().isOk())

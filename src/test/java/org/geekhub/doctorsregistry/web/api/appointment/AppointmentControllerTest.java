@@ -8,7 +8,8 @@ import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentExce
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
 import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AppointmentControllerTest extends AbstractTestNGSpringContextTests {
 
     private static final int TEST_PATIENT_ID = 333;
+    private static final AuthenticationPrincipal TEST_PATIENT_AUTHENTICATION_PRINCIPAL =
+        new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT);
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,7 +47,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
     private AppointmentService appointmentService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_can_create_appointments(Role role) throws Exception {
@@ -88,7 +92,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
         doThrow(exceptionType).when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/api/appointments").with(patient)
@@ -107,7 +111,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
         doNothing().when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/api/appointments").with(patient)
@@ -135,7 +139,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         int appointmentId = 1234;
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
         doThrow(OperationNotAllowedException.class).when(appointmentService)
             .deleteById(TEST_PATIENT_ID, appointmentId);
 
@@ -152,7 +156,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         int appointmentId = 1234;
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
         doNothing().when(appointmentService).deleteById(TEST_PATIENT_ID, appointmentId);
 
         mockMvc.perform(delete("/api/appointments/{appointment-id}", appointmentId)

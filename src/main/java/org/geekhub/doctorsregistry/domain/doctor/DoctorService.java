@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class DoctorService {
 
     private static final int PAGE_SIZE = 10;
-    private static final int NUMBER_OF_DAYS_IN_SCHEDULE = 8;
+    private static final int NUMBER_OF_DAYS_IN_SCHEDULE = 7;
 
     private final DoctorRepository doctorRepository;
     private final DoctorJdbcTemplateRepository doctorJdbcTemplateRepository;

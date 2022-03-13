@@ -4,7 +4,7 @@ import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,23 +23,23 @@ public class PatientUserMVCController {
     private final PatientService patientService;
     private final AppointmentMapper appointmentMapper;
     private final AppointmentService appointmentService;
-    private final UsernameExtractor usernameExtractor;
+    private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     public PatientUserMVCController(
         PatientService patientService,
         AppointmentMapper appointmentMapper,
         AppointmentService appointmentService,
-        UsernameExtractor usernameExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.patientService = patientService;
         this.appointmentMapper = appointmentMapper;
         this.appointmentService = appointmentService;
-        this.usernameExtractor = usernameExtractor;
+        this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
     }
 
     @GetMapping("/patients/me/cabinet")
     public String cabinet(Model model) {
-        Integer patientId = usernameExtractor.getPatientId();
+        int patientId = authenticationPrincipalExtractor.getPrincipal().userId();
         model.addAttribute("archive", patientService.getArchivedAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
             .toList());
@@ -51,7 +51,7 @@ public class PatientUserMVCController {
 
     @PostMapping("/patients/me/appointments/delete")
     public String deleteAppointment(@RequestParam("id") Integer appointmentId) {
-        Integer currentPatientId = usernameExtractor.getPatientId();
+        int currentPatientId = authenticationPrincipalExtractor.getPrincipal().userId();
         appointmentService.deleteById(currentPatientId, appointmentId);
         return "redirect:/patients/me/cabinet";
     }

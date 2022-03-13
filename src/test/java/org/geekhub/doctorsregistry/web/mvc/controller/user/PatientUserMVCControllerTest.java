@@ -6,7 +6,8 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;
@@ -20,6 +21,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,7 +50,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     private UserService userService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
@@ -62,7 +64,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     @Test
     public void returns_errors_when_submit_empty_form() throws Exception {
         Mockito.doNothing().when(patientService).save(new CreatePatientUserDTO());
-        Mockito.when(userService.userExists(null)).thenReturn(false);
+        when(userService.userExists(null)).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf()))
             .andExpect(status().isOk())
             .andExpect(model().hasErrors())
@@ -78,7 +80,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
             "Firstname", "Lastname", "patient-email@gmail.com",
             "password", "password");
         Mockito.doNothing().when(patientService).save(patient);
-        Mockito.when(userService.userExists(patient.getEmail())).thenReturn(false);
+        when(userService.userExists(patient.getEmail())).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf())
             .param("firstName", patient.getFirstName())
             .param("lastName", patient.getLastName())
@@ -97,7 +99,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
             "Firstname", "Lastname", "patient-email@gmail.com",
             "password", "password");
         Mockito.doNothing().when(patientService).save(patient);
-        Mockito.when(userService.userExists(patient.getEmail())).thenReturn(true);
+        when(userService.userExists(patient.getEmail())).thenReturn(true);
         mockMvc.perform(post("/patients/registration").with(csrf())
             .param("firstName", patient.getFirstName())
             .param("lastName", patient.getLastName())
@@ -124,6 +126,7 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     public void returns_patient_cabinet_correct() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             SecurityMockMvcRequestPostProcessors.user("patient@gmail.com").password("password").roles("PATIENT");
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(100, Role.PATIENT));
         mockMvc.perform(get("/patients/me/cabinet").with(patient))
             .andExpect(status().isOk())
             .andExpect(view().name("patient-cabinet"))

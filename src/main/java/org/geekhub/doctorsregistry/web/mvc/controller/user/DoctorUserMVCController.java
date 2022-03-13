@@ -7,7 +7,7 @@ import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,7 +28,7 @@ public class DoctorUserMVCController {
     private final Schedule schedule;
     private final SpecializationService specializationService;
     private final SpecializationMapper specializationMapper;
-    private final UsernameExtractor usernameExtractor;
+    private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     public DoctorUserMVCController(
         DoctorService doctorService,
@@ -36,19 +36,19 @@ public class DoctorUserMVCController {
         Schedule schedule,
         SpecializationService specializationService,
         SpecializationMapper specializationMapper,
-        UsernameExtractor usernameExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.doctorService = doctorService;
         this.appointmentMapper = appointmentMapper;
         this.schedule = schedule;
         this.specializationService = specializationService;
         this.specializationMapper = specializationMapper;
-        this.usernameExtractor = usernameExtractor;
+        this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
     }
 
     @GetMapping("/doctors/me/cabinet")
     public String cabinet(Model model) {
-        Integer currentDoctorId = usernameExtractor.getDoctorId();
+        int currentDoctorId = authenticationPrincipalExtractor.getPrincipal().userId();
         model.addAttribute("archive", doctorService.getArchivedAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
             .toList()
@@ -74,7 +74,7 @@ public class DoctorUserMVCController {
             model.addAttribute("specializations", specializations);
             return "clinic-cabinet";
         }
-        Integer currentClinicId = usernameExtractor.getClinicId();
+        int currentClinicId = authenticationPrincipalExtractor.getPrincipal().userId();
         doctorService.saveDoctor(currentClinicId, doctor);
         return "redirect:/clinics/me/cabinet";
     }

@@ -14,7 +14,8 @@ import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntit
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     private AppointmentService appointmentService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -195,7 +196,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notPatient =
             user("email@gmail.com").roles(role.toString()).password("password");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
 
         mockMvc.perform(post("/doctor/appointments").with(notPatient)
                 .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
@@ -223,7 +224,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
         doThrow(exceptionType).when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/doctor/appointments").with(patient).with(csrf())
@@ -241,7 +242,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
-        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
         doNothing().when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/doctor/appointments").with(user).with(csrf())

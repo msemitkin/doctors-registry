@@ -10,7 +10,8 @@ import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -61,7 +62,7 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     private UserService userService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test
     public void unauthorized_users_do_not_have_access_to_doctors_cabinets() throws Exception {
@@ -103,7 +104,7 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
             new AppointmentDTO(2, 25, doctorId, "2021-10-20T10:20"),
             new AppointmentDTO(3, 30, doctorId, "2021-10-21T08:00")
         );
-        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(doctorId, Role.DOCTOR));
         when(doctorService.getArchivedAppointments(doctorId)).thenReturn(archivedAppointments);
         when(doctorService.getPendingAppointments(doctorId)).thenReturn(pendingAppointments);
         for (int i = 0; i < archivedAppointments.size(); i++) {
@@ -136,7 +137,7 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
-        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_CLINIC_ID, Role.CLINIC));
         doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/doctors/registration").with(clinic).with(csrf())

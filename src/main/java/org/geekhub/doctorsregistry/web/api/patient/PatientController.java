@@ -7,7 +7,7 @@ import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.dto.patient.PatientDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,18 +24,18 @@ public class PatientController {
     private final PatientService patientService;
     private final PatientMapper patientMapper;
     private final AppointmentMapper appointmentMapper;
-    private final UsernameExtractor usernameExtractor;
+    private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     public PatientController(
         PatientService patientService,
         PatientMapper patientMapper,
         AppointmentMapper appointmentMapper,
-        UsernameExtractor usernameExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.patientService = patientService;
         this.patientMapper = patientMapper;
         this.appointmentMapper = appointmentMapper;
-        this.usernameExtractor = usernameExtractor;
+        this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
     }
 
     @GetMapping("/api/patients/{id}")
@@ -46,7 +46,7 @@ public class PatientController {
 
     @GetMapping("/api/patients/me/appointments/pending")
     public List<AppointmentDTO> getPendingAppointments() {
-        int patientId = usernameExtractor.getPatientId();
+        int patientId = authenticationPrincipalExtractor.getPrincipal().userId();
         return patientService.getPendingAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
             .toList();
@@ -54,7 +54,7 @@ public class PatientController {
 
     @GetMapping("/api/patients/me/appointments/archive")
     public List<AppointmentDTO> getArchivedAppointments() {
-        int id = usernameExtractor.getPatientId();
+        int id = authenticationPrincipalExtractor.getPrincipal().userId();
         return patientService.getArchivedAppointments(id).stream()
             .map(appointmentMapper::toDTO)
             .toList();

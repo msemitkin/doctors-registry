@@ -2,7 +2,7 @@ package org.geekhub.doctorsregistry.web.api.appointment;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,26 +15,26 @@ import javax.validation.Valid;
 @RestController
 public class AppointmentController {
     private final AppointmentService appointmentService;
-    private final UsernameExtractor usernameExtractor;
+    private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     public AppointmentController(
         AppointmentService appointmentService,
-        UsernameExtractor usernameExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.appointmentService = appointmentService;
-        this.usernameExtractor = usernameExtractor;
+        this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
     }
 
     @PostMapping("/api/appointments")
     @ResponseStatus(HttpStatus.CREATED)
     public void createAppointment(@Valid CreateAppointmentDTO createAppointmentDTO) {
-        Integer patientId = usernameExtractor.getPatientId();
+        int patientId = authenticationPrincipalExtractor.getPrincipal().userId();
         appointmentService.create(patientId, createAppointmentDTO);
     }
 
     @DeleteMapping("/api/appointments/{appointment-id}")
     public void deleteById(@PathVariable("appointment-id") Integer appointmentId) {
-        Integer patientId = usernameExtractor.getPatientId();
+        int patientId = authenticationPrincipalExtractor.getPrincipal().userId();
         appointmentService.deleteById(patientId, appointmentId);
     }
 }

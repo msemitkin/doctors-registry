@@ -1,20 +1,19 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
 import org.geekhub.doctorsregistry.domain.user.UserService;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
-import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -31,7 +30,7 @@ public class UserMVCControllerTest extends AbstractTestNGSpringContextTests {
     private UserService userService;
     @Autowired
     @MockBean
-    private RoleResolver roleResolver;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test
     public void unauthorized_users_do_not_have_access_to_cabinets() throws Exception {
@@ -52,15 +51,10 @@ public class UserMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test(dataProvider = "returns_users_cabinets_correct_parameters")
     public void returns_users_cabinets_correct(Role userRole, String redirectUrl) throws Exception {
-        String email = "email@gmail.com";
-        String role = userRole.toString();
-        String password = "password";
-
-        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
-            user(email).roles(role).password(password);
-        UserDetails userDetails = User.builder().username(email).roles(role).password(password).build();
-
-        Mockito.when(roleResolver.resolveRole(userDetails)).thenReturn(userRole);
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user = user("email@gmail.com")
+            .roles(userRole.toString())
+            .password("password");
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(100, userRole));
 
         mockMvc.perform(get("/users/me/cabinet").with(user))
             .andExpect(status().isFound())

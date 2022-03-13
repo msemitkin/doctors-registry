@@ -14,7 +14,8 @@ import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
+import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DoctorController.class)
 public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     private static final int TEST_CLINIC_ID = 333;
+    private static final AuthenticationPrincipal TEST_AUTHENTICATION_PRINCIPAL =
+        new AuthenticationPrincipal(TEST_CLINIC_ID, Role.CLINIC);
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,7 +69,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     private UserService userService;
     @Autowired
     @MockBean
-    private UsernameExtractor usernameExtractor;
+    private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_doctors(Role role) throws Exception {
@@ -260,7 +263,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         List<AppointmentDTO> appointmentDTOs
     ) throws Exception {
         int doctorId = 333;
-        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(doctorId, Role.DOCTOR));
         when(doctorService.getPendingAppointments(doctorId)).thenReturn(appointmentEntities);
         for (int i = 0; i < appointmentEntities.size(); i++) {
             when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
@@ -289,7 +292,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     @Test(dataProvider = "appointments")
     public void returns_pending_archived_correct(List<AppointmentEntity> appointmentEntities, List<AppointmentDTO> appointmentDTOs) throws Exception {
         int doctorId = 333;
-        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(doctorId, Role.DOCTOR));
         when(doctorService.getArchivedAppointments(doctorId)).thenReturn(appointmentEntities);
         for (int i = 0; i < appointmentEntities.size(); i++) {
             when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
@@ -333,7 +336,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
             user("email@gmail.com").password("password").roles("CLINIC");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("", "",
             "", null, null, Collections.emptyList(), "", "");
-        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_AUTHENTICATION_PRINCIPAL);
         doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/api/doctors")
@@ -360,7 +363,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
-        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_AUTHENTICATION_PRINCIPAL);
         doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/api/doctors").with(notAdmin)
