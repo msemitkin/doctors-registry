@@ -1,5 +1,7 @@
 package org.geekhub.doctorsregistry.web.dto.user;
 
+import org.geekhub.doctorsregistry.web.security.role.Role;
+
 public interface CreateUserDTO {
     String getEmail();
 
@@ -12,4 +14,6 @@ public interface CreateUserDTO {
     String getPasswordConfirmation();
 
     void setPasswordConfirmation(String passwordConfirmation);
+
+    Role getRole();
 }

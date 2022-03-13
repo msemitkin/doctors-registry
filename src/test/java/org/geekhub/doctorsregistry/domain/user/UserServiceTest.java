@@ -5,8 +5,6 @@ import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.security.role.Role;
-import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -34,15 +32,13 @@ public class UserServiceTest {
     private UserDetailsManager userDetailsManager;
     @Mock
     private PasswordEncoder passwordEncoder;
-    @Mock
-    private RoleResolver roleResolver;
 
     private UserService userService;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        userService = new UserService(userDetailsManager, passwordEncoder, roleResolver);
+        userService = new UserService(userDetailsManager, passwordEncoder);
     }
 
     @DataProvider(name = "throws_UserAlreadyExistsException_when_user_with_given_email_already_exists_parameters")
@@ -77,7 +73,6 @@ public class UserServiceTest {
             .roles("PATIENT")
             .build();
         Mockito.when(userDetailsManager.userExists(correctUserDTO.getEmail())).thenReturn(false);
-        Mockito.when(roleResolver.resolveRole(correctUserDTO)).thenReturn(Role.PATIENT);
         Mockito.when(passwordEncoder.encode(correctUserDTO.getPassword())).thenReturn("encoded_password");
         Mockito.doNothing().when(userDetailsManager).createUser(user);
 

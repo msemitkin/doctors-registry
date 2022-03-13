@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.domain.user;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,16 +12,13 @@ public class UserService {
 
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
-    private final RoleResolver roleResolver;
 
     public UserService(
         UserDetailsManager userDetailsManager,
-        PasswordEncoder passwordEncoder,
-        RoleResolver roleResolver
+        PasswordEncoder passwordEncoder
     ) {
         this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
-        this.roleResolver = roleResolver;
     }
 
     public void saveUser(CreateUserDTO userDTO) {
@@ -35,12 +31,11 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-        String[] roles = new String[]{roleResolver.resolveRole(userDTO).name()};
         UserDetails userDetails =
             User.builder()
                 .username(userDTO.getEmail())
                 .password(encodedPassword)
-                .roles(roles)
+                .roles(userDTO.getRole().name())
                 .build();
         userDetailsManager.createUser(userDetails);
     }
