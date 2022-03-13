@@ -5,6 +5,7 @@ import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @ApiIgnore
@@ -39,15 +39,13 @@ public class DoctorMVCController {
 
     @GetMapping("/doctors")
     public String doctors(
-        @RequestParam(value = "page", required = false) Integer page,
+        @RequestParam(value = "page", required = false) Integer inputPage,
         Model model
     ) {
-        if (page == null || page < 0) {
-            page = 0;
-        }
+        int page = adjustPage(inputPage);
         List<DoctorDTO> doctors = doctorService.findAll(page).stream()
             .map(doctorMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
         model.addAttribute("doctors", doctors);
         return "doctors";
     }
@@ -66,5 +64,13 @@ public class DoctorMVCController {
     public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
         appointmentService.create(appointmentDTO);
         return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
+    }
+
+    private int adjustPage(@Nullable Integer givenPage) {
+        if (givenPage == null || givenPage < 0) {
+            return 0;
+        } else {
+            return givenPage;
+        }
     }
 }

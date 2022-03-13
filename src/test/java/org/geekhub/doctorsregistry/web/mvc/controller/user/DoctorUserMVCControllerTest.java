@@ -10,6 +10,7 @@ import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,6 +58,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     @Autowired
     @MockBean
     private UserService userService;
+    @Autowired
+    @MockBean
+    private UsernameExtractor usernameExtractor;
 
     @Test
     public void unauthorized_users_do_not_have_access_to_doctors_cabinets() throws Exception {
@@ -75,36 +80,38 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     public void returns_doctor_cabinet_with_future_and_past_appointments_correct() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor doctor =
             user("email@gmail.com").roles("DOCTOR").password("password");
+        int doctorId = 1;
 
         List<AppointmentEntity> archivedAppointments = List.of(
-            new AppointmentEntity(1, 5, 1, LocalDateTime.parse("2021-10-10T10:00")),
-            new AppointmentEntity(2, 10, 1, LocalDateTime.parse("2021-10-10T10:20")),
-            new AppointmentEntity(3, 15, 1, LocalDateTime.parse("2021-10-11T08:00"))
+            new AppointmentEntity(1, 5, doctorId, LocalDateTime.parse("2021-10-10T10:00")),
+            new AppointmentEntity(2, 10, doctorId, LocalDateTime.parse("2021-10-10T10:20")),
+            new AppointmentEntity(3, 15, doctorId, LocalDateTime.parse("2021-10-11T08:00"))
         );
         List<AppointmentDTO> archivedAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 5, 1, "2021-10-10T10:00"),
-            new AppointmentDTO(2, 10, 1, "2021-10-10T10:20"),
-            new AppointmentDTO(3, 15, 1, "2021-10-11T08:00")
+            new AppointmentDTO(1, 5, doctorId, "2021-10-10T10:00"),
+            new AppointmentDTO(2, 10, doctorId, "2021-10-10T10:20"),
+            new AppointmentDTO(3, 15, doctorId, "2021-10-11T08:00")
         );
         List<AppointmentEntity> pendingAppointments = List.of(
-            new AppointmentEntity(1, 20, 1, LocalDateTime.parse("2021-10-20T10:00")),
-            new AppointmentEntity(2, 25, 1, LocalDateTime.parse("2021-10-20T10:20")),
-            new AppointmentEntity(3, 30, 1, LocalDateTime.parse("2021-10-21T08:00"))
+            new AppointmentEntity(1, 20, doctorId, LocalDateTime.parse("2021-10-20T10:00")),
+            new AppointmentEntity(2, 25, doctorId, LocalDateTime.parse("2021-10-20T10:20")),
+            new AppointmentEntity(3, 30, doctorId, LocalDateTime.parse("2021-10-21T08:00"))
         );
         List<AppointmentDTO> pendingAppointmentsDTOs = List.of(
-            new AppointmentDTO(1, 20, 1, "2021-10-20T10:00"),
-            new AppointmentDTO(2, 25, 1, "2021-10-20T10:20"),
-            new AppointmentDTO(3, 30, 1, "2021-10-21T08:00")
+            new AppointmentDTO(1, 20, doctorId, "2021-10-20T10:00"),
+            new AppointmentDTO(2, 25, doctorId, "2021-10-20T10:20"),
+            new AppointmentDTO(3, 30, doctorId, "2021-10-21T08:00")
         );
+        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(doctorService.getArchivedAppointments(doctorId)).thenReturn(archivedAppointments);
+        when(doctorService.getPendingAppointments(doctorId)).thenReturn(pendingAppointments);
+        for (int i = 0; i < archivedAppointments.size(); i++) {
+            when(appointmentMapper.toDTO(archivedAppointments.get(i))).thenReturn(archivedAppointmentsDTOs.get(i));
+        }
+        for (int i = 0; i < archivedAppointments.size(); i++) {
+            when(appointmentMapper.toDTO(pendingAppointments.get(i))).thenReturn(pendingAppointmentsDTOs.get(i));
+        }
 
-        Mockito.when(doctorService.getArchivedAppointments()).thenReturn(archivedAppointments);
-        Mockito.when(doctorService.getPendingAppointments()).thenReturn(pendingAppointments);
-        for (int i = 0; i < archivedAppointments.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(archivedAppointments.get(i))).thenReturn(archivedAppointmentsDTOs.get(i));
-        }
-        for (int i = 0; i < archivedAppointments.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(pendingAppointments.get(i))).thenReturn(pendingAppointmentsDTOs.get(i));
-        }
         mockMvc.perform(get("/doctors/me/cabinet").with(doctor))
             .andExpect(status().isOk())
             .andExpect(view().name("doctor-cabinet"))
@@ -132,8 +139,8 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
         Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
 
         mockMvc.perform(post("/doctors/registration").with(clinic).with(csrf())
-            .flashAttr("doctor", doctorDTO)
-        )
+                .flashAttr("doctor", doctorDTO)
+            )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/clinics/me/cabinet"));
     }

@@ -14,6 +14,7 @@ import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,6 +63,9 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private UserService userService;
+    @Autowired
+    @MockBean
+    private UsernameExtractor usernameExtractor;
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_doctors(Role role) throws Exception {
@@ -80,9 +85,9 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
                 new SpecializationDTO(20, "specialization2"), 2, 200)
         );
 
-        Mockito.when(doctorService.findAll(0)).thenReturn(doctors);
+        when(doctorService.findAll(0)).thenReturn(doctors);
         for (int i = 0; i < doctors.size(); i++) {
-            Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
+            when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
         }
 
         ResultActions perform = mockMvc.perform(get("/api/doctors/pages/{page}", 0).with(user));
@@ -113,7 +118,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
 
-        Mockito.when(doctorService.findById(doctorId)).thenThrow(EntityNotFoundException.class);
+        when(doctorService.findById(doctorId)).thenThrow(EntityNotFoundException.class);
 
         mockMvc.perform(get("/api/doctors/{id}", doctorId).with(user))
             .andExpect(status().isNotFound())
@@ -134,8 +139,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         DoctorDTO doctorDTO = new DoctorDTO(1, "name", "surname",
             new SpecializationDTO(1, "specialization"), 2, 100);
 
-        Mockito.when(doctorService.findById(doctorId)).thenReturn(doctor);
-        Mockito.when(doctorMapper.toDTO(doctor)).thenReturn(doctorDTO);
+        when(doctorService.findById(doctorId)).thenReturn(doctor);
+        when(doctorMapper.toDTO(doctor)).thenReturn(doctorDTO);
 
         mockMvc.perform(get("/api/doctors/{id}", doctorId).with(user))
             .andExpect(status().isOk())
@@ -171,9 +176,9 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
                 new SpecializationDTO(20, "specialization2"), clinicId, 200)
         );
 
-        Mockito.when(doctorService.findDoctorsByClinic(clinicId)).thenReturn(doctors);
+        when(doctorService.findDoctorsByClinic(clinicId)).thenReturn(doctors);
         for (int i = 0; i < doctors.size(); i++) {
-            Mockito.when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
+            when(doctorMapper.toDTO(doctors.get(i))).thenReturn(doctorDTOs.get(i));
         }
 
         ResultActions perform = mockMvc.perform(get("/api/clinics/{id}/doctors", clinicId).with(user));
@@ -204,7 +209,7 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
 
-        Mockito.when(doctorService.findDoctorsByClinic(clinicId)).thenThrow(EntityNotFoundException.class);
+        when(doctorService.findDoctorsByClinic(clinicId)).thenThrow(EntityNotFoundException.class);
 
         ResultActions perform = mockMvc.perform(get("/api/clinics/{id}/doctors", clinicId).with(user));
         perform
@@ -249,10 +254,15 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "appointments")
-    public void returns_pending_appointments_correct(List<AppointmentEntity> appointmentEntities, List<AppointmentDTO> appointmentDTOs) throws Exception {
-        Mockito.when(doctorService.getPendingAppointments()).thenReturn(appointmentEntities);
+    public void returns_pending_appointments_correct(
+        List<AppointmentEntity> appointmentEntities,
+        List<AppointmentDTO> appointmentDTOs
+    ) throws Exception {
+        int doctorId = 333;
+        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(doctorService.getPendingAppointments(doctorId)).thenReturn(appointmentEntities);
         for (int i = 0; i < appointmentEntities.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
+            when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
         }
 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
@@ -277,9 +287,11 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test(dataProvider = "appointments")
     public void returns_pending_archived_correct(List<AppointmentEntity> appointmentEntities, List<AppointmentDTO> appointmentDTOs) throws Exception {
-        Mockito.when(doctorService.getArchivedAppointments()).thenReturn(appointmentEntities);
+        int doctorId = 333;
+        when(usernameExtractor.getDoctorId()).thenReturn(doctorId);
+        when(doctorService.getArchivedAppointments(doctorId)).thenReturn(appointmentEntities);
         for (int i = 0; i < appointmentEntities.size(); i++) {
-            Mockito.when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
+            when(appointmentMapper.toDTO(appointmentEntities.get(i))).thenReturn(appointmentDTOs.get(i));
         }
 
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
@@ -308,8 +320,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
             user("email@gmail.com").password("password").roles(role.toString());
 
         mockMvc.perform(post("/api/doctors").with(notAdmin)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(new CreateDoctorUserDTO())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new CreateDoctorUserDTO())))
             .andExpect(status().isForbidden())
             .andExpect(jsonPath("$").doesNotExist());
     }
@@ -324,10 +336,10 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
 
         mockMvc.perform(post("/api/doctors")
-            .with(notAdmin)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(doctorDTO))
-        )
+                .with(notAdmin)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(doctorDTO))
+            )
             .andExpect(status().isBadRequest())
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -351,8 +363,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
 
         mockMvc.perform(post("/api/doctors").with(notAdmin)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(doctorDTO)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(doctorDTO)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());
     }

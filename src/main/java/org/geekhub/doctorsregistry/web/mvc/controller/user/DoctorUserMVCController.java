@@ -7,6 +7,7 @@ import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +18,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @ApiIgnore
@@ -28,29 +28,35 @@ public class DoctorUserMVCController {
     private final Schedule schedule;
     private final SpecializationService specializationService;
     private final SpecializationMapper specializationMapper;
+    private final UsernameExtractor usernameExtractor;
 
     public DoctorUserMVCController(
         DoctorService doctorService,
         AppointmentMapper appointmentMapper,
         Schedule schedule,
         SpecializationService specializationService,
-        SpecializationMapper specializationMapper
+        SpecializationMapper specializationMapper,
+        UsernameExtractor usernameExtractor
     ) {
         this.doctorService = doctorService;
         this.appointmentMapper = appointmentMapper;
         this.schedule = schedule;
         this.specializationService = specializationService;
         this.specializationMapper = specializationMapper;
+        this.usernameExtractor = usernameExtractor;
     }
 
     @GetMapping("/doctors/me/cabinet")
     public String cabinet(Model model) {
-        model.addAttribute("archive", doctorService.getArchivedAppointments().stream()
+        Integer currentDoctorId = usernameExtractor.getDoctorId();
+        model.addAttribute("archive", doctorService.getArchivedAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList()));
-        model.addAttribute("pending", doctorService.getPendingAppointments().stream()
+            .toList()
+        );
+        model.addAttribute("pending", doctorService.getPendingAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList()));
+            .toList()
+        );
         return "doctor-cabinet";
     }
 
@@ -64,7 +70,7 @@ public class DoctorUserMVCController {
             model.addAttribute("defaultSchedule", schedule.getScheduleMap());
             List<SpecializationDTO> specializations = specializationService.findAll().stream()
                 .map(specializationMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
             model.addAttribute("specializations", specializations);
             return "clinic-cabinet";
         }

@@ -7,6 +7,7 @@ import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class DoctorController {
@@ -28,15 +28,18 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final DoctorMapper doctorMapper;
     private final AppointmentMapper appointmentMapper;
+    private final UsernameExtractor usernameExtractor;
 
     public DoctorController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
-        AppointmentMapper appointmentMapper
+        AppointmentMapper appointmentMapper,
+        UsernameExtractor usernameExtractor
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentMapper = appointmentMapper;
+        this.usernameExtractor = usernameExtractor;
     }
 
     @PostMapping("/api/doctors")
@@ -52,7 +55,7 @@ public class DoctorController {
         }
         return doctorService.findAll(page).stream()
             .map(doctorMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/api/doctors/{id}")
@@ -65,7 +68,7 @@ public class DoctorController {
     public List<DoctorDTO> getDoctorsByClinicId(@PathVariable("id") int id) {
         return doctorService.findDoctorsByClinic(id).stream()
             .map(doctorMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/api/doctors/{id}/schedule")
@@ -77,16 +80,18 @@ public class DoctorController {
 
     @GetMapping("/api/doctors/me/appointments/pending")
     public List<AppointmentDTO> getPendingAppointments() {
-        return doctorService.getPendingAppointments().stream()
+        Integer currentDoctorId = usernameExtractor.getDoctorId();
+        return doctorService.getPendingAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/api/doctors/me/appointments/archive")
     public List<AppointmentDTO> getArchivedAppointments() {
-        return doctorService.getArchivedAppointments().stream()
+        Integer currentDoctorId = usernameExtractor.getDoctorId();
+        return doctorService.getArchivedAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

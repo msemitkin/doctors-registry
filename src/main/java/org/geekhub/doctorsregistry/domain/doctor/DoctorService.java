@@ -26,7 +26,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Service
 public class DoctorService {
@@ -100,13 +99,13 @@ public class DoctorService {
         Integer doctorId = doctorRepository.save(doctorEntity).getId();
         List<DayTime> doctorTimetable = dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable());
         List<DoctorWorkingHourEntity> doctorWorkingHours = doctorTimetable.stream()
-            .map(entry ->
-                new DoctorWorkingHourEntity(
-                    null,
-                    doctorId,
-                    Time.valueOf(entry.getTime()),
-                    entry.getDay().getValue())
-            ).collect(Collectors.toList());
+            .map(entry -> new DoctorWorkingHourEntity(
+                null,
+                doctorId,
+                Time.valueOf(entry.getTime()),
+                entry.getDay().getValue())
+            )
+            .toList();
         doctorWorkingHourRepository.setDoctorWorkingHours(doctorWorkingHours);
     }
 
@@ -121,24 +120,20 @@ public class DoctorService {
         return result;
     }
 
-    public List<AppointmentEntity> getPendingAppointments() {
-        String email = usernameExtractor.getDoctorUserName();
-        int doctorId = getIdByEmail(email);
+    public List<AppointmentEntity> getPendingAppointments(int doctorId) {
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()
             .filter(appointment -> appointment.getDateTime().isAfter(timeNow))
-            .collect(Collectors.toList());
+            .toList();
     }
 
-    public List<AppointmentEntity> getArchivedAppointments() {
-        String email = usernameExtractor.getDoctorUserName();
-        int doctorId = getIdByEmail(email);
+    public List<AppointmentEntity> getArchivedAppointments(int doctorId) {
         List<AppointmentEntity> appointments = doctorJdbcTemplateRepository.getAppointments(doctorId);
         LocalDateTime timeNow = zonedTime.now();
         return appointments.stream()
             .filter(appointment -> appointment.getDateTime().isBefore(timeNow))
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }
