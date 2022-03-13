@@ -43,7 +43,7 @@ public class ClinicController {
         }
         return clinicService.findAll(page).stream()
             .map(clinicMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/api/clinics/{id}")

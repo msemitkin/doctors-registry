@@ -147,7 +147,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
         List<LocalTime> times = Stream.of("08:00", "08:20", "08:40")
             .map(LocalTime::parse)
-            .collect(Collectors.toList());
+            .toList();
         Map<LocalDate, List<LocalTime>> schedule = LocalDate.parse("2021-10-10").datesUntil(LocalDate.parse("2021-10-18"))
             .collect(Collectors.toMap(date -> date, date -> times));
 

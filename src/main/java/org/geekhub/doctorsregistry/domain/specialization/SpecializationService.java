@@ -19,7 +19,7 @@ public class SpecializationService {
 
     public List<SpecializationEntity> findAll() {
         return StreamSupport.stream(specializationRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

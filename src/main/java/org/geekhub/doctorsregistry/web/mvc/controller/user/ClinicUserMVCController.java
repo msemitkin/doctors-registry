@@ -38,7 +38,7 @@ public class ClinicUserMVCController {
         createDoctorUserDTO.setTimetable(new ArrayList<>());
         List<SpecializationDTO> specializations = specializationService.findAll().stream()
             .map(specializationMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
         model.addAttribute("specializations", specializations);
         model.addAttribute("defaultSchedule", schedule.getScheduleMap());
         model.addAttribute("doctor", createDoctorUserDTO);

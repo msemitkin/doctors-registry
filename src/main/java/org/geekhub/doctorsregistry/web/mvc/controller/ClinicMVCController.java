@@ -51,7 +51,7 @@ public class ClinicMVCController {
         }
         List<ClinicDTO> clinics = clinicService.findAll(page).stream()
             .map(clinicMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
         model.addAttribute("clinics", clinics);
         return "clinics";
     }
@@ -64,7 +64,7 @@ public class ClinicMVCController {
         ClinicDTO clinic = clinicMapper.toDTO(clinicService.findById(clinicId));
         List<DoctorDTO> doctors = doctorService.findDoctorsByClinic(clinicId).stream()
             .map(doctorMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
         model.addAttribute("clinic", clinic);
         model.addAttribute("doctors", doctors);
         return "clinic";

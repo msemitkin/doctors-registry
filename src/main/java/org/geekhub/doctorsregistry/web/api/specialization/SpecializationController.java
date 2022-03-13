@@ -27,6 +27,6 @@ public class SpecializationController {
     public List<SpecializationDTO> getSpecializations() {
         return specializationService.findAll().stream()
             .map(specializationMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 }
