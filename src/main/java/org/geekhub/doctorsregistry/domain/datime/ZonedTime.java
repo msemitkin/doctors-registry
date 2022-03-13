@@ -2,7 +2,6 @@ package org.geekhub.doctorsregistry.domain.datime;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class ZonedTime {
 
@@ -13,15 +12,7 @@ public class ZonedTime {
     }
 
     public LocalDateTime now() {
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of(timeZone));
-        return LocalDateTime.of(
-            now.getYear(),
-            now.getMonth(),
-            now.getDayOfMonth(),
-            now.getHour(),
-            now.getMinute(),
-            now.getSecond()
-        );
+        return LocalDateTime.now(ZoneId.of(timeZone));
     }
 
 }
