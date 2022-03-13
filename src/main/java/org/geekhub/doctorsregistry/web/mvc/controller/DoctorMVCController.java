@@ -55,7 +55,7 @@ public class DoctorMVCController {
     }
 
     @GetMapping("/doctor")
-    public String doctor(@RequestParam("id") Integer doctorId, Model model) {
+    public String doctor(@RequestParam("id") int doctorId, Model model) {
         DoctorDTO doctor = doctorMapper.toDTO(doctorService.findById(doctorId));
         model.addAttribute("doctor", doctor);
         Map<LocalDate, List<LocalTime>> schedule = doctorService.getSchedule(doctorId);

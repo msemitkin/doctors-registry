@@ -23,12 +23,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorService {
 
     private static final int PAGE_SIZE = 10;
+    private static final int NUMBER_OF_DAYS_IN_SCHEDULE = 8;
 
     private final DoctorRepository doctorRepository;
     private final DoctorJdbcTemplateRepository doctorJdbcTemplateRepository;
@@ -76,7 +78,7 @@ public class DoctorService {
         }
     }
 
-    public boolean doctorAvailable(Integer doctorId, LocalDateTime dateTime) {
+    public boolean isDoctorAvailable(Integer doctorId, LocalDateTime dateTime) {
         return doctorJdbcTemplateRepository.doctorAvailable(doctorId, dateTime);
     }
 
@@ -99,15 +101,12 @@ public class DoctorService {
         doctorWorkingHourRepository.setDoctorWorkingHours(doctorWorkingHours);
     }
 
-    public Map<LocalDate, List<LocalTime>> getSchedule(Integer doctorId) {
-        Map<LocalDate, List<LocalTime>> result = new TreeMap<>();
-        LocalDate dateNow = zonedTime.now().toLocalDate();
-        for (int deltaDays = 1; deltaDays < 8; deltaDays++) {
-            LocalDate date = dateNow.plusDays(deltaDays);
-            List<LocalTime> availableWorkingHours = doctorWorkingHourRepository.getAvailableWorkingHours(doctorId, date);
-            result.put(date, availableWorkingHours);
-        }
-        return result;
+    public Map<LocalDate, List<LocalTime>> getSchedule(int doctorId) {
+        List<LocalDate> dates = getDates();
+        return dates.stream().collect(Collectors.toMap(
+            Function.identity(),
+            date -> doctorWorkingHourRepository.getAvailableWorkingHours(doctorId, date)
+        ));
     }
 
     public List<AppointmentEntity> getPendingAppointments(int doctorId) {
@@ -124,6 +123,12 @@ public class DoctorService {
         return appointments.stream()
             .filter(appointment -> appointment.getDateTime().isBefore(timeNow))
             .toList();
+    }
+
+    private List<LocalDate> getDates() {
+        LocalDate dateNow = zonedTime.now().toLocalDate();
+        LocalDate tomorrowDate = dateNow.plusDays(1);
+        return tomorrowDate.datesUntil(dateNow.plusDays(NUMBER_OF_DAYS_IN_SCHEDULE + 1L)).toList();
     }
 
 }

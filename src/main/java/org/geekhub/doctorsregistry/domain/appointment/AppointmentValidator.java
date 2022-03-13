@@ -73,7 +73,7 @@ public class AppointmentValidator {
     }
 
     private boolean isDoctorNotAvailableOnTime(int doctorId, LocalDateTime requestedTime) {
-        return !doctorService.doctorAvailable(doctorId, requestedTime);
+        return !doctorService.isDoctorAvailable(doctorId, requestedTime);
     }
 
 }

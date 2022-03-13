@@ -49,7 +49,7 @@ public class AppointmentValidatorTest {
         Mockito.when(zonedTime.now()).thenReturn(TEST_DATE_TIME.minusDays(1));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(Mockito.any())).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(Mockito.any())).thenReturn(false);
-        Mockito.when(doctorService.doctorAvailable(Mockito.any(), Mockito.any())).thenReturn(true);
+        Mockito.when(doctorService.isDoctorAvailable(Mockito.any(), Mockito.any())).thenReturn(true);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
 
         appointmentValidator.validate(appointmentEntity);
@@ -123,7 +123,7 @@ public class AppointmentValidatorTest {
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(true);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
-        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+        Mockito.when(doctorService.isDoctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
 
         Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
@@ -136,7 +136,7 @@ public class AppointmentValidatorTest {
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(true);
-        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+        Mockito.when(doctorService.isDoctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
 
         Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
@@ -149,7 +149,7 @@ public class AppointmentValidatorTest {
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
-        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(false);
+        Mockito.when(doctorService.isDoctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(false);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
         Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
             .isInstanceOf(DoctorNotAvailableException.class);
@@ -161,7 +161,7 @@ public class AppointmentValidatorTest {
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
-        Mockito.when(doctorService.doctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
+        Mockito.when(doctorService.isDoctorAvailable(appointmentEntity.getDoctorId(), appointmentEntity.getDateTime())).thenReturn(true);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
         Assertions.assertThatCode(() -> appointmentValidator.validate(appointmentEntity))
             .doesNotThrowAnyException();
