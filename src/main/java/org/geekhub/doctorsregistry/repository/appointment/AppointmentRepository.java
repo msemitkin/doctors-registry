@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.repository.appointment;
 
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +13,14 @@ import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.geekhub.doctorsregistry.repository.DatabaseFields.*;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DATE;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DAY_OF_THE_WEEK;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DOCTOR_ID;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.DOCTOR_WORKING_HOUR_ID;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.ID;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.PATIENT_ID;
+import static org.geekhub.doctorsregistry.repository.DatabaseFields.TIME;
+import static org.geekhub.doctorsregistry.repository.util.RepositoryUtil.wrapWithEmptyResultDataAccessException;
 
 @Repository
 public class AppointmentRepository {
@@ -42,14 +48,11 @@ public class AppointmentRepository {
     }
 
     public Optional<AppointmentEntity> findById(Integer id) {
-        try {
-            String query = sqlManager.getQuery("find-appointment-by-id");
-            return Optional.ofNullable(
-                jdbcTemplate.queryForObject(query, Map.of(ID, id), rowMapper)
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        String query = sqlManager.getQuery("find-appointment-by-id");
+        return wrapWithEmptyResultDataAccessException(
+            () -> Optional.ofNullable(jdbcTemplate.queryForObject(query, Map.of(ID, id), rowMapper)),
+            Optional::empty
+        );
     }
 
     public void deleteById(Integer id) {
@@ -63,22 +66,16 @@ public class AppointmentRepository {
         DayOfWeek dayOfWeek
     ) {
         String query = sqlManager.getQuery(
-            "find-doctor-working-hour-id-by-doctor-id-and-day-of-the-week-and-time"
+            "find-doctor-working-hour-id-by-doctor-id-and-day-of-the-week-and-time");
+        Map<String, Object> parameters = Map.of(
+            DOCTOR_ID, doctorId,
+            TIME, Time.valueOf(time),
+            DAY_OF_THE_WEEK, dayOfWeek.getValue()
         );
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(
-                query,
-                Map.of(
-                    DOCTOR_ID, doctorId,
-                    TIME, Time.valueOf(time),
-                    DAY_OF_THE_WEEK, dayOfWeek.getValue()
-                ),
-                Integer.class
-                )
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return wrapWithEmptyResultDataAccessException(
+            () -> Optional.ofNullable(jdbcTemplate.queryForObject(query, parameters, Integer.class)),
+            Optional::empty
+        );
     }
 
     public void create(AppointmentEntity appointmentEntity) {
@@ -91,13 +88,12 @@ public class AppointmentRepository {
             () -> new IllegalArgumentException("Doctor working hour was not found with parameters")
         );
 
-        jdbcTemplate.update(sqlManager.getQuery("save-appointment"), Map.of(
+        Map<String, Object> parameters = Map.of(
             PATIENT_ID, appointmentEntity.getPatientId(),
             DOCTOR_WORKING_HOUR_ID, workingHourId,
             DATE, Date.valueOf(appointmentEntity.getDateTime().toLocalDate())
-            )
         );
-
+        jdbcTemplate.update(sqlManager.getQuery("save-appointment"), parameters);
     }
 
 }
