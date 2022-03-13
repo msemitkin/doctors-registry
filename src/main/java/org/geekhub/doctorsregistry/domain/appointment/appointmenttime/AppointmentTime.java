@@ -10,11 +10,23 @@ import java.util.Set;
 
 @Service
 public class AppointmentTime {
-
-    private final Set<LocalTime> availableTime = init();
     private static final LocalTime WORKING_DAY_STARTS_AT = LocalTime.parse("08:00");
     private static final LocalTime WORKING_DAY_ENDS_AT = LocalTime.parse("20:00");
     private static final int MINUTES_FREQUENCY = 20;
+
+    private final Set<LocalTime> availableTime;
+
+    public AppointmentTime() {
+        this.availableTime = init();
+    }
+
+    public boolean isTimeValid(LocalTime time) {
+        return availableTime.contains(time);
+    }
+
+    public List<LocalTime> getSupportedTimes() {
+        return new ArrayList<>(availableTime).stream().sorted().toList();
+    }
 
     private Set<LocalTime> init() {
         Set<LocalTime> times = new HashSet<>();
@@ -28,15 +40,6 @@ public class AppointmentTime {
             time = time.plusMinutes(MINUTES_FREQUENCY);
         }
         return times;
-    }
-
-    public boolean isTimeValid(LocalTime time) {
-        return availableTime.contains(time);
-    }
-
-    public List<LocalTime> getSupportedTimes() {
-        return new ArrayList<>(availableTime).stream()
-            .sorted().toList();
     }
 
 }
