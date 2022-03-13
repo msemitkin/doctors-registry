@@ -17,7 +17,6 @@ import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,6 +34,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(DoctorController.class)
 public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
+    private static final int TEST_CLINIC_ID = 333;
 
     @Autowired
     private MockMvc mockMvc;
@@ -332,8 +333,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
             user("email@gmail.com").password("password").roles("CLINIC");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("", "",
             "", null, null, Collections.emptyList(), "", "");
-
-        Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
+        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/api/doctors")
                 .with(notAdmin)
@@ -359,8 +360,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
-
-        Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
+        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/api/doctors").with(notAdmin)
                 .contentType(MediaType.APPLICATION_JSON)

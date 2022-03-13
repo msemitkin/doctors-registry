@@ -12,7 +12,6 @@ import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,6 +23,7 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(DoctorUserMVCController.class)
 public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTests {
+    private static final int TEST_CLINIC_ID = 333;
 
     @Autowired
     private MockMvc mockMvc;
@@ -135,8 +136,8 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
-
-        Mockito.doNothing().when(doctorService).saveDoctor(doctorDTO);
+        when(usernameExtractor.getClinicId()).thenReturn(TEST_CLINIC_ID);
+        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/doctors/registration").with(clinic).with(csrf())
                 .flashAttr("doctor", doctorDTO)

@@ -9,7 +9,6 @@ import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -56,8 +55,6 @@ public class DoctorServiceTest {
     private DoctorWorkingHourRepository doctorWorkingHourRepository;
     @Mock
     private ClinicRepository clinicRepository;
-    @Mock
-    private UsernameExtractor usernameExtractor;
 
     private DoctorService doctorService;
 
@@ -65,7 +62,7 @@ public class DoctorServiceTest {
     private void setUp() {
         MockitoAnnotations.openMocks(this);
         doctorService = new DoctorService(doctorRepository, doctorJdbcTemplateRepository,
-            zonedTime, dayTimeSpliterator, userService, doctorMapper, doctorWorkingHourRepository, clinicRepository, usernameExtractor);
+            zonedTime, dayTimeSpliterator, userService, doctorMapper, doctorWorkingHourRepository, clinicRepository);
     }
 
     @Test

@@ -14,7 +14,6 @@ import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,6 @@ public class DoctorService {
     private final DoctorMapper doctorMapper;
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
     private final ClinicRepository clinicRepository;
-    private final UsernameExtractor usernameExtractor;
 
     public DoctorService(
         DoctorRepository doctorRepository,
@@ -50,8 +48,7 @@ public class DoctorService {
         UserService userService,
         DoctorMapper doctorMapper,
         DoctorWorkingHourRepository doctorWorkingHourRepository,
-        ClinicRepository clinicRepository,
-        UsernameExtractor usernameExtractor
+        ClinicRepository clinicRepository
     ) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
@@ -61,7 +58,6 @@ public class DoctorService {
         this.doctorMapper = doctorMapper;
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
         this.clinicRepository = clinicRepository;
-        this.usernameExtractor = usernameExtractor;
     }
 
     public List<DoctorEntity> findAll(int page) {
@@ -90,8 +86,7 @@ public class DoctorService {
     }
 
     @Transactional
-    public void saveDoctor(CreateDoctorUserDTO doctorDTO) {
-        Integer clinicId = clinicRepository.getIdByEmail(usernameExtractor.getClinicUserName());
+    public void saveDoctor(int clinicId, CreateDoctorUserDTO doctorDTO) {
         DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO, clinicId);
 
         userService.saveUser(doctorDTO);

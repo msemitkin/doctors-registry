@@ -1,5 +1,6 @@
 package org.geekhub.doctorsregistry.web.security;
 
+import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
@@ -12,20 +13,21 @@ public class UsernameExtractor {
 
     private final RoleResolver roleResolver;
     private final DoctorRepository doctorRepository;
+    private final ClinicRepository clinicRepository;
 
-    public UsernameExtractor(RoleResolver roleResolver, DoctorRepository doctorRepository) {
+    public UsernameExtractor(
+        RoleResolver roleResolver,
+        DoctorRepository doctorRepository,
+        ClinicRepository clinicRepository
+    ) {
         this.roleResolver = roleResolver;
         this.doctorRepository = doctorRepository;
+        this.clinicRepository = clinicRepository;
     }
 
-    @Deprecated
-    public String getClinicUserName() {
-        return getCurrentUserWithRole(Role.CLINIC);
-    }
-
-    @Deprecated
-    public String getDoctorUserName() {
-        return getCurrentUserWithRole(Role.DOCTOR);
+    public Integer getClinicId() {
+        String clinicEmail = getCurrentUserWithRole(Role.CLINIC);
+        return clinicRepository.getIdByEmail(clinicEmail);
     }
 
     public Integer getDoctorId() {

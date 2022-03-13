@@ -74,7 +74,8 @@ public class DoctorUserMVCController {
             model.addAttribute("specializations", specializations);
             return "clinic-cabinet";
         }
-        doctorService.saveDoctor(doctor);
+        Integer currentClinicId = usernameExtractor.getClinicId();
+        doctorService.saveDoctor(currentClinicId, doctor);
         return "redirect:/clinics/me/cabinet";
     }
 }

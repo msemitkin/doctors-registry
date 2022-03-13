@@ -45,7 +45,8 @@ public class DoctorController {
     @PostMapping("/api/doctors")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveDoctor(@Valid @RequestBody CreateDoctorUserDTO doctorDTO) {
-        doctorService.saveDoctor(doctorDTO);
+        Integer currentClinicId = usernameExtractor.getClinicId();
+        doctorService.saveDoctor(currentClinicId, doctorDTO);
     }
 
     @GetMapping("/api/doctors/pages/{page}")
