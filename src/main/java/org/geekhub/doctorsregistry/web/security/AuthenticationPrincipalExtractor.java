@@ -49,7 +49,7 @@ public class AuthenticationPrincipalExtractor {
             case DOCTOR -> doctorRepository.getIdByEmail(email);
             case PATIENT -> patientRepository.getIdByEmail(email);
             case CLINIC -> clinicRepository.getIdByEmail(email);
-            case ADMIN -> throw new UserRoleMismatchException();
+            case ADMIN -> -1;
         };
     }
 
