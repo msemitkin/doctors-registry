@@ -8,10 +8,16 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import java.time.Duration;
+
+import static org.geekhub.doctorsregistry.web.security.role.Role.ADMIN;
+import static org.geekhub.doctorsregistry.web.security.role.Role.CLINIC;
+import static org.geekhub.doctorsregistry.web.security.role.Role.PATIENT;
+
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final int TOKEN_VALIDITY_SECONDS = 7 * 24 * 60 * 60;
+    private static final int TOKEN_VALIDITY_SECONDS = (int) Duration.ofDays(7).toSeconds();
     private static final String[] SWAGGER_WHITELIST = {
         "/api/**",
         "/configuration/ui",
@@ -36,21 +42,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .mvcMatchers("/patients/registration").hasRole("ANONYMOUS")
             .mvcMatchers(HttpMethod.POST, "/api/patients").hasRole("ANONYMOUS")
 
-            .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole("PATIENT")
+            .mvcMatchers(HttpMethod.POST, "doctor/appointments").hasRole(PATIENT.name())
             .mvcMatchers("/api/patients/me/appointments/archive",
-                "/api/patients/me/appointments/pending", "/patients/me/cabinet").hasRole("PATIENT")
-            .mvcMatchers(HttpMethod.POST, "/api/appointments").hasRole("PATIENT")
-            .mvcMatchers(HttpMethod.DELETE, "/api/appointments/{appointment-id}").hasRole("PATIENT")
+                "/api/patients/me/appointments/pending", "/patients/me/cabinet").hasRole(PATIENT.name())
+            .mvcMatchers(HttpMethod.POST, "/api/appointments").hasRole(PATIENT.name())
+            .mvcMatchers(HttpMethod.DELETE, "/api/appointments/{appointment-id}").hasRole(PATIENT.name())
 
             .mvcMatchers("/doctors/me/cabinet", "/api/doctors/me/appointments/archive",
                 "/api/doctors/me/appointments/pending").hasRole("DOCTOR")
 
-            .mvcMatchers("/clinics/me/cabinet").hasRole("CLINIC")
-            .mvcMatchers(HttpMethod.POST, "/doctors/registration", "/api/doctors").hasRole("CLINIC")
+            .mvcMatchers("/clinics/me/cabinet").hasRole(CLINIC.name())
+            .mvcMatchers(HttpMethod.POST, "/doctors/registration", "/api/doctors").hasRole(CLINIC.name())
 
-            .mvcMatchers(HttpMethod.POST, "/clinics", "/api/clinics").hasRole("ADMIN")
-            .mvcMatchers(HttpMethod.GET, "/api/patients/*").hasRole("ADMIN")
-            .mvcMatchers("/admins/me/cabinet", "/actuator/**", "/api/users/analytics", "/analytics").hasRole("ADMIN")
+            .mvcMatchers(HttpMethod.POST, "/clinics", "/api/clinics").hasRole(ADMIN.name())
+            .mvcMatchers(HttpMethod.GET, "/api/patients/*").hasRole(ADMIN.name())
+            .mvcMatchers("/admins/me/cabinet", "/actuator/**", "/api/users/analytics", "/analytics").hasRole(ADMIN.name())
 
             .anyRequest()
             .authenticated()
