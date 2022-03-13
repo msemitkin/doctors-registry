@@ -6,6 +6,7 @@ import org.geekhub.doctorsregistry.domain.appointment.DoctorNotAvailableExceptio
 import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentException;
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
@@ -51,6 +52,9 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
     @Autowired
     @MockBean
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    @Autowired
+    @MockBean
+    private AppointmentMapper appointmentMapper;
 
     @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_can_create_appointments(Role role) throws Exception {
@@ -92,11 +96,13 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
 
     @Test(dataProvider = "returns_error_message_when_exception_happened_parameters")
     public void returns_error_message_when_exception_happened(Class<? extends Throwable> exceptionType, String message) throws Exception {
+        CreateAppointmentDTO createAppointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
         AppointmentEntity appointmentEntity =
             new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
+        when(appointmentMapper.toEntity(TEST_PATIENT_ID, createAppointmentDTO)).thenReturn(appointmentEntity);
         doThrow(exceptionType).when(appointmentService).create(appointmentEntity);
 
         mockMvc.perform(post("/api/appointments").with(patient)

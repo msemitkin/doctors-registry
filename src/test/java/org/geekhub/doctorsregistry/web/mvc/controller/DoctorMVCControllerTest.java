@@ -8,6 +8,7 @@ import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentException;
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
@@ -72,6 +73,9 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    @Autowired
+    @MockBean
+    private AppointmentMapper appointmentMapper;
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -195,7 +199,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_can_make_appointments(Role role) throws Exception {
-        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10"));
+        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notPatient =
             user("email@gmail.com").roles(role.toString()).password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
@@ -223,10 +227,12 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         Class<? extends Throwable> exceptionType,
         String message
     ) throws Exception {
+        CreateAppointmentDTO createAppointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
         AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
+        when(appointmentMapper.toEntity(TEST_PATIENT_ID, createAppointmentDTO)).thenReturn(appointment);
         doThrow(exceptionType).when(appointmentService).create(appointment);
 
         mockMvc.perform(post("/doctor/appointments").with(patient).with(csrf())
