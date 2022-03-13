@@ -1,15 +1,20 @@
 package org.geekhub.doctorsregistry.repository.doctorworkinghour;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
 public class DoctorWorkingHourEntity {
 
     private final Integer id;
     private final Integer doctorId;
-    private final Time time;
+    private final LocalTime time;
     private final Integer dayOfTheWeek;
 
-    public DoctorWorkingHourEntity(Integer id, Integer doctorId, Time time, Integer dayOfTheWeek) {
+    public DoctorWorkingHourEntity(
+        Integer id,
+        Integer doctorId,
+        LocalTime time,
+        Integer dayOfTheWeek
+    ) {
         this.id = id;
         this.doctorId = doctorId;
         this.time = time;
@@ -24,7 +29,7 @@ public class DoctorWorkingHourEntity {
         return doctorId;
     }
 
-    public Time getTime() {
+    public LocalTime getTime() {
         return time;
     }
 

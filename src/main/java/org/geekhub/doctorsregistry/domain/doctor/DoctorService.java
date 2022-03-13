@@ -18,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -93,7 +92,7 @@ public class DoctorService {
             .map(entry -> new DoctorWorkingHourEntity(
                 null,
                 doctorId,
-                Time.valueOf(entry.getTime()),
+                entry.getTime(),
                 entry.getDay().getValue())
             )
             .toList();
