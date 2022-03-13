@@ -7,7 +7,6 @@ import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -19,26 +18,21 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final PatientService patientService;
     private final AppointmentValidator appointmentValidator;
-    private final UsernameExtractor usernameExtractor;
     private final AppointmentMapper appointmentMapper;
 
     public AppointmentService(
         AppointmentRepository appointmentRepository,
         PatientService patientService,
         AppointmentValidator appointmentValidator,
-        UsernameExtractor usernameExtractor,
         AppointmentMapper appointmentMapper
     ) {
         this.appointmentRepository = appointmentRepository;
         this.patientService = patientService;
         this.appointmentValidator = appointmentValidator;
-        this.usernameExtractor = usernameExtractor;
         this.appointmentMapper = appointmentMapper;
     }
 
-    public void create(CreateAppointmentDTO createAppointmentDTO) {
-        String email = usernameExtractor.getPatientUsername();
-        Integer patientId = patientService.getIdByEmail(email);
+    public void create(int patientId, CreateAppointmentDTO createAppointmentDTO) {
         AppointmentEntity appointment = appointmentMapper.toEntity(createAppointmentDTO);
         appointment.setPatientId(patientId);
         appointmentValidator.validate(appointment);
@@ -50,9 +44,7 @@ public class AppointmentService {
             .orElseThrow(EntityNotFoundException::new);
     }
 
-    public void deleteById(Integer appointmentId) {
-        String email = usernameExtractor.getPatientUsername();
-        int patientId = patientService.getIdByEmail(email);
+    public void deleteById(int patientId, Integer appointmentId) {
         if (isAppointmentPending(patientId, appointmentId)) {
             appointmentRepository.deleteById(appointmentId);
         } else {

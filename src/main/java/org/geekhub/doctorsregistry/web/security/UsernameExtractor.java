@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.security;
 
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
+import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.geekhub.doctorsregistry.web.security.role.RoleResolver;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,15 +15,18 @@ public class UsernameExtractor {
     private final RoleResolver roleResolver;
     private final DoctorRepository doctorRepository;
     private final ClinicRepository clinicRepository;
+    private final PatientRepository patientRepository;
 
     public UsernameExtractor(
         RoleResolver roleResolver,
         DoctorRepository doctorRepository,
-        ClinicRepository clinicRepository
+        ClinicRepository clinicRepository,
+        PatientRepository patientRepository
     ) {
         this.roleResolver = roleResolver;
         this.doctorRepository = doctorRepository;
         this.clinicRepository = clinicRepository;
+        this.patientRepository = patientRepository;
     }
 
     public Integer getClinicId() {
@@ -35,11 +39,10 @@ public class UsernameExtractor {
         return doctorRepository.getIdByEmail(doctorEmail);
     }
 
-    @Deprecated
-    public String getPatientUsername() {
-        return getCurrentUserWithRole(Role.PATIENT);
+    public Integer getPatientId() {
+        String patientEmail = getCurrentUserWithRole(Role.PATIENT);
+        return patientRepository.getIdByEmail(patientEmail);
     }
-
 
     private String getCurrentUserWithRole(Role role) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

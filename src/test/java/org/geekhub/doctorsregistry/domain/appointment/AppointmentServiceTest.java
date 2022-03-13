@@ -5,7 +5,6 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
-import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -28,8 +27,6 @@ public class AppointmentServiceTest {
     @Mock
     private AppointmentValidator appointmentValidator;
     @Mock
-    private UsernameExtractor usernameExtractor;
-    @Mock
     private AppointmentMapper appointmentMapper;
 
     private AppointmentService appointmentService;
@@ -41,7 +38,6 @@ public class AppointmentServiceTest {
             appointmentRepository,
             patientService,
             appointmentValidator,
-            usernameExtractor,
             appointmentMapper
         );
     }

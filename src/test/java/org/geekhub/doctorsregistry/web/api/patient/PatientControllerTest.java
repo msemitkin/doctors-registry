@@ -19,10 +19,10 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PatientController.class)
 public class PatientControllerTest extends AbstractTestNGSpringContextTests {
 
+    private static final int TEST_PATIENT_ID = 333;
     @Autowired
     private MockMvc mockMvc;
 
@@ -54,23 +55,18 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void unauthorized_users_do_not_have_access() throws Exception {
-        int patientId = 1;
-
-        mockMvc.perform(get("/api/patients/{id}", patientId))
+        mockMvc.perform(get("/api/patients/{id}", TEST_PATIENT_ID))
             .andExpect(status().isFound());
-
-        Mockito.verify(patientService, Mockito.never()).findById(anyInt());
+        verify(patientService, Mockito.never()).findById(anyInt());
     }
 
     @Test
     public void returns_message_when_there_is_no_patient_with_given_id() throws Exception {
-        int patientId = 1;
-
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").password("password").roles("ADMIN");
+        when(patientService.findById(TEST_PATIENT_ID)).thenThrow(EntityNotFoundException.class);
 
-        Mockito.when(patientService.findById(patientId)).thenThrow(EntityNotFoundException.class);
-        mockMvc.perform(get("/api/patients/{id}", patientId).with(user))
+        mockMvc.perform(get("/api/patients/{id}", TEST_PATIENT_ID).with(user))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$").isMap())
             .andExpect(jsonPath("$.message", is("Requested entity does not exist")));
@@ -81,17 +77,16 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void saves_patient_when_given_valid_data() throws Exception {
         CreatePatientUserDTO patientDTO = new CreatePatientUserDTO("Firstname", "Lastname",
             "email@gmail.com", "password", "password");
-
-        Mockito.when(userService.userExists(patientDTO.getEmail())).thenReturn(false);
+        when(userService.userExists(patientDTO.getEmail())).thenReturn(false);
         Mockito.doNothing().when(userService).saveUser(patientDTO);
 
         mockMvc.perform(post("/api/patients")
-            .param("firstName", patientDTO.getFirstName())
-            .param("lastName", patientDTO.getLastName())
-            .param("email", patientDTO.getEmail())
-            .param("password", patientDTO.getPassword())
-            .param("passwordConfirmation", patientDTO.getPasswordConfirmation())
-        )
+                .param("firstName", patientDTO.getFirstName())
+                .param("lastName", patientDTO.getLastName())
+                .param("email", patientDTO.getEmail())
+                .param("password", patientDTO.getPassword())
+                .param("passwordConfirmation", patientDTO.getPasswordConfirmation())
+            )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());
     }
@@ -109,16 +104,15 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void returns_bad_request_when_user_with_given_email_already_exists() throws Exception {
         CreatePatientUserDTO patientDTO = new CreatePatientUserDTO("Firstname", "Lastname",
             "email@gmail.com", "password", "password");
-
-        Mockito.when(userService.userExists(patientDTO.getEmail())).thenReturn(true);
+        when(userService.userExists(patientDTO.getEmail())).thenReturn(true);
 
         mockMvc.perform(post("/api/patients")
-            .param("firstName", patientDTO.getFirstName())
-            .param("lastName", patientDTO.getLastName())
-            .param("email", patientDTO.getEmail())
-            .param("password", patientDTO.getPassword())
-            .param("passwordConfirmation", patientDTO.getPasswordConfirmation())
-        )
+                .param("firstName", patientDTO.getFirstName())
+                .param("lastName", patientDTO.getLastName())
+                .param("email", patientDTO.getEmail())
+                .param("password", patientDTO.getPassword())
+                .param("passwordConfirmation", patientDTO.getPasswordConfirmation())
+            )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$").isMap())
             .andExpect(jsonPath("$.errors").isMap())
@@ -130,12 +124,12 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
         CreatePatientUserDTO createPatientUserDTO = new CreatePatientUserDTO();
 
         mockMvc.perform(post("/api/patients")
-            .param("firstName", createPatientUserDTO.getFirstName())
-            .param("lastName", createPatientUserDTO.getLastName())
-            .param("email", createPatientUserDTO.getEmail())
-            .param("password", createPatientUserDTO.getPassword())
-            .param("passwordConfirmation", createPatientUserDTO.getPasswordConfirmation())
-        )
+                .param("firstName", createPatientUserDTO.getFirstName())
+                .param("lastName", createPatientUserDTO.getLastName())
+                .param("email", createPatientUserDTO.getEmail())
+                .param("password", createPatientUserDTO.getPassword())
+                .param("passwordConfirmation", createPatientUserDTO.getPasswordConfirmation())
+            )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$").isMap())
             .andExpect(jsonPath("$.errors").isMap())
@@ -152,12 +146,12 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
             "Lastname", "emailEmail", "password", "password");
 
         mockMvc.perform(post("/api/patients")
-            .param("firstName", createPatientUserDTO.getFirstName())
-            .param("lastName", createPatientUserDTO.getLastName())
-            .param("email", createPatientUserDTO.getEmail())
-            .param("password", createPatientUserDTO.getPassword())
-            .param("passwordConfirmation", createPatientUserDTO.getPasswordConfirmation())
-        )
+                .param("firstName", createPatientUserDTO.getFirstName())
+                .param("lastName", createPatientUserDTO.getLastName())
+                .param("email", createPatientUserDTO.getEmail())
+                .param("password", createPatientUserDTO.getPassword())
+                .param("passwordConfirmation", createPatientUserDTO.getPasswordConfirmation())
+            )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$").isMap())
             .andExpect(jsonPath("$.errors").isMap())
@@ -168,9 +162,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void returns_empty_list_when_there_are_no_archived_appointments() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("patient@gmail.com").password("password").roles("PATIENT");
-        int patientId = 1;
-        Mockito.when(patientService.getIdByEmail("patient@gmail.com")).thenReturn(patientId);
-        Mockito.when(patientService.getArchivedAppointments(patientId)).thenReturn(Collections.emptyList());
+        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
 
         mockMvc.perform(get("/api/patients/me/appointments/archive").with(patient))
             .andExpect(status().isOk())
@@ -202,9 +194,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void returns_empty_list_when_there_are_no_pending_appointments() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("patient@gmail.com").password("password").roles("PATIENT");
-        int patientId = 1;
-        Mockito.when(patientService.getIdByEmail("patient@gmail.com")).thenReturn(patientId);
-        Mockito.when(patientService.getPendingAppointments(patientId)).thenReturn(Collections.emptyList());
+        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
 
         mockMvc.perform(get("/api/patients/me/appointments/pending").with(patient))
             .andExpect(status().isOk())
@@ -216,6 +206,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void only_admin_can_see_patients_data(Role role) throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor not_admin =
             user("email@gmail.com").password("password").roles(role.name());
+
         mockMvc.perform(get("/api/patients/{id}", 1).with(not_admin))
             .andExpect(status().isForbidden());
     }
@@ -224,6 +215,7 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
     public void admin_can_see_patients_data() throws Exception {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor admin =
             user("email@gmail.com").password("password").roles("ADMIN");
+
         mockMvc.perform(get("/api/patients/{id}", 1).with(admin))
             .andExpect(status().isOk());
     }

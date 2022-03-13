@@ -14,6 +14,7 @@ import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntit
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(DoctorMVCController.class)
 public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
+    private static final int TEST_PATIENT_ID = 333;
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,13 +66,16 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private AppointmentService appointmentService;
+    @Autowired
+    @MockBean
+    private UsernameExtractor usernameExtractor;
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void only_authenticated_users_can_see_doctors() throws Exception {
         mockMvc.perform(get("/doctors"))
             .andExpect(status().isFound());
-        Mockito.verify(doctorService, Mockito.never()).findAll(Mockito.anyInt());
+        verify(doctorService, Mockito.never()).findAll(Mockito.anyInt());
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
@@ -124,7 +131,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         int doctorId = 5;
         mockMvc.perform(get("/doctor").param("id", String.valueOf(doctorId)))
             .andExpect(status().isFound());
-        Mockito.verify(doctorService, Mockito.never()).findById(doctorId);
+        verify(doctorService, Mockito.never()).findById(doctorId);
     }
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
@@ -138,7 +145,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         DoctorDTO doctorDTO = new DoctorDTO(1, "name", "surname",
             new SpecializationDTO(1, "specialization"), 10, 100);
 
-        List<LocalTime> times = List.of("08:00", "08:20", "08:40").stream()
+        List<LocalTime> times = Stream.of("08:00", "08:20", "08:40")
             .map(LocalTime::parse)
             .collect(Collectors.toList());
         Map<LocalDate, List<LocalTime>> schedule = LocalDate.parse("2021-10-10").datesUntil(LocalDate.parse("2021-10-18"))
@@ -177,9 +184,9 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     public void unauthenticated_users_can_not_make_appointments() throws Exception {
         int doctorId = 5;
         mockMvc.perform(post("/doctor/appointments").with(csrf())
-            .param("doctorId", String.valueOf(doctorId))
-            .param("inputDateTime", "2021-10-10T10:10")
-        )
+                .param("doctorId", String.valueOf(doctorId))
+                .param("inputDateTime", "2021-10-10T10:10")
+            )
             .andExpect(status().isFound());
     }
 
@@ -188,13 +195,14 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notPatient =
             user("email@gmail.com").roles(role.toString()).password("password");
+        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
 
         mockMvc.perform(post("/doctor/appointments").with(notPatient)
-            .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-            .param("inputDateTime", appointmentDTO.getInputDateTime())
-        )
+                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
+                .param("inputDateTime", appointmentDTO.getInputDateTime())
+            )
             .andExpect(status().isForbidden());
-        Mockito.verify(appointmentService, Mockito.never()).create(appointmentDTO);
+        verify(appointmentService, Mockito.never()).create(TEST_PATIENT_ID, appointmentDTO);
     }
 
     @DataProvider(name = "returns_error_message_when_exception_happened_parameters")
@@ -208,17 +216,20 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "returns_error_message_when_exception_happened_parameters")
-    public void returns_error_message_when_exception_happened(Class<? extends Throwable> exceptionType, String message) throws Exception {
+    public void returns_error_message_when_exception_happened(
+        Class<? extends Throwable> exceptionType,
+        String message
+    ) throws Exception {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
-
-        Mockito.doThrow(exceptionType).when(appointmentService).create(appointmentDTO);
+        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        doThrow(exceptionType).when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/doctor/appointments").with(patient).with(csrf())
-            .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-            .param("inputDateTime", appointmentDTO.getInputDateTime())
-        )
+                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
+                .param("inputDateTime", appointmentDTO.getInputDateTime())
+            )
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(model().size(1))
@@ -230,13 +241,13 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
-
-        Mockito.doNothing().when(appointmentService).create(appointmentDTO);
+        when(usernameExtractor.getPatientId()).thenReturn(TEST_PATIENT_ID);
+        doNothing().when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
 
         mockMvc.perform(post("/doctor/appointments").with(user).with(csrf())
-            .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-            .param("inputDateTime", appointmentDTO.getInputDateTime())
-        )
+                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
+                .param("inputDateTime", appointmentDTO.getInputDateTime())
+            )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/doctor?id=" + appointmentDTO.getDoctorId()));
     }

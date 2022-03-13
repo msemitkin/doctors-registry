@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class PatientController {
@@ -47,18 +46,18 @@ public class PatientController {
 
     @GetMapping("/api/patients/me/appointments/pending")
     public List<AppointmentDTO> getPendingAppointments() {
-        int patientId = patientService.getIdByEmail(usernameExtractor.getPatientUsername());
+        int patientId = usernameExtractor.getPatientId();
         return patientService.getPendingAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/api/patients/me/appointments/archive")
     public List<AppointmentDTO> getArchivedAppointments() {
-        int id = patientService.getIdByEmail(usernameExtractor.getPatientUsername());
+        int id = usernameExtractor.getPatientId();
         return patientService.getArchivedAppointments(id).stream()
             .map(appointmentMapper::toDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @PostMapping("/api/patients")

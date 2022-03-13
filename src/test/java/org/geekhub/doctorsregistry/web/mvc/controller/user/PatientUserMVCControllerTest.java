@@ -6,6 +6,7 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;
@@ -45,6 +46,9 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
     @Autowired
     @MockBean
     private UserService userService;
+    @Autowired
+    @MockBean
+    private UsernameExtractor usernameExtractor;
 
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
