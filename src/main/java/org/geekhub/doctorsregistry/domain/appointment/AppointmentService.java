@@ -8,6 +8,7 @@ import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,22 +46,25 @@ public class AppointmentService {
     }
 
     public AppointmentEntity findById(int id) {
-        return appointmentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return appointmentRepository.findById(id)
+            .orElseThrow(EntityNotFoundException::new);
     }
 
     public void deleteById(Integer appointmentId) {
         String email = usernameExtractor.getPatientUsername();
         int patientId = patientService.getIdByEmail(email);
-        List<AppointmentEntity> appointments = patientService.getPendingAppointments(patientId);
-        if (
-            appointments.stream()
-                .map(AppointmentEntity::getId)
-                .anyMatch(appointmentId::equals)
-        ) {
+        if (isAppointmentPending(patientId, appointmentId)) {
             appointmentRepository.deleteById(appointmentId);
         } else {
             throw new OperationNotAllowedException();
         }
+    }
+
+    private boolean isAppointmentPending(@NonNull Integer patientId, @NonNull Integer appointmentId) {
+        List<AppointmentEntity> appointments = patientService.getPendingAppointments(patientId);
+        return appointments.stream()
+            .map(AppointmentEntity::getId)
+            .anyMatch(appointmentId::equals);
     }
 
 }

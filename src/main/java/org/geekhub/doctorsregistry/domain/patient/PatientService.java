@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
@@ -71,14 +70,14 @@ public class PatientService {
         LocalDateTime dateTimeNow = zonedTime.now();
         return patientJdbcTemplateRepository.getAppointments(patientId).stream()
             .filter(appointment -> appointment.getDateTime().isAfter(dateTimeNow))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public List<AppointmentEntity> getArchivedAppointments(Integer patientId) {
         LocalDateTime dateTimeNow = zonedTime.now();
         return patientJdbcTemplateRepository.getAppointments(patientId).stream()
             .filter(appointment -> appointment.getDateTime().isBefore(dateTimeNow))
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }
