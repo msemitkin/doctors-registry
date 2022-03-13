@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.repository.appointment;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
@@ -78,7 +79,7 @@ public class AppointmentRepository {
         );
     }
 
-    public void create(AppointmentEntity appointmentEntity) {
+    public void create(@NonNull AppointmentEntity appointmentEntity) {
 
         Integer workingHourId = getWorkingHourId(
             appointmentEntity.getDoctorId(),

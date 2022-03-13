@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.domain.appointment;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
-import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentRepository;
@@ -26,8 +25,6 @@ public class AppointmentServiceTest {
     private PatientService patientService;
     @Mock
     private AppointmentValidator appointmentValidator;
-    @Mock
-    private AppointmentMapper appointmentMapper;
 
     private AppointmentService appointmentService;
 
@@ -37,8 +34,7 @@ public class AppointmentServiceTest {
         appointmentService = new AppointmentService(
             appointmentRepository,
             patientService,
-            appointmentValidator,
-            appointmentMapper
+            appointmentValidator
         );
     }
 

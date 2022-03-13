@@ -7,6 +7,7 @@ import org.geekhub.doctorsregistry.domain.appointment.PatientBusyException;
 import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentException;
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
 import org.geekhub.doctorsregistry.domain.patient.OperationNotAllowedException;
+import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
@@ -20,6 +21,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -89,15 +92,16 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
 
     @Test(dataProvider = "returns_error_message_when_exception_happened_parameters")
     public void returns_error_message_when_exception_happened(Class<? extends Throwable> exceptionType, String message) throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
+        AppointmentEntity appointmentEntity =
+            new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
-        doThrow(exceptionType).when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
+        doThrow(exceptionType).when(appointmentService).create(appointmentEntity);
 
         mockMvc.perform(post("/api/appointments").with(patient)
-                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-                .param("inputDateTime", appointmentDTO.getInputDateTime())
+                .param("doctorId", "1")
+                .param("inputDateTime", "2021-10-10T08:00")
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$").isMap())
@@ -107,16 +111,16 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
 
     @Test
     public void saves_appointment_correct() throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
-
+        AppointmentEntity appointmentEntity =
+            new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
-        doNothing().when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
+        doNothing().when(appointmentService).create(appointmentEntity);
 
         mockMvc.perform(post("/api/appointments").with(patient)
-                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-                .param("inputDateTime", appointmentDTO.getInputDateTime())
+                .param("doctorId", "1")
+                .param("inputDateTime", "2021-10-10T08:00")
             )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());

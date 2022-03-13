@@ -1,6 +1,8 @@
 package org.geekhub.doctorsregistry.web.api.appointment;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
 import org.springframework.http.HttpStatus;
@@ -16,20 +18,24 @@ import javax.validation.Valid;
 public class AppointmentController {
     private final AppointmentService appointmentService;
     private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    private final AppointmentMapper appointmentMapper;
 
     public AppointmentController(
         AppointmentService appointmentService,
-        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor,
+        AppointmentMapper appointmentMapper
     ) {
         this.appointmentService = appointmentService;
         this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
+        this.appointmentMapper = appointmentMapper;
     }
 
     @PostMapping("/api/appointments")
     @ResponseStatus(HttpStatus.CREATED)
     public void createAppointment(@Valid CreateAppointmentDTO createAppointmentDTO) {
         int patientId = authenticationPrincipalExtractor.getPrincipal().userId();
-        appointmentService.create(patientId, createAppointmentDTO);
+        AppointmentEntity appointment = appointmentMapper.toEntity(patientId, createAppointmentDTO);
+        appointmentService.create(appointment);
     }
 
     @DeleteMapping("/api/appointments/{appointment-id}")

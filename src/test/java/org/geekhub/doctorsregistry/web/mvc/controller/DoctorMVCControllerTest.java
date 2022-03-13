@@ -9,6 +9,7 @@ import org.geekhub.doctorsregistry.domain.appointment.RepeatedDayAppointmentExce
 import org.geekhub.doctorsregistry.domain.appointment.TimeNotAllowedException;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
@@ -30,6 +31,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -193,17 +195,17 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_can_make_appointments(Role role) throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
+        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notPatient =
             user("email@gmail.com").roles(role.toString()).password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
 
         mockMvc.perform(post("/doctor/appointments").with(notPatient)
-                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-                .param("inputDateTime", appointmentDTO.getInputDateTime())
+                .param("doctorId", "1")
+                .param("inputDateTime", "2021-10-10")
             )
             .andExpect(status().isForbidden());
-        verify(appointmentService, Mockito.never()).create(TEST_PATIENT_ID, appointmentDTO);
+        verify(appointmentService, Mockito.never()).create(appointment);
     }
 
     @DataProvider(name = "returns_error_message_when_exception_happened_parameters")
@@ -221,15 +223,15 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         Class<? extends Throwable> exceptionType,
         String message
     ) throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
+        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
-        doThrow(exceptionType).when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
+        doThrow(exceptionType).when(appointmentService).create(appointment);
 
         mockMvc.perform(post("/doctor/appointments").with(patient).with(csrf())
-                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-                .param("inputDateTime", appointmentDTO.getInputDateTime())
+                .param("doctorId", "1")
+                .param("inputDateTime", "2021-10-10T08:00")
             )
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
@@ -239,18 +241,18 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void saves_appointment_correct() throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(1, "2021-10-10");
+        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
-        doNothing().when(appointmentService).create(TEST_PATIENT_ID, appointmentDTO);
+        doNothing().when(appointmentService).create(appointment);
 
         mockMvc.perform(post("/doctor/appointments").with(user).with(csrf())
-                .param("doctorId", String.valueOf(appointmentDTO.getDoctorId()))
-                .param("inputDateTime", appointmentDTO.getInputDateTime())
+                .param("doctorId", "1")
+                .param("inputDateTime", "2021-10-10T08:00")
             )
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/doctor?id=" + appointmentDTO.getDoctorId()));
+            .andExpect(redirectedUrl("/doctor?id=1"));
     }
 
 }

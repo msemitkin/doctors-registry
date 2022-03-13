@@ -2,7 +2,9 @@ package org.geekhub.doctorsregistry.web.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
+import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.CreateAppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
@@ -28,17 +30,20 @@ public class DoctorMVCController {
     private final DoctorMapper doctorMapper;
     private final AppointmentService appointmentService;
     private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    private final AppointmentMapper appointmentMapper;
 
     public DoctorMVCController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
         AppointmentService appointmentService,
-        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor,
+        AppointmentMapper appointmentMapper
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentService = appointmentService;
         this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
+        this.appointmentMapper = appointmentMapper;
     }
 
     @GetMapping("/doctors")
@@ -67,7 +72,8 @@ public class DoctorMVCController {
     @PostMapping("/doctor/appointments")
     public String makeAppointment(@Valid CreateAppointmentDTO appointmentDTO) {
         int currentPatientId = authenticationPrincipalExtractor.getPrincipal().userId();
-        appointmentService.create(currentPatientId, appointmentDTO);
+        AppointmentEntity appointment = appointmentMapper.toEntity(currentPatientId, appointmentDTO);
+        appointmentService.create(appointment);
         return "redirect:/doctor?id=" + appointmentDTO.getDoctorId();
     }
 
