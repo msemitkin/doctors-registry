@@ -46,8 +46,4 @@ public class ClinicService {
             .orElseThrow(EntityNotFoundException::new);
     }
 
-    public Integer getIdByEmail(String email) {
-        return clinicRepository.getIdByEmail(email);
-    }
-
 }

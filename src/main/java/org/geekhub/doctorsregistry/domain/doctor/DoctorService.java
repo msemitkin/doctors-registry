@@ -64,10 +64,6 @@ public class DoctorService {
         return doctorRepository.findAll(PageRequest.of(page, PAGE_SIZE)).toList();
     }
 
-    public int getIdByEmail(String email) {
-        return doctorRepository.getIdByEmail(email);
-    }
-
     public DoctorEntity findById(int id) {
         return doctorRepository.findById(id)
             .orElseThrow(EntityNotFoundException::new);

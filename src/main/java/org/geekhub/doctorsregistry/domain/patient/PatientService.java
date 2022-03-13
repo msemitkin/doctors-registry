@@ -48,10 +48,6 @@ public class PatientService {
         return patientRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    public int getIdByEmail(String email) {
-        return patientRepository.getIdByEmail(email);
-    }
-
     public boolean patientHasAppointmentOnSelectedTime(AppointmentEntity appointmentEntity) {
         return !patientJdbcTemplateRepository.patientDoNotHaveAppointment(
             appointmentEntity.getPatientId(), appointmentEntity.getDateTime()

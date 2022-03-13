@@ -5,8 +5,6 @@ import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.security.UsernameExtractor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,12 +38,12 @@ public class PatientUserMVCController {
     }
 
     @GetMapping("/patients/me/cabinet")
-    public String cabinet(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        Integer doctorId = patientService.getIdByEmail(userDetails.getUsername());
-        model.addAttribute("archive", patientService.getArchivedAppointments(doctorId).stream()
+    public String cabinet(Model model) {
+        Integer patientId = usernameExtractor.getPatientId();
+        model.addAttribute("archive", patientService.getArchivedAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
             .toList());
-        model.addAttribute("pending", patientService.getPendingAppointments(doctorId).stream()
+        model.addAttribute("pending", patientService.getPendingAppointments(patientId).stream()
             .map(appointmentMapper::toDTO)
             .toList());
         return "patient-cabinet";
