@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.mvc.controller.user;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.patient.CreatePatientCommand;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
@@ -63,8 +64,6 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
 
     @Test
     public void returns_errors_when_submit_empty_form() throws Exception {
-        Mockito.doNothing().when(patientService).save(new CreatePatientUserDTO());
-        when(userService.userExists(null)).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf()))
             .andExpect(status().isOk())
             .andExpect(model().hasErrors())
@@ -79,15 +78,17 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
         CreatePatientUserDTO patient = new CreatePatientUserDTO(
             "Firstname", "Lastname", "patient-email@gmail.com",
             "password", "password");
-        Mockito.doNothing().when(patientService).save(patient);
+        CreatePatientCommand createPatientCommand = new CreatePatientCommand(
+            "patient-email@gmail.com", "Firstname", "Lastname", "password");
+        Mockito.doNothing().when(patientService).save(createPatientCommand);
         when(userService.userExists(patient.getEmail())).thenReturn(false);
         mockMvc.perform(post("/patients/registration").with(csrf())
-            .param("firstName", patient.getFirstName())
-            .param("lastName", patient.getLastName())
-            .param("email", patient.getEmail())
-            .param("password", patient.getPassword())
-            .param("passwordConfirmation", patient.getPasswordConfirmation())
-        )
+                .param("firstName", patient.getFirstName())
+                .param("lastName", patient.getLastName())
+                .param("email", patient.getEmail())
+                .param("password", patient.getPassword())
+                .param("passwordConfirmation", patient.getPasswordConfirmation())
+            )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/index"))
             .andExpect(model().hasNoErrors());
@@ -98,15 +99,17 @@ public class PatientUserMVCControllerTest extends AbstractTestNGSpringContextTes
         CreatePatientUserDTO patient = new CreatePatientUserDTO(
             "Firstname", "Lastname", "patient-email@gmail.com",
             "password", "password");
-        Mockito.doNothing().when(patientService).save(patient);
+        CreatePatientCommand createPatientCommand = new CreatePatientCommand(
+            "patient-email@gmail.com", "Firstname", "Lastname", "password");
+        Mockito.doNothing().when(patientService).save(createPatientCommand);
         when(userService.userExists(patient.getEmail())).thenReturn(true);
         mockMvc.perform(post("/patients/registration").with(csrf())
-            .param("firstName", patient.getFirstName())
-            .param("lastName", patient.getLastName())
-            .param("email", patient.getEmail())
-            .param("password", patient.getPassword())
-            .param("passwordConfirmation", patient.getPasswordConfirmation())
-        )
+                .param("firstName", patient.getFirstName())
+                .param("lastName", patient.getLastName())
+                .param("email", patient.getEmail())
+                .param("password", patient.getPassword())
+                .param("passwordConfirmation", patient.getPasswordConfirmation())
+            )
             .andExpect(status().isOk())
             .andExpect(model().hasErrors())
             .andExpect(model().attributeHasFieldErrors("patient", "email"))
