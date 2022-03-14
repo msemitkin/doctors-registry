@@ -44,16 +44,13 @@ public class PatientServiceTest {
     private ZonedTime zonedTime;
     @Mock
     private UserService userService;
-    @Mock
-    private PatientMapper patientMapper;
 
     private PatientService patientService;
 
     @BeforeMethod
     private void setUp() {
         MockitoAnnotations.openMocks(this);
-        patientService = new PatientService(patientRepository, patientJdbcTemplateRepository,
-            zonedTime, userService, patientMapper);
+        patientService = new PatientService(patientRepository, patientJdbcTemplateRepository, zonedTime, userService);
     }
 
     @Test

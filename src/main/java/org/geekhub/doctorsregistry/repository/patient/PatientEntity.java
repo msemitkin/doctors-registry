@@ -33,6 +33,10 @@ public class PatientEntity {
         this.email = email;
     }
 
+    public static PatientEntity create(String firstName, String lastName, String email) {
+        return new PatientEntity(null, firstName, lastName, email);
+    }
+
     public Integer getId() {
         return id;
     }

@@ -2,14 +2,12 @@ package org.geekhub.doctorsregistry.domain.patient;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
-import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,28 +21,25 @@ public class PatientService {
     private final PatientJdbcTemplateRepository patientJdbcTemplateRepository;
     private final ZonedTime zonedTime;
     private final UserService userService;
-    private final PatientMapper patientMapper;
 
     public PatientService(
         PatientRepository patientRepository,
         PatientJdbcTemplateRepository patientJdbcTemplateRepository,
         ZonedTime zonedTime,
-        UserService userService,
-        PatientMapper patientMapper
+        UserService userService
     ) {
         this.patientRepository = patientRepository;
         this.patientJdbcTemplateRepository = patientJdbcTemplateRepository;
         this.zonedTime = zonedTime;
         this.userService = userService;
-        this.patientMapper = patientMapper;
     }
 
     @Transactional
-    public void save(@NonNull CreatePatientUserDTO patient) {
-        User user = User.newPatient(patient.getEmail(), patient.getPassword());
+    public void save(@NonNull CreatePatientCommand patient) {
+        User user = User.newPatient(patient.email(), patient.password());
         userService.saveUser(user);
 
-        PatientEntity patientEntity = patientMapper.toEntity(patient);
+        PatientEntity patientEntity = PatientEntity.create(patient.firstName(), patient.lastName(), patient.email());
         patientRepository.save(patientEntity);
     }
 

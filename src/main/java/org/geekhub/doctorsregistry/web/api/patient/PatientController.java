@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.api.patient;
 
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
+import org.geekhub.doctorsregistry.domain.patient.CreatePatientCommand;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
@@ -63,6 +64,12 @@ public class PatientController {
     @PostMapping("/api/patients")
     @ResponseStatus(HttpStatus.CREATED)
     public void newPatient(@Valid CreatePatientUserDTO patientDTO) {
-        patientService.save(patientDTO);
+        CreatePatientCommand createPatientCommand = getCreatePatientCommand(patientDTO);
+        patientService.save(createPatientCommand);
+    }
+
+    private CreatePatientCommand getCreatePatientCommand(CreatePatientUserDTO patientDTO) {
+        return new CreatePatientCommand(
+            patientDTO.getEmail(), patientDTO.getFirstName(), patientDTO.getLastName(), patientDTO.getPassword());
     }
 }

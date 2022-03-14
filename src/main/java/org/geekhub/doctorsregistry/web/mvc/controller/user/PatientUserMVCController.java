@@ -2,6 +2,7 @@ package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
 import org.geekhub.doctorsregistry.domain.appointment.AppointmentService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.patient.CreatePatientCommand;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipalExtractor;
@@ -70,7 +71,13 @@ public class PatientUserMVCController {
         if (bindingResult.hasErrors()) {
             return "patient-registration";
         }
-        patientService.save(patient);
+        CreatePatientCommand createPatientCommand = getCreatePatientCommand(patient);
+        patientService.save(createPatientCommand);
         return "redirect:/index";
+    }
+
+    private CreatePatientCommand getCreatePatientCommand(CreatePatientUserDTO patient) {
+        return new CreatePatientCommand(
+            patient.getEmail(), patient.getFirstName(), patient.getLastName(), patient.getPassword());
     }
 }
