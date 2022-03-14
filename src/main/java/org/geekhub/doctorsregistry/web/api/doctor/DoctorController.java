@@ -4,7 +4,6 @@ import org.geekhub.doctorsregistry.domain.doctor.CreateDoctorCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
-import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.web.dto.appointment.AppointmentDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -32,27 +30,24 @@ public class DoctorController {
     private final DoctorMapper doctorMapper;
     private final AppointmentMapper appointmentMapper;
     private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
-    private final DayTimeSpliterator dayTimeSpliterator;
 
     public DoctorController(
         DoctorService doctorService,
         DoctorMapper doctorMapper,
         AppointmentMapper appointmentMapper,
-        AuthenticationPrincipalExtractor authenticationPrincipalExtractor,
-        DayTimeSpliterator dayTimeSpliterator
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
     ) {
         this.doctorService = doctorService;
         this.doctorMapper = doctorMapper;
         this.appointmentMapper = appointmentMapper;
         this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
-        this.dayTimeSpliterator = dayTimeSpliterator;
     }
 
     @PostMapping("/api/doctors")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveDoctor(@Valid @RequestBody CreateDoctorUserDTO doctorDTO) {
         int currentClinicId = authenticationPrincipalExtractor.getPrincipal().userId();
-        CreateDoctorCommand createDoctorCommand = getCreateDoctorCommand(doctorDTO, currentClinicId);
+        CreateDoctorCommand createDoctorCommand = doctorMapper.toCreateDoctorCommand(doctorDTO, currentClinicId);
         doctorService.saveDoctor(createDoctorCommand);
     }
 
@@ -100,19 +95,6 @@ public class DoctorController {
         return doctorService.getArchivedAppointments(currentDoctorId).stream()
             .map(appointmentMapper::toDTO)
             .toList();
-    }
-
-    private CreateDoctorCommand getCreateDoctorCommand(CreateDoctorUserDTO doctorDTO, int currentClinicId) {
-        return new CreateDoctorCommand(
-            doctorDTO.getFirstName(),
-            doctorDTO.getLastName(),
-            doctorDTO.getEmail(),
-            doctorDTO.getPassword(),
-            doctorDTO.getSpecializationId(),
-            currentClinicId,
-            doctorDTO.getPrice(),
-            new HashSet<>(dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable()))
-        );
     }
 
 }

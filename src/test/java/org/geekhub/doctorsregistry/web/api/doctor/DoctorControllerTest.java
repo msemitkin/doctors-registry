@@ -7,7 +7,6 @@ import org.geekhub.doctorsregistry.domain.doctor.CreateDoctorCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
-import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
@@ -72,9 +71,6 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
-    @Autowired
-    @MockBean
-    private DayTimeSpliterator dayTimeSpliterator;
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_doctors(Role role) throws Exception {

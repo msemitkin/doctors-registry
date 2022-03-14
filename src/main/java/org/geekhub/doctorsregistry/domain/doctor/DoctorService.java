@@ -13,6 +13,7 @@ import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHou
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +76,7 @@ public class DoctorService {
     }
 
     @Transactional
-    public void saveDoctor(CreateDoctorCommand createDoctorCommand) {
+    public void saveDoctor(@NonNull CreateDoctorCommand createDoctorCommand) {
         User user = User.newDoctor(createDoctorCommand.email(), createDoctorCommand.password());
         userService.saveUser(user);
 

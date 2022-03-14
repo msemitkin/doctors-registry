@@ -3,8 +3,8 @@ package org.geekhub.doctorsregistry.web.mvc.controller.user;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
+import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
-import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
@@ -65,7 +65,7 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
     @Autowired
     @MockBean
-    private DayTimeSpliterator dayTimeSpliterator;
+    private DoctorMapper doctorMapper;
 
     @Test
     public void unauthorized_users_do_not_have_access_to_doctors_cabinets() throws Exception {
