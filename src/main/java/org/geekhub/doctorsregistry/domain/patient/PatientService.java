@@ -3,12 +3,14 @@ package org.geekhub.doctorsregistry.domain.patient;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
+import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
 import org.geekhub.doctorsregistry.repository.patient.PatientRepository;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +40,10 @@ public class PatientService {
     }
 
     @Transactional
-    public void save(CreatePatientUserDTO patient) {
-        userService.saveUser(patient);
+    public void save(@NonNull CreatePatientUserDTO patient) {
+        User user = User.newPatient(patient.getEmail(), patient.getPassword());
+        userService.saveUser(user);
+
         PatientEntity patientEntity = patientMapper.toEntity(patient);
         patientRepository.save(patientEntity);
     }

@@ -5,6 +5,7 @@ import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
 import org.geekhub.doctorsregistry.domain.schedule.DayTime;
 import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
+import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
@@ -15,6 +16,7 @@ import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHou
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,12 +85,13 @@ public class DoctorService {
     }
 
     @Transactional
-    public void saveDoctor(int clinicId, CreateDoctorUserDTO doctorDTO) {
+    public void saveDoctor(int clinicId, @NonNull CreateDoctorUserDTO doctorDTO) {
+        User user = User.newDoctor(doctorDTO.getEmail(), doctorDTO.getPassword());
+        userService.saveUser(user);
+
         DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO, clinicId);
-
-        userService.saveUser(doctorDTO);
-
         Integer doctorId = doctorRepository.save(doctorEntity).getId();
+
         List<DayTime> doctorTimetable = dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable());
         List<DoctorWorkingHourEntity> doctorWorkingHours = doctorTimetable.stream()
             .map(entry -> new DoctorWorkingHourEntity(

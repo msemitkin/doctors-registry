@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.web.dto.doctor;
 
 import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.geekhub.doctorsregistry.web.validation.FieldsMatch;
 import org.geekhub.doctorsregistry.web.validation.UniqueEmail;
 
@@ -146,11 +145,6 @@ public class CreateDoctorUserDTO implements CreateDoctorDTO, CreateUserDTO {
     @Override
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
-    }
-
-    @Override
-    public Role getRole() {
-        return Role.DOCTOR;
     }
 
     @Override

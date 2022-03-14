@@ -5,6 +5,7 @@ import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.patient.PatientService;
+import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.web.dto.patient.CreatePatientUserDTO;
 import org.geekhub.doctorsregistry.web.security.AuthenticationPrincipal;
@@ -76,17 +77,16 @@ public class PatientControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void saves_patient_when_given_valid_data() throws Exception {
-        CreatePatientUserDTO patientDTO = new CreatePatientUserDTO("Firstname", "Lastname",
-            "email@gmail.com", "password", "password");
-        when(userService.userExists(patientDTO.getEmail())).thenReturn(false);
-        Mockito.doNothing().when(userService).saveUser(patientDTO);
+        User patient = User.newPatient("email@gmail.com", "password");
+        when(userService.userExists(patient.getEmail())).thenReturn(false);
+        Mockito.doNothing().when(userService).saveUser(patient);
 
         mockMvc.perform(post("/api/patients")
-                .param("firstName", patientDTO.getFirstName())
-                .param("lastName", patientDTO.getLastName())
-                .param("email", patientDTO.getEmail())
-                .param("password", patientDTO.getPassword())
-                .param("passwordConfirmation", patientDTO.getPasswordConfirmation())
+                .param("firstName", "Firstname")
+                .param("lastName", "Lastname")
+                .param("email", "email@gmail.com")
+                .param("password", "password")
+                .param("passwordConfirmation", "password")
             )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());

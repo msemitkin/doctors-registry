@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.domain.user;
 
-import org.geekhub.doctorsregistry.web.dto.user.CreateUserDTO;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -21,19 +20,17 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void saveUser(CreateUserDTO userDTO) {
-
-        if (userDetailsManager.userExists(userDTO.getEmail())) {
+    public void saveUser(@NonNull User user) {
+        if (userDetailsManager.userExists(user.getEmail())) {
             throw new UserAlreadyExistsException("User with given email already exists");
         }
 
-        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-        UserDetails userDetails =
-            User.builder()
-                .username(userDTO.getEmail())
-                .password(encodedPassword)
-                .roles(userDTO.getRole().name())
-                .build();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+            .username(user.getEmail())
+            .password(encodedPassword)
+            .roles(user.getRole().name())
+            .build();
         userDetailsManager.createUser(userDetails);
     }
 
