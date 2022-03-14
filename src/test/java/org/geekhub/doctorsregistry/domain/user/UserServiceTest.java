@@ -56,15 +56,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throws_PasswordsDoNotMatchException_when_passwords_do_not_match() {
-        CreateUserDTO userWithDifferentPasswords = new CreatePatientUserDTO("Firstname", "Lastname",
-            "patient_email@gmail.com", "password", "passwordConfirmation");
-        Mockito.when(userDetailsManager.userExists(userWithDifferentPasswords.getEmail())).thenReturn(false);
-        Assertions.assertThatCode(() -> userService.saveUser(userWithDifferentPasswords))
-            .isInstanceOf(PasswordsDoNotMatchException.class);
-    }
-
-    @Test
     public void do_not_throw_any_exception_when_given_correct_data() {
         CreateUserDTO correctUserDTO = TEST_PATIENT_USER;
         UserDetails user = User.builder()

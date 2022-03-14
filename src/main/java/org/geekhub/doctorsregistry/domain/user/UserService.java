@@ -26,9 +26,6 @@ public class UserService {
         if (userDetailsManager.userExists(userDTO.getEmail())) {
             throw new UserAlreadyExistsException("User with given email already exists");
         }
-        if (!passwordsMatch(userDTO.getPassword(), userDTO.getPasswordConfirmation())) {
-            throw new PasswordsDoNotMatchException("Passwords do not match");
-        }
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         UserDetails userDetails =
@@ -47,9 +44,5 @@ public class UserService {
 
     public boolean userExists(String email) {
         return userDetailsManager.userExists(email);
-    }
-
-    private boolean passwordsMatch(String password, String passwordConfirmation) {
-        return password.equals(passwordConfirmation);
     }
 }
