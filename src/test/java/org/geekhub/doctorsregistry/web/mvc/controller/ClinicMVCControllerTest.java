@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.mvc.controller;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.CreateClinicCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
@@ -10,13 +11,11 @@ import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
 import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
-import org.geekhub.doctorsregistry.web.api.errorhandling.ErrorWithStatusDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
 import org.geekhub.doctorsregistry.web.dto.clinic.CreateClinicUserDTO;
 import org.geekhub.doctorsregistry.web.dto.doctor.DoctorDTO;
 import org.geekhub.doctorsregistry.web.dto.specialization.SpecializationDTO;
 import org.geekhub.doctorsregistry.web.security.role.Role;
-import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,15 +30,11 @@ import org.testng.annotations.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -214,7 +209,9 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor admin =
             user("email@gmail.com").roles("ADMIN").password("password");
 
-        Mockito.doNothing().when(clinicService).save(clinicDTO);
+        CreateClinicCommand createClinicCommand = new CreateClinicCommand(
+            clinicDTO.getEmail(), clinicDTO.getName(), clinicDTO.getAddress(), clinicDTO.getPassword());
+        Mockito.doNothing().when(clinicService).save(createClinicCommand);
 
         mockMvc.perform(post("/clinics").with(admin).with(csrf())
             .param("name", clinicDTO.getName())
@@ -225,7 +222,7 @@ public class ClinicMVCControllerTest extends AbstractTestNGSpringContextTests {
         )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/index"));
-        Mockito.verify(clinicService, Mockito.times(1)).save(clinicDTO);
+        Mockito.verify(clinicService, Mockito.times(1)).save(createClinicCommand);
     }
 
     @Test

@@ -32,7 +32,7 @@ public class ClinicEntity {
         this.email = email;
     }
 
-    public static ClinicEntity of(String name, String address, String email) {
+    public static ClinicEntity create(String name, String address, String email) {
         return new ClinicEntity(null, name, address, email);
     }
 

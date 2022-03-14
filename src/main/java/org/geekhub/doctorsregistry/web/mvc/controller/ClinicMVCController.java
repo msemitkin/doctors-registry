@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.mvc.controller;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.CreateClinicCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
@@ -18,7 +19,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @ApiIgnore
@@ -78,7 +78,19 @@ public class ClinicMVCController {
         if (bindingResult.hasErrors()) {
             return "admin-cabinet";
         }
-        clinicService.save(clinicDTO);
+
+        CreateClinicCommand createClinicCommand = getCreateClinicCommand(clinicDTO);
+        clinicService.save(createClinicCommand);
         return "redirect:/index";
     }
+
+    private CreateClinicCommand getCreateClinicCommand(CreateClinicUserDTO clinicDTO) {
+        return new CreateClinicCommand(
+            clinicDTO.getEmail(),
+            clinicDTO.getName(),
+            clinicDTO.getAddress(),
+            clinicDTO.getPassword()
+        );
+    }
+
 }

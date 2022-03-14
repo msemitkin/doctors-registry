@@ -1,6 +1,7 @@
 package org.geekhub.doctorsregistry.web.api.clinic;
 
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.CreateClinicCommand;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
 import org.geekhub.doctorsregistry.web.dto.clinic.ClinicDTO;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class ClinicController {
@@ -33,7 +33,8 @@ public class ClinicController {
     @PostMapping("/api/clinics")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveClinic(@Valid CreateClinicUserDTO clinicDTO) {
-        clinicService.save(clinicDTO);
+        CreateClinicCommand createClinicCommand = getCreateClinicCommand(clinicDTO);
+        clinicService.save(createClinicCommand);
     }
 
     @GetMapping("/api/clinics/pages/{page}")
@@ -50,6 +51,15 @@ public class ClinicController {
     public ClinicDTO findClinicById(@PathVariable("id") int id) {
         ClinicEntity found = clinicService.findById(id);
         return clinicMapper.toDTO(found);
+    }
+
+    private CreateClinicCommand getCreateClinicCommand(CreateClinicUserDTO clinicDTO) {
+        return new CreateClinicCommand(
+            clinicDTO.getEmail(),
+            clinicDTO.getName(),
+            clinicDTO.getAddress(),
+            clinicDTO.getPassword()
+        );
     }
 
 }

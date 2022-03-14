@@ -3,6 +3,7 @@ package org.geekhub.doctorsregistry.web.api.clinic;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.clinic.ClinicService;
+import org.geekhub.doctorsregistry.domain.clinic.CreateClinicCommand;
 import org.geekhub.doctorsregistry.domain.mapper.ClinicMapper;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicEntity;
@@ -18,23 +19,20 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.springframework.test.web.servlet.ResultActions;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClinicController.class)
 public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
@@ -194,15 +192,17 @@ public class ClinicControllerTest extends AbstractTestNGSpringContextTests {
         CreateClinicUserDTO clinicDTO = new CreateClinicUserDTO("name", "address",
             "email@gmail.com", "password", "password");
 
-        Mockito.doNothing().when(clinicService).save(clinicDTO);
+        CreateClinicCommand createClinicCommand = new CreateClinicCommand(
+            clinicDTO.getEmail(), clinicDTO.getName(), clinicDTO.getAddress(), clinicDTO.getPassword());
+        Mockito.doNothing().when(clinicService).save(createClinicCommand);
 
         mockMvc.perform(post("/api/clinics").with(admin)
-            .param("name", clinicDTO.getName())
-            .param("address", clinicDTO.getAddress())
-            .param("email", clinicDTO.getEmail())
-            .param("password", clinicDTO.getPassword())
-            .param("passwordConfirmation", clinicDTO.getPasswordConfirmation())
-        )
+                .param("name", clinicDTO.getName())
+                .param("address", clinicDTO.getAddress())
+                .param("email", clinicDTO.getEmail())
+                .param("password", clinicDTO.getPassword())
+                .param("passwordConfirmation", clinicDTO.getPasswordConfirmation())
+            )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$").doesNotExist());
     }
