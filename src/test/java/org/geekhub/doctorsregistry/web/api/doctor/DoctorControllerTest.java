@@ -3,9 +3,11 @@ package org.geekhub.doctorsregistry.web.api.doctor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
+import org.geekhub.doctorsregistry.domain.doctor.CreateDoctorCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
+import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.doctor.DoctorEntity;
@@ -70,6 +72,9 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     @MockBean
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    @Autowired
+    @MockBean
+    private DayTimeSpliterator dayTimeSpliterator;
 
     @Test(dataProvider = "roles", dataProviderClass = RolesDataProviders.class)
     public void all_roles_can_see_doctors(Role role) throws Exception {
@@ -337,7 +342,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("", "",
             "", null, null, Collections.emptyList(), "", "");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_AUTHENTICATION_PRINCIPAL);
-        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
+        CreateDoctorCommand createDoctorCommand = new CreateDoctorCommand("", "", "", "", 0, 0, 0, Collections.emptySet());
+        doNothing().when(doctorService).saveDoctor(createDoctorCommand);
 
         mockMvc.perform(post("/api/doctors")
                 .with(notAdmin)
@@ -364,7 +370,6 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_AUTHENTICATION_PRINCIPAL);
-        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/api/doctors").with(notAdmin)
                 .contentType(MediaType.APPLICATION_JSON)

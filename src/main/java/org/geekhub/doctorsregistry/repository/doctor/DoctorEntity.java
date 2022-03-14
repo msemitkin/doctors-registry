@@ -49,6 +49,17 @@ public class DoctorEntity {
         this.price = price;
     }
 
+    public static DoctorEntity create(
+        String firstName,
+        String lastName,
+        String email,
+        SpecializationEntity specialization,
+        Integer clinicId,
+        Integer price
+    ) {
+        return new DoctorEntity(null, firstName, lastName, email, specialization, clinicId, price);
+    }
+
 
     public Integer getId() {
         return id;
@@ -112,11 +123,11 @@ public class DoctorEntity {
         if (o == null || getClass() != o.getClass()) return false;
         DoctorEntity that = (DoctorEntity) o;
         return Objects.equals(id, that.id) &&
-               Objects.equals(firstName, that.firstName) &&
-               Objects.equals(lastName, that.lastName) &&
-               Objects.equals(specialization, that.specialization) &&
-               Objects.equals(clinicId, that.clinicId) &&
-               Objects.equals(price, that.price);
+            Objects.equals(firstName, that.firstName) &&
+            Objects.equals(lastName, that.lastName) &&
+            Objects.equals(specialization, that.specialization) &&
+            Objects.equals(clinicId, that.clinicId) &&
+            Objects.equals(price, that.price);
     }
 
     @Override
@@ -127,12 +138,12 @@ public class DoctorEntity {
     @Override
     public String toString() {
         return "DoctorEntity{" +
-               "id=" + id +
-               ", firstName='" + firstName + '\'' +
-               ", lastName='" + lastName + '\'' +
-               ", specialization=" + specialization +
-               ", clinicId=" + clinicId +
-               ", price=" + price +
-               '}';
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", specialization=" + specialization +
+            ", clinicId=" + clinicId +
+            ", price=" + price +
+            '}';
     }
 }

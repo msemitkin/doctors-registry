@@ -1,8 +1,6 @@
 package org.geekhub.doctorsregistry.domain.doctor;
 
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
-import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.clinic.ClinicRepository;
@@ -53,11 +51,7 @@ public class DoctorServiceTest {
     @Mock
     private ZonedTime zonedTime;
     @Mock
-    private DayTimeSpliterator dayTimeSpliterator;
-    @Mock
     private UserService userService;
-    @Mock
-    private DoctorMapper doctorMapper;
     @Mock
     private DoctorWorkingHourRepository doctorWorkingHourRepository;
     @Mock
@@ -69,7 +63,7 @@ public class DoctorServiceTest {
     private void setUp() {
         MockitoAnnotations.openMocks(this);
         doctorService = new DoctorService(doctorRepository, doctorJdbcTemplateRepository,
-            zonedTime, dayTimeSpliterator, userService, doctorMapper, doctorWorkingHourRepository, clinicRepository);
+            zonedTime, userService, doctorWorkingHourRepository, clinicRepository);
     }
 
     @Test

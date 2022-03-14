@@ -1,8 +1,10 @@
 package org.geekhub.doctorsregistry.web.mvc.controller.user;
 
+import org.geekhub.doctorsregistry.domain.doctor.CreateDoctorCommand;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
+import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -29,6 +32,7 @@ public class DoctorUserMVCController {
     private final SpecializationService specializationService;
     private final SpecializationMapper specializationMapper;
     private final AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    private final DayTimeSpliterator dayTimeSpliterator;
 
     public DoctorUserMVCController(
         DoctorService doctorService,
@@ -36,7 +40,8 @@ public class DoctorUserMVCController {
         Schedule schedule,
         SpecializationService specializationService,
         SpecializationMapper specializationMapper,
-        AuthenticationPrincipalExtractor authenticationPrincipalExtractor
+        AuthenticationPrincipalExtractor authenticationPrincipalExtractor,
+        DayTimeSpliterator dayTimeSpliterator
     ) {
         this.doctorService = doctorService;
         this.appointmentMapper = appointmentMapper;
@@ -44,6 +49,7 @@ public class DoctorUserMVCController {
         this.specializationService = specializationService;
         this.specializationMapper = specializationMapper;
         this.authenticationPrincipalExtractor = authenticationPrincipalExtractor;
+        this.dayTimeSpliterator = dayTimeSpliterator;
     }
 
     @GetMapping("/doctors/me/cabinet")
@@ -75,7 +81,21 @@ public class DoctorUserMVCController {
             return "clinic-cabinet";
         }
         int currentClinicId = authenticationPrincipalExtractor.getPrincipal().userId();
-        doctorService.saveDoctor(currentClinicId, doctor);
+        CreateDoctorCommand createDoctorCommand = getCreateDoctorCommand(doctor, currentClinicId);
+        doctorService.saveDoctor(createDoctorCommand);
         return "redirect:/clinics/me/cabinet";
+    }
+
+    private CreateDoctorCommand getCreateDoctorCommand(CreateDoctorUserDTO doctorDTO, int currentClinicId) {
+        return new CreateDoctorCommand(
+            doctorDTO.getFirstName(),
+            doctorDTO.getLastName(),
+            doctorDTO.getEmail(),
+            doctorDTO.getPassword(),
+            doctorDTO.getSpecializationId(),
+            currentClinicId,
+            doctorDTO.getPrice(),
+            new HashSet<>(dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable()))
+        );
     }
 }

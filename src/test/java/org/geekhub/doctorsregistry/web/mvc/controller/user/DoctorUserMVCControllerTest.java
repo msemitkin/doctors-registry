@@ -4,6 +4,7 @@ import org.geekhub.doctorsregistry.RolesDataProviders;
 import org.geekhub.doctorsregistry.domain.doctor.DoctorService;
 import org.geekhub.doctorsregistry.domain.mapper.AppointmentMapper;
 import org.geekhub.doctorsregistry.domain.mapper.SpecializationMapper;
+import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.schedule.Schedule;
 import org.geekhub.doctorsregistry.domain.specialization.SpecializationService;
 import org.geekhub.doctorsregistry.domain.user.UserService;
@@ -24,7 +25,6 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -63,6 +63,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
     @Autowired
     @MockBean
     private AuthenticationPrincipalExtractor authenticationPrincipalExtractor;
+    @Autowired
+    @MockBean
+    private DayTimeSpliterator dayTimeSpliterator;
 
     @Test
     public void unauthorized_users_do_not_have_access_to_doctors_cabinets() throws Exception {
@@ -137,8 +140,6 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
         List<String> timetable = List.of("MONDAY&10:00", "MONDAY&10:20", "TUESDAY&08:00", "TUESDAY&08:20");
         CreateDoctorUserDTO doctorDTO = new CreateDoctorUserDTO("name", "surname",
             "doctorEmail@gmail.com", 1, 100, timetable, "password", "password");
-        when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_CLINIC_ID, Role.CLINIC));
-        doNothing().when(doctorService).saveDoctor(TEST_CLINIC_ID, doctorDTO);
 
         mockMvc.perform(post("/doctors/registration").with(clinic).with(csrf())
                 .flashAttr("doctor", doctorDTO)

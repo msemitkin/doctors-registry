@@ -24,6 +24,10 @@ public class SpecializationEntity {
         this.name = name;
     }
 
+    public static SpecializationEntity fromId(int id) {
+        return new SpecializationEntity(id, null);
+    }
+
     public Integer getId() {
         return id;
     }
@@ -56,8 +60,8 @@ public class SpecializationEntity {
     @Override
     public String toString() {
         return "SpecializationEntity{" +
-               "id=" + id +
-               ", name='" + name + '\'' +
-               '}';
+            "id=" + id +
+            ", name='" + name + '\'' +
+            '}';
     }
 }

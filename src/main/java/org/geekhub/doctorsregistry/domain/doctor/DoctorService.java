@@ -2,9 +2,6 @@ package org.geekhub.doctorsregistry.domain.doctor;
 
 import org.geekhub.doctorsregistry.domain.EntityNotFoundException;
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.DoctorMapper;
-import org.geekhub.doctorsregistry.domain.schedule.DayTime;
-import org.geekhub.doctorsregistry.domain.schedule.DayTimeSpliterator;
 import org.geekhub.doctorsregistry.domain.user.User;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
@@ -14,9 +11,8 @@ import org.geekhub.doctorsregistry.repository.doctor.DoctorJdbcTemplateRepositor
 import org.geekhub.doctorsregistry.repository.doctor.DoctorRepository;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourEntity;
 import org.geekhub.doctorsregistry.repository.doctorworkinghour.DoctorWorkingHourRepository;
-import org.geekhub.doctorsregistry.web.dto.doctor.CreateDoctorUserDTO;
+import org.geekhub.doctorsregistry.repository.specialization.SpecializationEntity;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,9 +33,7 @@ public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorJdbcTemplateRepository doctorJdbcTemplateRepository;
     private final ZonedTime zonedTime;
-    private final DayTimeSpliterator dayTimeSpliterator;
     private final UserService userService;
-    private final DoctorMapper doctorMapper;
     private final DoctorWorkingHourRepository doctorWorkingHourRepository;
     private final ClinicRepository clinicRepository;
 
@@ -47,18 +41,14 @@ public class DoctorService {
         DoctorRepository doctorRepository,
         DoctorJdbcTemplateRepository doctorJdbcTemplateRepository,
         ZonedTime zonedTime,
-        DayTimeSpliterator dayTimeSpliterator,
         UserService userService,
-        DoctorMapper doctorMapper,
         DoctorWorkingHourRepository doctorWorkingHourRepository,
         ClinicRepository clinicRepository
     ) {
         this.doctorRepository = doctorRepository;
         this.doctorJdbcTemplateRepository = doctorJdbcTemplateRepository;
         this.zonedTime = zonedTime;
-        this.dayTimeSpliterator = dayTimeSpliterator;
         this.userService = userService;
-        this.doctorMapper = doctorMapper;
         this.doctorWorkingHourRepository = doctorWorkingHourRepository;
         this.clinicRepository = clinicRepository;
     }
@@ -85,15 +75,14 @@ public class DoctorService {
     }
 
     @Transactional
-    public void saveDoctor(int clinicId, @NonNull CreateDoctorUserDTO doctorDTO) {
-        User user = User.newDoctor(doctorDTO.getEmail(), doctorDTO.getPassword());
+    public void saveDoctor(CreateDoctorCommand createDoctorCommand) {
+        User user = User.newDoctor(createDoctorCommand.email(), createDoctorCommand.password());
         userService.saveUser(user);
 
-        DoctorEntity doctorEntity = doctorMapper.toEntity(doctorDTO, clinicId);
+        DoctorEntity doctorEntity = getDoctorEntity(createDoctorCommand);
         Integer doctorId = doctorRepository.save(doctorEntity).getId();
 
-        List<DayTime> doctorTimetable = dayTimeSpliterator.splitToDayTime(doctorDTO.getTimetable());
-        List<DoctorWorkingHourEntity> doctorWorkingHours = doctorTimetable.stream()
+        List<DoctorWorkingHourEntity> doctorWorkingHours = createDoctorCommand.timetable().stream()
             .map(entry -> new DoctorWorkingHourEntity(
                 null,
                 doctorId,
@@ -132,6 +121,17 @@ public class DoctorService {
         LocalDate dateNow = zonedTime.now().toLocalDate();
         LocalDate tomorrowDate = dateNow.plusDays(1);
         return tomorrowDate.datesUntil(dateNow.plusDays(NUMBER_OF_DAYS_IN_SCHEDULE + 1L)).toList();
+    }
+
+    private DoctorEntity getDoctorEntity(CreateDoctorCommand createDoctorCommand) {
+        return DoctorEntity.create(
+            createDoctorCommand.firstName(),
+            createDoctorCommand.lastName(),
+            createDoctorCommand.email(),
+            SpecializationEntity.fromId(createDoctorCommand.specialization()),
+            createDoctorCommand.clinicId(),
+            createDoctorCommand.price()
+        );
     }
 
 }
