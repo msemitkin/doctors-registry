@@ -47,7 +47,7 @@ public class AppointmentServiceTest {
 
     @Test
     public void returns_entity_when_exists_with_given_id() {
-        AppointmentEntity testAppointment = new AppointmentEntity(1, 2, 3, TEST_DATE_TIME);
+        AppointmentEntity testAppointment = AppointmentEntity.withId(1, 2, 3, TEST_DATE_TIME);
         Mockito.when(appointmentRepository.findById(1)).thenReturn(Optional.of(testAppointment));
 
         AppointmentEntity actual = appointmentService.findById(1);

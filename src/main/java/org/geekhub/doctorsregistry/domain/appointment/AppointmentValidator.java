@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,12 +36,6 @@ public class AppointmentValidator {
     }
 
     public void validate(@NonNull AppointmentEntity appointmentEntity) {
-
-        Assert.notNull(appointmentEntity, "Appointment entity is null");
-        Assert.notNull(appointmentEntity.getDoctorId(), "Doctor id is null");
-        Assert.notNull(appointmentEntity.getPatientId(), "Patient id is null");
-        Assert.notNull(appointmentEntity.getDateTime(), "Datetime is null");
-
         if (isDateTimeNotAllowed(appointmentEntity.getDateTime())) {
             logger.warn("Not allowed date");
             throw new TimeNotAllowedException("Received appointment with now allowed date: "
@@ -60,7 +53,6 @@ public class AppointmentValidator {
             logger.info("Attempted to make an appointment with a doctor at already booked time");
             throw new DoctorNotAvailableException("Doctor is not available at this time");
         }
-
     }
 
     public boolean isDateTimeNotAllowed(LocalDateTime dateTime) {

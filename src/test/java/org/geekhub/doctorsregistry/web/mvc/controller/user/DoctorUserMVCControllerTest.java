@@ -88,9 +88,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
         int doctorId = 1;
 
         List<AppointmentEntity> archivedAppointments = List.of(
-            new AppointmentEntity(1, 5, doctorId, LocalDateTime.parse("2021-10-10T10:00")),
-            new AppointmentEntity(2, 10, doctorId, LocalDateTime.parse("2021-10-10T10:20")),
-            new AppointmentEntity(3, 15, doctorId, LocalDateTime.parse("2021-10-11T08:00"))
+            AppointmentEntity.withId(1, 5, doctorId, LocalDateTime.parse("2021-10-10T10:00")),
+            AppointmentEntity.withId(2, 10, doctorId, LocalDateTime.parse("2021-10-10T10:20")),
+            AppointmentEntity.withId(3, 15, doctorId, LocalDateTime.parse("2021-10-11T08:00"))
         );
         List<AppointmentDTO> archivedAppointmentsDTOs = List.of(
             new AppointmentDTO(1, 5, doctorId, "2021-10-10T10:00"),
@@ -98,9 +98,9 @@ public class DoctorUserMVCControllerTest extends AbstractTestNGSpringContextTest
             new AppointmentDTO(3, 15, doctorId, "2021-10-11T08:00")
         );
         List<AppointmentEntity> pendingAppointments = List.of(
-            new AppointmentEntity(1, 20, doctorId, LocalDateTime.parse("2021-10-20T10:00")),
-            new AppointmentEntity(2, 25, doctorId, LocalDateTime.parse("2021-10-20T10:20")),
-            new AppointmentEntity(3, 30, doctorId, LocalDateTime.parse("2021-10-21T08:00"))
+            AppointmentEntity.withId(1, 20, doctorId, LocalDateTime.parse("2021-10-20T10:00")),
+            AppointmentEntity.withId(2, 25, doctorId, LocalDateTime.parse("2021-10-20T10:20")),
+            AppointmentEntity.withId(3, 30, doctorId, LocalDateTime.parse("2021-10-21T08:00"))
         );
         List<AppointmentDTO> pendingAppointmentsDTOs = List.of(
             new AppointmentDTO(1, 20, doctorId, "2021-10-20T10:00"),

@@ -249,8 +249,8 @@ public class DoctorControllerTest extends AbstractTestNGSpringContextTests {
     private Object[][] appointments() {
         return new Object[][]{
             {List.of(
-                new AppointmentEntity(1, 1, 1, LocalDateTime.parse("2021-10-10T10:00")),
-                new AppointmentEntity(2, 3, 1, LocalDateTime.parse("2021-10-12T08:00"))
+                AppointmentEntity.withId(1, 1, 1, LocalDateTime.parse("2021-10-10T10:00")),
+                AppointmentEntity.withId(2, 3, 1, LocalDateTime.parse("2021-10-12T08:00"))
             ), List.of(
                 new AppointmentDTO(1, 1, 1, "2021-10-10T10:00"),
                 new AppointmentDTO(2, 3, 1, "2021-10-12T08:00")

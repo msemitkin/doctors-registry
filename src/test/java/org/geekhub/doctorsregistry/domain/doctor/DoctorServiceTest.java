@@ -32,16 +32,16 @@ public class DoctorServiceTest {
     private static final int TEST_DOCTOR_ID = 1;
 
     private static final List<AppointmentEntity> PAST_APPOINTMENTS = List.of(
-        AppointmentEntity.of(1, TEST_DOCTOR_ID, TEST_TIME.minusMinutes(1)),
-        AppointmentEntity.of(2, TEST_DOCTOR_ID, TEST_TIME.minusHours(1)),
-        AppointmentEntity.of(3, TEST_DOCTOR_ID, TEST_TIME.minusDays(1)),
-        AppointmentEntity.of(4, TEST_DOCTOR_ID, TEST_TIME.minusMonths(1))
+        AppointmentEntity.create(1, TEST_DOCTOR_ID, TEST_TIME.minusMinutes(1)),
+        AppointmentEntity.create(2, TEST_DOCTOR_ID, TEST_TIME.minusHours(1)),
+        AppointmentEntity.create(3, TEST_DOCTOR_ID, TEST_TIME.minusDays(1)),
+        AppointmentEntity.create(4, TEST_DOCTOR_ID, TEST_TIME.minusMonths(1))
     );
     private static final List<AppointmentEntity> FUTURE_APPOINTMENTS = List.of(
-        AppointmentEntity.of(1, TEST_DOCTOR_ID, TEST_TIME.plusSeconds(1)),
-        AppointmentEntity.of(2, TEST_DOCTOR_ID, TEST_TIME.plusMinutes(1)),
-        AppointmentEntity.of(3, TEST_DOCTOR_ID, TEST_TIME.plusHours(1)),
-        AppointmentEntity.of(4, TEST_DOCTOR_ID, TEST_TIME.plusDays(1))
+        AppointmentEntity.create(1, TEST_DOCTOR_ID, TEST_TIME.plusSeconds(1)),
+        AppointmentEntity.create(2, TEST_DOCTOR_ID, TEST_TIME.plusMinutes(1)),
+        AppointmentEntity.create(3, TEST_DOCTOR_ID, TEST_TIME.plusHours(1)),
+        AppointmentEntity.create(4, TEST_DOCTOR_ID, TEST_TIME.plusDays(1))
     );
 
     @Mock

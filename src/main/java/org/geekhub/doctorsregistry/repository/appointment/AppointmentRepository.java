@@ -27,7 +27,7 @@ import static org.geekhub.doctorsregistry.repository.util.RepositoryUtil.wrapWit
 public class AppointmentRepository {
 
     private static final RowMapper<AppointmentEntity> rowMapper = (rs, rowNum) ->
-        new AppointmentEntity(
+        AppointmentEntity.withId(
             rs.getInt(ID),
             rs.getInt(PATIENT_ID),
             rs.getInt(DOCTOR_ID),

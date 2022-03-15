@@ -199,7 +199,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test(dataProvider = "roles_except_patient", dataProviderClass = RolesDataProviders.class)
     public void only_patients_can_make_appointments(Role role) throws Exception {
-        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
+        AppointmentEntity appointment = AppointmentEntity.create( TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor notPatient =
             user("email@gmail.com").roles(role.toString()).password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
@@ -228,7 +228,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
         String message
     ) throws Exception {
         CreateAppointmentDTO createAppointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
-        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
+        AppointmentEntity appointment = AppointmentEntity.create(TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));
@@ -247,7 +247,7 @@ public class DoctorMVCControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void saves_appointment_correct() throws Exception {
-        AppointmentEntity appointment = new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
+        AppointmentEntity appointment = AppointmentEntity.create(TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor user =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(new AuthenticationPrincipal(TEST_PATIENT_ID, Role.PATIENT));

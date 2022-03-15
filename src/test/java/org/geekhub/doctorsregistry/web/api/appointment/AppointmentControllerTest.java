@@ -98,7 +98,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
     public void returns_error_message_when_exception_happened(Class<? extends Throwable> exceptionType, String message) throws Exception {
         CreateAppointmentDTO createAppointmentDTO = new CreateAppointmentDTO(1, "2021-10-10T08:00");
         AppointmentEntity appointmentEntity =
-            new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
+            AppointmentEntity.create( TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);
@@ -118,7 +118,7 @@ public class AppointmentControllerTest extends AbstractTestNGSpringContextTests 
     @Test
     public void saves_appointment_correct() throws Exception {
         AppointmentEntity appointmentEntity =
-            new AppointmentEntity(null, TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
+            AppointmentEntity.create( TEST_PATIENT_ID, 1, LocalDateTime.parse("2021-10-10T08:00"));
         SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor patient =
             user("email@gmail.com").roles("PATIENT").password("password");
         when(authenticationPrincipalExtractor.getPrincipal()).thenReturn(TEST_PATIENT_AUTHENTICATION_PRINCIPAL);

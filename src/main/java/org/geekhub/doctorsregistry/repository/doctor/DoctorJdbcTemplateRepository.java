@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +31,7 @@ public class DoctorJdbcTemplateRepository {
         Date date = resultSet.getDate(DATE);
         Time time = resultSet.getTime(TIME);
         LocalDateTime dateTime = LocalDateTime.of(date.toLocalDate(), time.toLocalTime());
-        return new AppointmentEntity(id, patientId, doctorId, dateTime);
+        return AppointmentEntity.withId(id, patientId, doctorId, dateTime);
     };
 
     private final NamedParameterJdbcTemplate jdbcTemplate;

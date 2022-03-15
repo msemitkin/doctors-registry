@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.domain.patient;
 
 import org.geekhub.doctorsregistry.domain.datime.ZonedTime;
-import org.geekhub.doctorsregistry.domain.mapper.PatientMapper;
 import org.geekhub.doctorsregistry.domain.user.UserService;
 import org.geekhub.doctorsregistry.repository.appointment.AppointmentEntity;
 import org.geekhub.doctorsregistry.repository.patient.PatientJdbcTemplateRepository;
@@ -24,16 +23,16 @@ public class PatientServiceTest {
     private static final int TEST_PATIENT_ID = 1;
 
     private static final List<AppointmentEntity> PAST_APPOINTMENTS = List.of(
-        AppointmentEntity.of(TEST_PATIENT_ID, 1, TEST_TIME.minusMinutes(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 2, TEST_TIME.minusHours(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 3, TEST_TIME.minusDays(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 4, TEST_TIME.minusMonths(1))
+        AppointmentEntity.create(TEST_PATIENT_ID, 1, TEST_TIME.minusMinutes(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 2, TEST_TIME.minusHours(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 3, TEST_TIME.minusDays(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 4, TEST_TIME.minusMonths(1))
     );
     private static final List<AppointmentEntity> FUTURE_APPOINTMENTS = List.of(
-        AppointmentEntity.of(TEST_PATIENT_ID, 1, TEST_TIME.plusSeconds(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 2, TEST_TIME.plusMinutes(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 3, TEST_TIME.plusHours(1)),
-        AppointmentEntity.of(TEST_PATIENT_ID, 4, TEST_TIME.plusDays(1))
+        AppointmentEntity.create(TEST_PATIENT_ID, 1, TEST_TIME.plusSeconds(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 2, TEST_TIME.plusMinutes(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 3, TEST_TIME.plusHours(1)),
+        AppointmentEntity.create(TEST_PATIENT_ID, 4, TEST_TIME.plusDays(1))
     );
 
     @Mock

@@ -1,6 +1,5 @@
 package org.geekhub.doctorsregistry.web.dto.appointment;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class AppointmentDTO {
@@ -43,9 +42,9 @@ public class AppointmentDTO {
         if (o == null || getClass() != o.getClass()) return false;
         AppointmentDTO that = (AppointmentDTO) o;
         return Objects.equals(id, that.id) &&
-               Objects.equals(patientId, that.patientId) &&
-               Objects.equals(doctorId, that.doctorId) &&
-               Objects.equals(dateTime, that.dateTime);
+            Objects.equals(patientId, that.patientId) &&
+            Objects.equals(doctorId, that.doctorId) &&
+            Objects.equals(dateTime, that.dateTime);
     }
 
     @Override
@@ -56,10 +55,10 @@ public class AppointmentDTO {
     @Override
     public String toString() {
         return "AppointmentDTO{" +
-               "id=" + id +
-               ", patientId=" + patientId +
-               ", doctorId=" + doctorId +
-               ", dateTime='" + dateTime + '\'' +
-               '}';
+            "id=" + id +
+            ", patientId=" + patientId +
+            ", doctorId=" + doctorId +
+            ", dateTime='" + dateTime + '\'' +
+            '}';
     }
 }

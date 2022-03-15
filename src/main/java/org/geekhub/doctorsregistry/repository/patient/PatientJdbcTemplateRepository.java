@@ -26,7 +26,7 @@ public class PatientJdbcTemplateRepository {
         Date date = resultSet.getDate(DATE);
         Time time = resultSet.getTime(TIME);
         LocalDateTime dateTime = LocalDateTime.of(date.toLocalDate(), time.toLocalTime());
-        return new AppointmentEntity(id, patientId, doctorId, dateTime);
+        return AppointmentEntity.withId(id, patientId, doctorId, dateTime);
     };
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -48,7 +48,7 @@ public class PatientJdbcTemplateRepository {
             TIME, Time.valueOf(dateTime.toLocalTime())
         );
         boolean patientHasAppointment = Optional.ofNullable(
-            jdbcTemplate.queryForObject(query, parameters, Boolean.class))
+                jdbcTemplate.queryForObject(query, parameters, Boolean.class))
             .orElseThrow(() -> new DatabaseException(
                     "Expected boolean value while fetching data from db, but null received"
                 )

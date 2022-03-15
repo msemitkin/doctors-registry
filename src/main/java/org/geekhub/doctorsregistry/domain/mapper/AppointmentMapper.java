@@ -13,12 +13,8 @@ public class AppointmentMapper {
 
     @NonNull
     public AppointmentEntity toEntity(int patientId, @NonNull CreateAppointmentDTO appointmentDTO) {
-        LocalDateTime dateTime = LocalDateTime.parse(appointmentDTO.getInputDateTime());
-        AppointmentEntity appointmentEntity = new AppointmentEntity();
-        appointmentEntity.setDoctorId(appointmentDTO.getDoctorId());
-        appointmentEntity.setDateTime(dateTime);
-        appointmentEntity.setPatientId(patientId);
-        return appointmentEntity;
+        LocalDateTime appointmentTime = LocalDateTime.parse(appointmentDTO.getInputDateTime());
+        return AppointmentEntity.create(patientId, appointmentDTO.getDoctorId(), appointmentTime);
     }
 
     @NonNull

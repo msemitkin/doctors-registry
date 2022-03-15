@@ -37,14 +37,9 @@ public class AppointmentValidatorTest {
         appointmentValidator = new AppointmentValidator(zonedTime, doctorService, patientService, appointmentTime);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void throws_exception_when_appointment_is_null() {
-        appointmentValidator.validate(null);
-    }
-
     @Test
     public void allows_appointment_with_null_id() {
-        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 1, TEST_DATE_TIME);
+        AppointmentEntity appointmentEntity = AppointmentEntity.create(1, 1, TEST_DATE_TIME);
 
         Mockito.when(zonedTime.now()).thenReturn(TEST_DATE_TIME.minusDays(1));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(Mockito.any())).thenReturn(false);
@@ -52,23 +47,6 @@ public class AppointmentValidatorTest {
         Mockito.when(doctorService.isDoctorAvailable(Mockito.any(), Mockito.any())).thenReturn(true);
         Mockito.when(appointmentTime.isTimeValid(appointmentEntity.getDateTime().toLocalTime())).thenReturn(true);
 
-        appointmentValidator.validate(appointmentEntity);
-    }
-
-    @DataProvider(name = "throws_exception_when_appointment_has_null_fields_parameters")
-    private Object[][] throws_exception_when_appointment_has_null_fields_parameters() {
-        return new Object[][]{
-            {new AppointmentEntity(null, null, 100, TEST_DATE_TIME)},
-            {new AppointmentEntity(null, 100, null, TEST_DATE_TIME)},
-            {new AppointmentEntity(null, 1, 1, null)}
-        };
-    }
-
-    @Test(
-        expectedExceptions = IllegalArgumentException.class,
-        dataProvider = "throws_exception_when_appointment_has_null_fields_parameters"
-    )
-    public void throws_exception_when_appointment_has_null_fields(AppointmentEntity appointmentEntity) {
         appointmentValidator.validate(appointmentEntity);
     }
 
@@ -118,7 +96,7 @@ public class AppointmentValidatorTest {
 
     @Test
     public void throws_PatientBusyException_when_patient_already_has_an_appointment_for_specified_time() {
-        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        AppointmentEntity appointmentEntity = AppointmentEntity.create(1, 2, LocalDateTime.parse("2021-10-10T10:20"));
 
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(true);
@@ -132,7 +110,7 @@ public class AppointmentValidatorTest {
 
     @Test
     public void throws_RepeatedDayAppointmentException_when_patient_already_has_an_appointment_with_chosen_doctor_on_specified_day() {
-        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        AppointmentEntity appointmentEntity = AppointmentEntity.create(1, 2, LocalDateTime.parse("2021-10-10T10:20"));
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(true);
@@ -145,7 +123,7 @@ public class AppointmentValidatorTest {
 
     @Test
     public void throws_DoctorNotAvailableException_when_doctor_is_not_available() {
-        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        AppointmentEntity appointmentEntity = AppointmentEntity.create(1, 2, LocalDateTime.parse("2021-10-10T10:20"));
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
@@ -157,7 +135,7 @@ public class AppointmentValidatorTest {
 
     @Test
     public void do_not_throw_any_exceptions_when_given_valid_data_and_it_is_allowed_to_create_appointment() {
-        AppointmentEntity appointmentEntity = new AppointmentEntity(null, 1, 2, LocalDateTime.parse("2021-10-10T10:20"));
+        AppointmentEntity appointmentEntity = AppointmentEntity.create(1, 2, LocalDateTime.parse("2021-10-10T10:20"));
         Mockito.when(zonedTime.now()).thenReturn(LocalDateTime.parse("2021-10-08T10:20"));
         Mockito.when(patientService.patientHasAppointmentOnSelectedTime(appointmentEntity)).thenReturn(false);
         Mockito.when(patientService.patientHasAppointmentWithDoctorThatDay(appointmentEntity)).thenReturn(false);
