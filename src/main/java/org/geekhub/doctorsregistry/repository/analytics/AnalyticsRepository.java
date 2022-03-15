@@ -1,7 +1,6 @@
 package org.geekhub.doctorsregistry.repository.analytics;
 
 import org.geekhub.doctorsregistry.domain.analytics.UsersAnalyticsEntity;
-import org.geekhub.doctorsregistry.domain.analytics.SingleRowUsersAnalyticsEntity;
 import org.geekhub.doctorsregistry.repository.util.SQLManager;
 import org.geekhub.doctorsregistry.web.security.role.Role;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,8 +38,11 @@ public class AnalyticsRepository {
             jdbcTemplate.query(query, analyticsRowMapper);
         Map<Role, Integer> analytics = new EnumMap<>(Role.class);
         for (SingleRowUsersAnalyticsEntity analyticsEntity : singleRowAnalyticsEntities) {
-            analytics.put(analyticsEntity.getRole(), analyticsEntity.getCount());
+            analytics.put(analyticsEntity.role(), analyticsEntity.count());
         }
         return new UsersAnalyticsEntity(analytics);
     }
+}
+
+record SingleRowUsersAnalyticsEntity(Role role, int count) {
 }
