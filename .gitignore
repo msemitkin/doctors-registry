@@ -18,7 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/*
 *.iws
 *.iml
 *.ipr
@@ -37,3 +37,5 @@ out/
 .vscode/
 
 config
+
+!.idea/icon.png
